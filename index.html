@@ -108,6 +108,28 @@
 </head>
 <body>
 
+<aside class="side-panel" id="sidePanel">
+  <button class="side-toggle" id="sideToggle" type="button" aria-label="toggle contacts" data-augmented-ui="tr-clip br-clip border">
+    <span class="arrow" id="sideArrow">&gt;</span>
+  </button>
+  <div class="side-inner">
+    <h2>// CONTACTS</h2>
+    <div class="contact-form">
+      <div class="contact-form-row">
+        <div class="contact-avatar-preview" id="newAvatarPreview"></div>
+        <input type="text" id="newContactName" maxlength="40" placeholder="Contact name..." />
+      </div>
+      <div class="contact-form-row">
+        <input type="file" class="avatar-file" id="newContactAvatar" accept="image/*" />
+        <label class="btn cyan icon" for="newContactAvatar">AVATAR</label>
+        <button class="btn cyan icon" id="addContact" type="button">+ SAVE</button>
+        <button class="btn danger icon" id="clearNewAvatar" type="button">✕</button>
+      </div>
+    </div>
+    <div class="contact-list" id="contactList"></div>
+  </div>
+</aside>
+
 <header>
   <div class="logo">&gt; COMMLINK_</div>
   <div class="tag">DIALOG CONSTRUCTOR // v1.0</div>
@@ -211,6 +233,8 @@
   // ---------- Storage helpers (localStorage-backed) ----------
   const STATE_KEY = 'commlink:state';
   const SNAPSHOTS_KEY = 'commlink:snapshots';
+  const CONTACTS_KEY = 'commlink:contacts';
+  const SIDE_OPEN_KEY = 'commlink:sideOpen';
 
   function storageSet(key, value) {
     try { localStorage.setItem(key, value); return true; }
@@ -301,6 +325,16 @@
   const pChoices = $('pChoices');
   const charCount = $('charCount');
   const toast = $('toast');
+
+  const sidePanel = $('sidePanel');
+  const sideToggle = $('sideToggle');
+  const sideArrow = $('sideArrow');
+  const newContactName = $('newContactName');
+  const newContactAvatar = $('newContactAvatar');
+  const newAvatarPreview = $('newAvatarPreview');
+  const clearNewAvatarBtn = $('clearNewAvatar');
+  const addContactBtn = $('addContact');
+  const contactList = $('contactList');
 
   // ---------- Render ----------
   function renderMessagesEditor() {
@@ -521,6 +555,111 @@
     showToast(`LOADED "${name}"`);
   }
 
+  // ---------- Contacts (sidebar) ----------
+  let newAvatarData = '';
+
+  function loadContacts() {
+    const raw = storageGet(CONTACTS_KEY);
+    if (!raw) return [];
+    try { return JSON.parse(raw) || []; } catch { return []; }
+  }
+  function saveContacts(list) {
+    return storageSet(CONTACTS_KEY, JSON.stringify(list));
+  }
+  function addMessageFromContact(c) {
+    if (state.messages.length >= 12) { showToast('MAX 12 MESSAGES'); return; }
+    state.messages.push({
+      speaker: c.name || '',
+      body: '',
+      portrait: c.avatar || '',
+      side: 'left'
+    });
+    renderMessagesEditor();
+    renderPreview();
+    saveState();
+    showToast(`+ "${c.name || 'contact'}"`);
+  }
+  function renderContacts() {
+    const contacts = loadContacts();
+    contactList.innerHTML = '';
+    contacts.forEach((c) => {
+      const item = document.createElement('div');
+      item.className = 'contact';
+      item.innerHTML = `
+        <div class="contact-avatar"></div>
+        <span class="contact-name"></span>
+        <button class="btn danger icon" type="button" data-del aria-label="delete">✕</button>
+      `;
+      if (c.avatar) item.querySelector('.contact-avatar').style.backgroundImage = `url("${c.avatar}")`;
+      item.querySelector('.contact-name').textContent = c.name || '—';
+      item.addEventListener('click', (e) => {
+        if (e.target.closest('[data-del]')) return;
+        addMessageFromContact(c);
+      });
+      item.querySelector('[data-del]').addEventListener('click', (e) => {
+        e.stopPropagation();
+        if (!confirm(`Delete contact "${c.name}"?`)) return;
+        const updated = loadContacts().filter(x => x.id !== c.id);
+        saveContacts(updated);
+        renderContacts();
+      });
+      contactList.appendChild(item);
+    });
+    augmentButtons(contactList);
+  }
+
+  // Sidebar open/close
+  sideToggle.addEventListener('click', () => {
+    sidePanel.classList.toggle('open');
+    const isOpen = sidePanel.classList.contains('open');
+    sideArrow.textContent = isOpen ? '<' : '>';
+    storageSet(SIDE_OPEN_KEY, isOpen ? '1' : '');
+  });
+  if (storageGet(SIDE_OPEN_KEY) === '1') {
+    sidePanel.classList.add('open');
+    sideArrow.textContent = '<';
+  }
+
+  // New-contact form
+  newContactAvatar.addEventListener('change', (e) => {
+    const f = e.target.files && e.target.files[0];
+    if (!f) return;
+    const reader = new FileReader();
+    reader.onload = (ev) => {
+      newAvatarData = ev.target.result;
+      newAvatarPreview.style.backgroundImage = `url("${newAvatarData}")`;
+    };
+    reader.readAsDataURL(f);
+  });
+  clearNewAvatarBtn.addEventListener('click', () => {
+    newAvatarData = '';
+    newContactAvatar.value = '';
+    newAvatarPreview.style.backgroundImage = 'none';
+  });
+  addContactBtn.addEventListener('click', () => {
+    const name = newContactName.value.trim();
+    if (!name) { showToast('NAME REQUIRED'); newContactName.focus(); return; }
+    const list = loadContacts();
+    list.push({
+      id: Date.now().toString(36) + Math.random().toString(36).slice(2, 6),
+      name,
+      avatar: newAvatarData
+    });
+    if (!saveContacts(list)) {
+      showToast('STORAGE FULL');
+      return;
+    }
+    newContactName.value = '';
+    newAvatarData = '';
+    newContactAvatar.value = '';
+    newAvatarPreview.style.backgroundImage = 'none';
+    renderContacts();
+    showToast(`SAVED "${name}"`);
+  });
+  newContactName.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') { e.preventDefault(); addContactBtn.click(); }
+  });
+
   // ---------- Events ----------
   metaInput.addEventListener('input', () => { state.meta = metaInput.value; renderPreview(); saveState(); });
 
@@ -689,6 +828,7 @@
   syncForm();
   renderPreview();
   renderSnapshots();
+  renderContacts();
 </script>
 
 </body>
