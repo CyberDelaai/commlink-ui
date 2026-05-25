@@ -366,24 +366,24 @@
     cropOutH = opts.outHeight || 256;
     cropOnConfirm = onConfirm;
     cropImg.onload = () => {
-      const stageRect = cropStage.getBoundingClientRect();
-      const imgRect = cropImg.getBoundingClientRect();
-      const sx = imgRect.left - stageRect.left;
-      const sy = imgRect.top - stageRect.top;
-      // Fit a 60% rectangle of the given aspect inside the image
-      let w, h;
-      if (imgRect.width / imgRect.height > cropAspect) {
-        // image wider than target aspect → height-bound
-        h = imgRect.height * 0.6;
-        w = h * cropAspect;
-      } else {
-        w = imgRect.width * 0.6;
-        h = w / cropAspect;
-      }
-      cropFrame.style.width = w + 'px';
-      cropFrame.style.height = h + 'px';
-      cropFrame.style.left = (sx + (imgRect.width - w) / 2) + 'px';
-      cropFrame.style.top = (sy + (imgRect.height - h) / 2) + 'px';
+      requestAnimationFrame(() => {
+        const stageRect = cropStage.getBoundingClientRect();
+        const imgRect = cropImg.getBoundingClientRect();
+        const sx = imgRect.left - stageRect.left;
+        const sy = imgRect.top - stageRect.top;
+        let w, h;
+        if (imgRect.width / imgRect.height > cropAspect) {
+          h = imgRect.height * 0.6;
+          w = h * cropAspect;
+        } else {
+          w = imgRect.width * 0.6;
+          h = w / cropAspect;
+        }
+        cropFrame.style.width = w + 'px';
+        cropFrame.style.height = h + 'px';
+        cropFrame.style.left = (sx + (imgRect.width - w) / 2) + 'px';
+        cropFrame.style.top = (sy + (imgRect.height - h) / 2) + 'px';
+      });
     };
     cropImg.src = dataUrl;
     cropModal.hidden = false;
@@ -398,10 +398,23 @@
     const frameRect = cropFrame.getBoundingClientRect();
     const scaleX = cropImg.naturalWidth / imgRect.width;
     const scaleY = cropImg.naturalHeight / imgRect.height;
-    const sx = Math.max(0, (frameRect.left - imgRect.left) * scaleX);
-    const sy = Math.max(0, (frameRect.top - imgRect.top) * scaleY);
-    const sw = Math.min(cropImg.naturalWidth - sx, frameRect.width * scaleX);
-    const sh = Math.min(cropImg.naturalHeight - sy, frameRect.height * scaleY);
+    // 2px cyan border drawn inside (box-sizing: border-box) → visible
+    // selection is the area inset by the border thickness.
+    const B = 2;
+    const sx = Math.max(0, (frameRect.left + B - imgRect.left) * scaleX);
+    const sy = Math.max(0, (frameRect.top + B - imgRect.top) * scaleY);
+    let sw = Math.max(1, (frameRect.width - 2 * B) * scaleX);
+    let sh = Math.max(1, (frameRect.height - 2 * B) * scaleY);
+    sw = Math.min(cropImg.naturalWidth - sx, sw);
+    sh = Math.min(cropImg.naturalHeight - sy, sh);
+    console.log('[crop]', {
+      natural: [cropImg.naturalWidth, cropImg.naturalHeight],
+      imgRect: { w: imgRect.width, h: imgRect.height, l: imgRect.left, t: imgRect.top },
+      frameRect: { w: frameRect.width, h: frameRect.height, l: frameRect.left, t: frameRect.top },
+      scale: [scaleX, scaleY],
+      src: { sx, sy, sw, sh },
+      out: [cropOutW, cropOutH]
+    });
     const c = document.createElement('canvas');
     c.width = cropOutW;
     c.height = cropOutH;
