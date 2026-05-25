@@ -555,35 +555,43 @@
       const row = document.createElement('div');
       row.className = 'msg-row';
       row.innerHTML = `
-        <div class="msg-row-head">
-          <span class="idx">MSG ${String(i + 1).padStart(2, '0')}</span>
+        <div class="msg-row-left">
           <div class="portrait-preview" data-portrait></div>
-          <input type="text" class="speaker-input" maxlength="40" placeholder="Speaker" />
-          <button class="btn danger icon" type="button" aria-label="remove" data-remove>✕</button>
-        </div>
-        <div class="msg-row-meta">
-          <input type="text" class="time-input" maxlength="20" placeholder="time" />
-          <button class="btn cyan icon" type="button" data-save-contact aria-label="save as contact" title="Save as contact">
-            <svg class="mi" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M17 3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V7l-4-4zm-5 16c-1.66 0-3-1.34-3-3s1.34-3 3-3 3 1.34 3 3-1.34 3-3 3zm3-10H5V5h10v4z"/></svg>
-          </button>
-          <button class="side-switch" type="button" data-side data-pos="${m.side === 'right' ? 'right' : 'left'}" aria-label="toggle side">
-            <span class="thumb"></span>
-            <span class="lab l">L</span>
-            <span class="lab r">R</span>
-          </button>
-        </div>
-        <textarea class="body-input" maxlength="500" placeholder="Message text..."></textarea>
-        <div class="msg-row-toolbar">
           <input type="file" accept="image/*" class="portrait-file" id="portrait-file-${i}" />
-          <label class="btn cyan icon portrait-upload" for="portrait-file-${i}">PORTRAIT</label>
-          <button class="btn cyan icon" type="button" data-paste-portrait title="Paste from clipboard">PASTE</button>
-          <button class="btn danger icon" type="button" data-clear-portrait>CLEAR</button>
-          <span class="toolbar-spacer"></span>
-          <button class="btn ghost icon" type="button" data-up aria-label="move up" ${i === 0 ? 'disabled' : ''}>↑</button>
-          <button class="btn ghost icon" type="button" data-down aria-label="move down" ${i === state.messages.length - 1 ? 'disabled' : ''}>↓</button>
-          <button class="btn cyan icon" type="button" data-clone aria-label="clone" title="Clone message">
-            <svg class="mi" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg>
+          <label class="btn cyan icon portrait-upload portrait-icon" for="portrait-file-${i}" aria-label="upload portrait" title="Upload portrait">
+            <svg class="mi" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M9 16h6v-6h4l-7-7-7 7h4v6zm-4 2h14v2H5z"/></svg>
+          </label>
+          <button class="btn cyan icon portrait-icon" type="button" data-paste-portrait title="Paste from clipboard" aria-label="paste portrait">
+            <svg class="mi" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M19 2h-4.18C14.4.84 13.3 0 12 0c-1.3 0-2.4.84-2.82 2H5c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-7 0c.55 0 1 .45 1 1s-.45 1-1 1-1-.45-1-1 .45-1 1-1zm2 18H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V10h10v2z"/></svg>
           </button>
+          <button class="btn danger icon portrait-icon" type="button" data-clear-portrait aria-label="clear portrait" title="Clear portrait">
+            <svg class="mi" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg>
+          </button>
+        </div>
+        <div class="msg-row-right">
+          <div class="msg-row-head">
+            <span class="idx">MSG ${String(i + 1).padStart(2, '0')}</span>
+            <input type="text" class="speaker-input" maxlength="40" placeholder="Speaker" />
+            <input type="text" class="time-input" maxlength="20" placeholder="time" />
+            <button class="btn danger icon" type="button" aria-label="remove" data-remove>✕</button>
+          </div>
+          <textarea class="body-input" maxlength="500" placeholder="Message text..."></textarea>
+          <div class="msg-row-toolbar">
+            <button class="btn cyan icon" type="button" data-save-contact aria-label="save as contact" title="Save as contact">
+              <svg class="mi" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M17 3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V7l-4-4zm-5 16c-1.66 0-3-1.34-3-3s1.34-3 3-3 3 1.34 3 3-1.34 3-3 3zm3-10H5V5h10v4z"/></svg>
+            </button>
+            <span class="toolbar-spacer"></span>
+            <button class="btn ghost icon" type="button" data-up aria-label="move up" ${i === 0 ? 'disabled' : ''}>↑</button>
+            <button class="btn ghost icon" type="button" data-down aria-label="move down" ${i === state.messages.length - 1 ? 'disabled' : ''}>↓</button>
+            <button class="btn cyan icon" type="button" data-clone aria-label="clone" title="Clone message">
+              <svg class="mi" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg>
+            </button>
+            <button class="side-switch" type="button" data-side data-pos="${m.side === 'right' ? 'right' : 'left'}" aria-label="toggle side">
+              <span class="thumb"></span>
+              <span class="lab l">L</span>
+              <span class="lab r">R</span>
+            </button>
+          </div>
         </div>
       `;
       const sp = row.querySelector('.speaker-input');

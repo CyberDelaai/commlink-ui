@@ -5,7 +5,40 @@
     margin-bottom: 10px;
     border-left: 2px solid var(--yellow);
     display: grid;
+    grid-template-columns: 50px 1fr;
+    gap: 10px;
+    align-items: stretch;
+  }
+  .msg-row-left {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    align-items: stretch;
+    padding-right: 9px;
+    border-right: 1px solid rgba(0, 240, 255, 0.22);
+  }
+  .msg-row-right {
+    display: grid;
     gap: 6px;
+    min-width: 0;
+  }
+  .msg-row-left .portrait-preview {
+    width: 40px;
+    height: 40px;
+    background: var(--panel);
+    border: 1px dashed rgba(0, 240, 255, 0.35);
+    background-size: cover;
+    background-position: center;
+    flex-shrink: 0;
+  }
+  .portrait-icon {
+    width: 100% !important;
+    padding: 0 !important;
+    height: 26px !important;
+  }
+  .portrait-icon .mi {
+    width: 14px;
+    height: 14px;
   }
   .msg-row .msg-row-head {
     display: flex;
@@ -29,19 +62,14 @@
     font-size: 14px;
     outline: none;
   }
-  .msg-row .time-input {
-    flex: 0 0 90px;
+  .msg-row input.time-input {
+    flex: 0 0 52px;
     font-family: 'JetBrains Mono', monospace;
-    font-size: 12px;
-    letter-spacing: 1px;
+    font-size: 11px;
+    letter-spacing: 0.5px;
     text-align: center;
+    padding: 7px 4px;
   }
-  .msg-row-meta {
-    display: flex;
-    gap: 6px;
-    align-items: center;
-  }
-
   .side-switch {
     position: relative;
     height: 32px;
@@ -105,15 +133,6 @@
   }
   .msg-row input:focus, .msg-row textarea:focus {
     border-color: var(--yellow);
-  }
-  .msg-row .portrait-preview {
-    width: 36px;
-    height: 36px;
-    background: var(--panel);
-    border: 1px dashed rgba(0, 240, 255, 0.35);
-    background-size: cover;
-    background-position: center;
-    flex-shrink: 0;
   }
   .msg-row-toolbar {
     display: flex;
