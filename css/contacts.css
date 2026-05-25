@@ -45,7 +45,8 @@
   }
   .side-toggle .label {
     writing-mode: vertical-rl;
-    font-size: 11px;
+    font-size: 14px;
+    font-weight: 700;
     letter-spacing: 3px;
     text-transform: uppercase;
   }
@@ -61,6 +62,9 @@
     padding: 22px;
     overflow-y: auto;
     flex: 1;
+  }
+  .side-toggle-2 {
+    top: 280px !important;
   }
   .side-inner h2 {
     margin: 0 0 18px 0;

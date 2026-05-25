@@ -111,13 +111,12 @@
 </head>
 <body>
 
-<aside class="side-panel" id="sidePanel">
-  <button class="side-toggle" id="sideToggle" type="button" aria-label="toggle contacts" data-augmented-ui="tr-clip br-clip border">
+<aside class="side-panel" id="sideContacts" data-name="contacts">
+  <button class="side-toggle" id="contactsToggle" type="button" aria-label="toggle contacts" data-augmented-ui="tr-clip br-clip border">
     <span class="label">CONTACTS</span>
-    <span class="arrow" id="sideArrow">&gt;</span>
+    <span class="arrow" id="contactsArrow">&gt;</span>
   </button>
   <div class="side-inner">
-    <h2>// CONTACTS</h2>
     <div class="contact-form">
       <div class="contact-form-row">
         <div class="contact-avatar-preview" id="newAvatarPreview"></div>
@@ -131,6 +130,20 @@
       </div>
     </div>
     <div class="contact-list" id="contactList"></div>
+  </div>
+</aside>
+
+<aside class="side-panel" id="sideSnapshots" data-name="snapshots">
+  <button class="side-toggle side-toggle-2" id="snapshotsToggle" type="button" aria-label="toggle snapshots" data-augmented-ui="tr-clip br-clip border">
+    <span class="label">SNAPSHOTS</span>
+    <span class="arrow" id="snapshotsArrow">&gt;</span>
+  </button>
+  <div class="side-inner">
+    <div class="snapshot-save">
+      <input type="text" id="snapshotName" maxlength="32" placeholder="snapshot name..." />
+      <button class="btn cyan icon" id="saveSnapshot" type="button">+ SAVE</button>
+    </div>
+    <div id="snapshotList" class="snapshot-list"></div>
   </div>
 </aside>
 
@@ -230,15 +243,6 @@
       </div>
     </div>
 
-    <div class="field">
-      <label>Snapshots</label>
-      <div class="snapshot-save">
-        <input type="text" id="snapshotName" maxlength="32" placeholder="snapshot name..." />
-        <button class="btn cyan icon" id="saveSnapshot" type="button">+ SAVE</button>
-      </div>
-      <div id="snapshotList" class="snapshot-list"></div>
-    </div>
-
     <div class="actions">
       <button class="btn" id="exportBtn" type="button">⬇ EXPORT PNG</button>
       <button class="btn danger" id="resetBtn" type="button">RESET</button>
@@ -253,7 +257,7 @@
   const STATE_KEY = 'commlink:state';
   const SNAPSHOTS_KEY = 'commlink:snapshots';
   const CONTACTS_KEY = 'commlink:contacts';
-  const SIDE_OPEN_KEY = 'commlink:sideOpen';
+  const OPEN_PANEL_KEY = 'commlink:openPanel';
 
   function storageSet(key, value) {
     try { localStorage.setItem(key, value); return true; }
@@ -358,9 +362,12 @@
   const stageDims = $('stageDims');
   const toast = $('toast');
 
-  const sidePanel = $('sidePanel');
-  const sideToggle = $('sideToggle');
-  const sideArrow = $('sideArrow');
+  const sideContacts = $('sideContacts');
+  const sideSnapshots = $('sideSnapshots');
+  const contactsToggle = $('contactsToggle');
+  const snapshotsToggle = $('snapshotsToggle');
+  const contactsArrow = $('contactsArrow');
+  const snapshotsArrow = $('snapshotsArrow');
   const newContactName = $('newContactName');
   const newContactAvatar = $('newContactAvatar');
   const newAvatarPreview = $('newAvatarPreview');
@@ -723,16 +730,20 @@
   }
 
   // Sidebar open/close
-  sideToggle.addEventListener('click', () => {
-    sidePanel.classList.toggle('open');
-    const isOpen = sidePanel.classList.contains('open');
-    sideArrow.textContent = isOpen ? '<' : '>';
-    storageSet(SIDE_OPEN_KEY, isOpen ? '1' : '');
-  });
-  if (storageGet(SIDE_OPEN_KEY) === '1') {
-    sidePanel.classList.add('open');
-    sideArrow.textContent = '<';
+  function setOpenPanel(name) {
+    sideContacts.classList.toggle('open', name === 'contacts');
+    sideSnapshots.classList.toggle('open', name === 'snapshots');
+    contactsArrow.textContent = name === 'contacts' ? '<' : '>';
+    snapshotsArrow.textContent = name === 'snapshots' ? '<' : '>';
+    storageSet(OPEN_PANEL_KEY, name || '');
   }
+  contactsToggle.addEventListener('click', () => {
+    setOpenPanel(sideContacts.classList.contains('open') ? '' : 'contacts');
+  });
+  snapshotsToggle.addEventListener('click', () => {
+    setOpenPanel(sideSnapshots.classList.contains('open') ? '' : 'snapshots');
+  });
+  setOpenPanel(storageGet(OPEN_PANEL_KEY) || '');
 
   // New-contact form
   newContactAvatar.addEventListener('change', (e) => {
