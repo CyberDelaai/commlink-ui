@@ -125,7 +125,10 @@
       <div class="contact-form-row">
         <input type="file" class="avatar-file" id="newContactAvatar" accept="image/*" />
         <label class="btn cyan icon" for="newContactAvatar">AVATAR</label>
-        <button class="btn cyan icon" id="addContact" type="button">+ SAVE</button>
+        <button class="btn cyan icon" id="pasteNewAvatar" type="button" title="Paste from clipboard">PASTE</button>
+        <button class="btn cyan icon" id="addContact" type="button" aria-label="save contact" title="Save contact">
+          <svg class="mi" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M17 3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V7l-4-4zm-5 16c-1.66 0-3-1.34-3-3s1.34-3 3-3 3 1.34 3 3-1.34 3-3 3zm3-10H5V5h10v4z"/></svg>
+        </button>
         <button class="btn danger icon" id="clearNewAvatar" type="button">✕</button>
       </div>
     </div>
@@ -141,7 +144,9 @@
   <div class="side-inner">
     <div class="snapshot-save">
       <input type="text" id="snapshotName" maxlength="32" placeholder="snapshot name..." />
-      <button class="btn cyan icon" id="saveSnapshot" type="button">+ SAVE</button>
+      <button class="btn cyan icon" id="saveSnapshot" type="button" aria-label="save snapshot" title="Save snapshot">
+        <svg class="mi" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M17 3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V7l-4-4zm-5 16c-1.66 0-3-1.34-3-3s1.34-3 3-3 3 1.34 3 3-1.34 3-3 3zm3-10H5V5h10v4z"/></svg>
+      </button>
     </div>
     <div id="snapshotList" class="snapshot-list"></div>
   </div>
@@ -252,6 +257,22 @@
 
 <div class="toast" id="toast">SAVED</div>
 
+<div class="modal-overlay" id="cropModal" hidden>
+  <div class="modal-content" data-augmented-ui="tl-clip tr-clip br-clip bl-clip border">
+    <h2>// CROP AVATAR</h2>
+    <div class="crop-stage" id="cropStage">
+      <img id="cropImg" alt="crop source" />
+      <div class="crop-frame" id="cropFrame">
+        <div class="crop-handle" id="cropHandle"></div>
+      </div>
+    </div>
+    <div class="crop-actions">
+      <button class="btn" id="cropConfirm" type="button">USE</button>
+      <button class="btn danger" id="cropCancel" type="button">CANCEL</button>
+    </div>
+  </div>
+</div>
+
 <script>
   // ---------- Storage helpers (localStorage-backed) ----------
   const STATE_KEY = 'commlink:state';
@@ -320,6 +341,125 @@
   function autoGrow(el) {
     el.style.height = 'auto';
     el.style.height = el.scrollHeight + 'px';
+  }
+
+  // ---------- Crop modal + clipboard paste ----------
+  const cropModal = document.getElementById('cropModal');
+  const cropImg = document.getElementById('cropImg');
+  const cropStage = document.getElementById('cropStage');
+  const cropFrame = document.getElementById('cropFrame');
+  const cropHandle = document.getElementById('cropHandle');
+  const cropConfirmBtn = document.getElementById('cropConfirm');
+  const cropCancelBtn = document.getElementById('cropCancel');
+  const CROP_OUTPUT_SIZE = 256;
+  let cropOnConfirm = null;
+
+  function openCrop(dataUrl, onConfirm) {
+    cropOnConfirm = onConfirm;
+    cropImg.onload = () => {
+      // Center a square selection at ~60% of the smaller stage dimension
+      const stageRect = cropStage.getBoundingClientRect();
+      const imgRect = cropImg.getBoundingClientRect();
+      const sx = imgRect.left - stageRect.left;
+      const sy = imgRect.top - stageRect.top;
+      const size = Math.min(imgRect.width, imgRect.height) * 0.6;
+      cropFrame.style.width = size + 'px';
+      cropFrame.style.height = size + 'px';
+      cropFrame.style.left = (sx + (imgRect.width - size) / 2) + 'px';
+      cropFrame.style.top = (sy + (imgRect.height - size) / 2) + 'px';
+    };
+    cropImg.src = dataUrl;
+    cropModal.hidden = false;
+  }
+  function closeCrop() {
+    cropModal.hidden = true;
+    cropOnConfirm = null;
+    cropImg.src = '';
+  }
+  function doCrop() {
+    const imgRect = cropImg.getBoundingClientRect();
+    const frameRect = cropFrame.getBoundingClientRect();
+    const scaleX = cropImg.naturalWidth / imgRect.width;
+    const scaleY = cropImg.naturalHeight / imgRect.height;
+    const sx = Math.max(0, (frameRect.left - imgRect.left) * scaleX);
+    const sy = Math.max(0, (frameRect.top - imgRect.top) * scaleY);
+    const sw = Math.min(cropImg.naturalWidth - sx, frameRect.width * scaleX);
+    const sh = Math.min(cropImg.naturalHeight - sy, frameRect.height * scaleY);
+    const c = document.createElement('canvas');
+    c.width = c.height = CROP_OUTPUT_SIZE;
+    const ctx = c.getContext('2d');
+    ctx.drawImage(cropImg, sx, sy, sw, sh, 0, 0, CROP_OUTPUT_SIZE, CROP_OUTPUT_SIZE);
+    return c.toDataURL('image/png');
+  }
+  cropConfirmBtn.addEventListener('click', () => {
+    const result = doCrop();
+    const cb = cropOnConfirm;
+    closeCrop();
+    if (cb) cb(result);
+  });
+  cropCancelBtn.addEventListener('click', closeCrop);
+  cropModal.addEventListener('click', (e) => { if (e.target === cropModal) closeCrop(); });
+
+  // Drag + resize for the crop frame
+  let cropDrag = null;
+  cropFrame.addEventListener('mousedown', (e) => {
+    const isHandle = e.target === cropHandle;
+    cropDrag = {
+      mode: isHandle ? 'resize' : 'move',
+      x: e.clientX,
+      y: e.clientY,
+      left: cropFrame.offsetLeft,
+      top: cropFrame.offsetTop,
+      size: cropFrame.offsetWidth
+    };
+    e.preventDefault();
+  });
+  document.addEventListener('mousemove', (e) => {
+    if (!cropDrag) return;
+    const dx = e.clientX - cropDrag.x;
+    const dy = e.clientY - cropDrag.y;
+    const stageRect = cropStage.getBoundingClientRect();
+    const imgRect = cropImg.getBoundingClientRect();
+    const imgX0 = imgRect.left - stageRect.left;
+    const imgY0 = imgRect.top - stageRect.top;
+    const imgX1 = imgX0 + imgRect.width;
+    const imgY1 = imgY0 + imgRect.height;
+    if (cropDrag.mode === 'move') {
+      let l = cropDrag.left + dx;
+      let t = cropDrag.top + dy;
+      l = Math.max(imgX0, Math.min(imgX1 - cropFrame.offsetWidth, l));
+      t = Math.max(imgY0, Math.min(imgY1 - cropFrame.offsetHeight, t));
+      cropFrame.style.left = l + 'px';
+      cropFrame.style.top = t + 'px';
+    } else {
+      const delta = Math.max(dx, dy);
+      const maxSize = Math.min(imgX1 - cropDrag.left, imgY1 - cropDrag.top);
+      const size = Math.max(32, Math.min(maxSize, cropDrag.size + delta));
+      cropFrame.style.width = size + 'px';
+      cropFrame.style.height = size + 'px';
+    }
+  });
+  document.addEventListener('mouseup', () => { cropDrag = null; });
+
+  async function tryPasteImage(onLoad) {
+    try {
+      const items = await navigator.clipboard.read();
+      for (const item of items) {
+        for (const type of item.types) {
+          if (type.startsWith('image/')) {
+            const blob = await item.getType(type);
+            const reader = new FileReader();
+            reader.onload = (e) => onLoad(e.target.result);
+            reader.readAsDataURL(blob);
+            return;
+          }
+        }
+      }
+      showToast('NO IMAGE IN CLIPBOARD');
+    } catch (err) {
+      console.warn(err);
+      showToast('CLIPBOARD BLOCKED');
+    }
   }
 
   // ---------- Augmented-UI helper ----------
@@ -403,6 +543,7 @@
         <div class="msg-row-toolbar">
           <input type="file" accept="image/*" class="portrait-file" id="portrait-file-${i}" />
           <label class="btn cyan icon portrait-upload" for="portrait-file-${i}">PORTRAIT</label>
+          <button class="btn cyan icon" type="button" data-paste-portrait title="Paste from clipboard">PASTE</button>
           <button class="btn danger icon" type="button" data-clear-portrait>CLEAR</button>
           <span class="toolbar-spacer"></span>
           <button class="btn ghost icon" type="button" data-up aria-label="move up" ${i === 0 ? 'disabled' : ''}>↑</button>
@@ -429,18 +570,23 @@
         renderPreview();
         saveState();
       });
+      const applyPortrait = (dataUrl) => {
+        state.messages[i].portrait = dataUrl;
+        portraitEl.style.backgroundImage = `url("${dataUrl}")`;
+        renderPreview();
+        saveState();
+        showToast('PORTRAIT LOADED');
+      };
       portraitInput.addEventListener('change', (e) => {
         const f = e.target.files && e.target.files[0];
         if (!f) return;
         const reader = new FileReader();
-        reader.onload = (ev) => {
-          state.messages[i].portrait = ev.target.result;
-          portraitEl.style.backgroundImage = `url("${ev.target.result}")`;
-          renderPreview();
-          saveState();
-          showToast('PORTRAIT LOADED');
-        };
+        reader.onload = (ev) => openCrop(ev.target.result, applyPortrait);
         reader.readAsDataURL(f);
+        portraitInput.value = '';
+      });
+      row.querySelector('[data-paste-portrait]').addEventListener('click', () => {
+        tryPasteImage((dataUrl) => openCrop(dataUrl, applyPortrait));
       });
       row.querySelector('[data-clear-portrait]').addEventListener('click', () => {
         state.messages[i].portrait = '';
@@ -746,15 +892,20 @@
   setOpenPanel(storageGet(OPEN_PANEL_KEY) || '');
 
   // New-contact form
+  const applyNewAvatar = (dataUrl) => {
+    newAvatarData = dataUrl;
+    newAvatarPreview.style.backgroundImage = `url("${dataUrl}")`;
+  };
   newContactAvatar.addEventListener('change', (e) => {
     const f = e.target.files && e.target.files[0];
     if (!f) return;
     const reader = new FileReader();
-    reader.onload = (ev) => {
-      newAvatarData = ev.target.result;
-      newAvatarPreview.style.backgroundImage = `url("${newAvatarData}")`;
-    };
+    reader.onload = (ev) => openCrop(ev.target.result, applyNewAvatar);
     reader.readAsDataURL(f);
+    newContactAvatar.value = '';
+  });
+  document.getElementById('pasteNewAvatar').addEventListener('click', () => {
+    tryPasteImage((dataUrl) => openCrop(dataUrl, applyNewAvatar));
   });
   clearNewAvatarBtn.addEventListener('click', () => {
     newAvatarData = '';

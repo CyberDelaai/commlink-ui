@@ -4,7 +4,7 @@
     position: fixed;
     top: 0;
     left: 0;
-    width: 320px;
+    width: 345px;
     height: 100vh;
     background: var(--panel);
     border-right: 1px solid rgba(252, 238, 10, 0.35);
@@ -81,6 +81,7 @@
     align-items: center;
     margin-bottom: 8px;
   }
+  .contact-form-row #addContact { margin-left: auto; }
   .contact-avatar-preview {
     width: 36px;
     height: 36px;

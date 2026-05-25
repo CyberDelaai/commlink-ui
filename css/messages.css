@@ -9,7 +9,7 @@
   }
   .msg-row .msg-row-head {
     display: flex;
-    gap: 8px;
+    gap: 6px;
     align-items: center;
   }
   .msg-row .msg-row-head .idx {
@@ -38,7 +38,7 @@
   }
   .msg-row-meta {
     display: flex;
-    gap: 8px;
+    gap: 6px;
     align-items: center;
   }
 
@@ -118,9 +118,11 @@
   .msg-row-toolbar {
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 6px;
     margin-top: 2px;
+    flex-wrap: wrap;
   }
+  .msg-row-toolbar .btn.icon { padding: 0 8px; }
   .msg-row-toolbar .portrait-upload {
     cursor: pointer;
   }
