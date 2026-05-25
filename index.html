@@ -239,6 +239,8 @@
       <div class="btn-row">
         <label class="file-label btn cyan" for="bgFile">UPLOAD IMG</label>
         <input type="file" id="bgFile" accept="image/*" />
+        <button class="btn cyan" id="pasteBg" type="button" title="Paste from clipboard">PASTE</button>
+        <button class="btn cyan" id="recropBg" type="button" title="Recrop current background">RECROP</button>
         <button class="btn danger" id="clearBg" type="button">CLEAR</button>
       </div>
       <div class="brightness-row">
@@ -308,6 +310,7 @@
     glitch: false,
     scanlines: true,
     bg: '',
+    bgOriginal: '',
     bgBrightness: 0.55
   };
 
@@ -351,22 +354,36 @@
   const cropHandle = document.getElementById('cropHandle');
   const cropConfirmBtn = document.getElementById('cropConfirm');
   const cropCancelBtn = document.getElementById('cropCancel');
-  const CROP_OUTPUT_SIZE = 256;
   let cropOnConfirm = null;
+  let cropAspect = 1;     // width / height
+  let cropOutW = 256;
+  let cropOutH = 256;
 
-  function openCrop(dataUrl, onConfirm) {
+  function openCrop(dataUrl, onConfirm, opts) {
+    opts = opts || {};
+    cropAspect = opts.aspect || 1;
+    cropOutW = opts.outWidth || 256;
+    cropOutH = opts.outHeight || 256;
     cropOnConfirm = onConfirm;
     cropImg.onload = () => {
-      // Center a square selection at ~60% of the smaller stage dimension
       const stageRect = cropStage.getBoundingClientRect();
       const imgRect = cropImg.getBoundingClientRect();
       const sx = imgRect.left - stageRect.left;
       const sy = imgRect.top - stageRect.top;
-      const size = Math.min(imgRect.width, imgRect.height) * 0.6;
-      cropFrame.style.width = size + 'px';
-      cropFrame.style.height = size + 'px';
-      cropFrame.style.left = (sx + (imgRect.width - size) / 2) + 'px';
-      cropFrame.style.top = (sy + (imgRect.height - size) / 2) + 'px';
+      // Fit a 60% rectangle of the given aspect inside the image
+      let w, h;
+      if (imgRect.width / imgRect.height > cropAspect) {
+        // image wider than target aspect → height-bound
+        h = imgRect.height * 0.6;
+        w = h * cropAspect;
+      } else {
+        w = imgRect.width * 0.6;
+        h = w / cropAspect;
+      }
+      cropFrame.style.width = w + 'px';
+      cropFrame.style.height = h + 'px';
+      cropFrame.style.left = (sx + (imgRect.width - w) / 2) + 'px';
+      cropFrame.style.top = (sy + (imgRect.height - h) / 2) + 'px';
     };
     cropImg.src = dataUrl;
     cropModal.hidden = false;
@@ -386,9 +403,10 @@
     const sw = Math.min(cropImg.naturalWidth - sx, frameRect.width * scaleX);
     const sh = Math.min(cropImg.naturalHeight - sy, frameRect.height * scaleY);
     const c = document.createElement('canvas');
-    c.width = c.height = CROP_OUTPUT_SIZE;
+    c.width = cropOutW;
+    c.height = cropOutH;
     const ctx = c.getContext('2d');
-    ctx.drawImage(cropImg, sx, sy, sw, sh, 0, 0, CROP_OUTPUT_SIZE, CROP_OUTPUT_SIZE);
+    ctx.drawImage(cropImg, sx, sy, sw, sh, 0, 0, cropOutW, cropOutH);
     return c.toDataURL('image/png');
   }
   cropConfirmBtn.addEventListener('click', () => {
@@ -410,7 +428,8 @@
       y: e.clientY,
       left: cropFrame.offsetLeft,
       top: cropFrame.offsetTop,
-      size: cropFrame.offsetWidth
+      w: cropFrame.offsetWidth,
+      h: cropFrame.offsetHeight
     };
     e.preventDefault();
   });
@@ -432,11 +451,25 @@
       cropFrame.style.left = l + 'px';
       cropFrame.style.top = t + 'px';
     } else {
-      const delta = Math.max(dx, dy);
-      const maxSize = Math.min(imgX1 - cropDrag.left, imgY1 - cropDrag.top);
-      const size = Math.max(32, Math.min(maxSize, cropDrag.size + delta));
-      cropFrame.style.width = size + 'px';
-      cropFrame.style.height = size + 'px';
+      // Resize preserving cropAspect (width / height)
+      // Drive by the larger of dx, dy normalized to the aspect
+      const wDelta = dx;
+      const hDelta = dy * cropAspect;
+      const delta = Math.max(wDelta, hDelta);
+      const startW = cropDrag.w || cropDrag.size;
+      const newW = Math.max(32, startW + delta);
+      const newH = newW / cropAspect;
+      // Constrain to image bounds
+      const maxW = imgX1 - cropDrag.left;
+      const maxH = imgY1 - cropDrag.top;
+      let finalW = Math.min(newW, maxW);
+      let finalH = finalW / cropAspect;
+      if (finalH > maxH) {
+        finalH = maxH;
+        finalW = finalH * cropAspect;
+      }
+      cropFrame.style.width = finalW + 'px';
+      cropFrame.style.height = finalH + 'px';
     }
   });
   document.addEventListener('mouseup', () => { cropDrag = null; });
@@ -981,18 +1014,41 @@
     saveState();
   });
 
+  function bgCropOptions() {
+    const r = stage.getBoundingClientRect();
+    const aspect = r.width / Math.max(1, r.height);
+    return {
+      aspect,
+      outWidth: Math.round(r.width * 2),
+      outHeight: Math.round(r.height * 2)
+    };
+  }
+  function applyBg(dataUrl) {
+    state.bg = dataUrl;
+    renderPreview();
+    saveState();
+    showToast('IMG LOADED');
+  }
+  function loadBgFromDataUrl(dataUrl) {
+    state.bgOriginal = dataUrl;
+    saveState();
+    openCrop(dataUrl, applyBg, bgCropOptions());
+  }
   bgFileInput.addEventListener('change', (e) => {
     const f = e.target.files && e.target.files[0];
     if (!f) return;
     const reader = new FileReader();
-    reader.onload = (ev) => {
-      state.bg = ev.target.result;
-      renderPreview();
-      // bg is not saved to cookie (too large) — only persists in current session
-      saveState();
-      showToast('IMG LOADED');
-    };
+    reader.onload = (ev) => loadBgFromDataUrl(ev.target.result);
     reader.readAsDataURL(f);
+    bgFileInput.value = '';
+  });
+  document.getElementById('pasteBg').addEventListener('click', () => {
+    tryPasteImage(loadBgFromDataUrl);
+  });
+  document.getElementById('recropBg').addEventListener('click', () => {
+    const src = state.bgOriginal || state.bg;
+    if (!src) { showToast('NO BG YET'); return; }
+    openCrop(src, applyBg, bgCropOptions());
   });
   bgBrightnessInput.addEventListener('input', () => {
     const val = parseFloat(bgBrightnessInput.value);
@@ -1004,6 +1060,7 @@
 
   clearBgBtn.addEventListener('click', () => {
     state.bg = '';
+    state.bgOriginal = '';
     bgFileInput.value = '';
     renderPreview();
     saveState();
