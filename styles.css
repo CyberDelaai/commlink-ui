@@ -19,7 +19,7 @@
       radial-gradient(ellipse at bottom, rgba(0, 240, 255, 0.05), transparent 60%),
       var(--bg);
     color: var(--text);
-    font-family: 'Rajdhani', system-ui, sans-serif;
+    font-family: 'Tektur', system-ui, sans-serif;
     overflow-x: hidden;
   }
 
@@ -49,13 +49,13 @@
     background: linear-gradient(180deg, rgba(252, 238, 10, 0.05), transparent);
   }
   header .logo {
-    font-family: 'Share Tech Mono', monospace;
+    font-family: 'JetBrains Mono', monospace;
     color: var(--yellow);
     font-size: 22px;
     letter-spacing: 2px;
   }
   header .tag {
-    font-family: 'Share Tech Mono', monospace;
+    font-family: 'JetBrains Mono', monospace;
     color: var(--cyan);
     font-size: 12px;
     letter-spacing: 1px;
@@ -64,7 +64,7 @@
   }
   header .status {
     margin-left: auto;
-    font-family: 'Share Tech Mono', monospace;
+    font-family: 'JetBrains Mono', monospace;
     color: var(--dim);
     font-size: 11px;
     letter-spacing: 1px;
@@ -111,7 +111,7 @@
 
   .panel h2 {
     margin: 0 0 18px 0;
-    font-family: 'Share Tech Mono', monospace;
+    font-family: 'JetBrains Mono', monospace;
     color: var(--yellow);
     font-size: 13px;
     letter-spacing: 3px;
@@ -121,7 +121,7 @@
   .field { margin-bottom: 16px; }
   .field label {
     display: block;
-    font-family: 'Share Tech Mono', monospace;
+    font-family: 'JetBrains Mono', monospace;
     color: var(--cyan);
     font-size: 11px;
     letter-spacing: 2px;
@@ -135,7 +135,7 @@
     border: 1px solid rgba(0, 240, 255, 0.25);
     color: var(--text);
     padding: 10px 12px;
-    font-family: 'Rajdhani', sans-serif;
+    font-family: 'Tektur', sans-serif;
     font-size: 15px;
     font-weight: 500;
     letter-spacing: 0.5px;
@@ -152,7 +152,7 @@
 
   .row { display: flex; gap: 10px; align-items: center; margin-bottom: 8px; }
   .row .idx {
-    font-family: 'Share Tech Mono', monospace;
+    font-family: 'JetBrains Mono', monospace;
     color: var(--yellow);
     width: 24px;
     text-align: right;
@@ -174,7 +174,7 @@
     align-items: center;
   }
   .msg-row .msg-row-head .idx {
-    font-family: 'Share Tech Mono', monospace;
+    font-family: 'JetBrains Mono', monospace;
     color: var(--cyan);
     font-size: 11px;
     letter-spacing: 1.5px;
@@ -186,7 +186,7 @@
     border: 1px solid rgba(0, 240, 255, 0.2);
     color: var(--text);
     padding: 7px 10px;
-    font-family: 'Rajdhani', sans-serif;
+    font-family: 'Tektur', sans-serif;
     font-size: 14px;
     outline: none;
   }
@@ -196,7 +196,7 @@
     border: 1px solid rgba(0, 240, 255, 0.2);
     color: var(--text);
     padding: 8px 10px;
-    font-family: 'Rajdhani', sans-serif;
+    font-family: 'Tektur', sans-serif;
     font-size: 14px;
     line-height: 1.45;
     min-height: 60px;
@@ -235,7 +235,7 @@
     border: 1px solid rgba(0, 240, 255, 0.25);
     color: var(--text);
     padding: 8px 10px;
-    font-family: 'Share Tech Mono', monospace;
+    font-family: 'JetBrains Mono', monospace;
     font-size: 12px;
     letter-spacing: 1px;
     outline: none;
@@ -251,7 +251,7 @@
   .snapshot-list:empty::before {
     content: 'NO SNAPSHOTS';
     color: var(--dim);
-    font-family: 'Share Tech Mono', monospace;
+    font-family: 'JetBrains Mono', monospace;
     font-size: 11px;
     letter-spacing: 2px;
     padding: 6px 0;
@@ -266,7 +266,7 @@
   }
   .snapshot-item .name {
     flex: 1;
-    font-family: 'Share Tech Mono', monospace;
+    font-family: 'JetBrains Mono', monospace;
     font-size: 12px;
     letter-spacing: 1px;
     color: var(--text);
@@ -275,7 +275,7 @@
     white-space: nowrap;
   }
   .snapshot-item .meta {
-    font-family: 'Share Tech Mono', monospace;
+    font-family: 'JetBrains Mono', monospace;
     font-size: 10px;
     color: var(--dim);
     letter-spacing: 1px;
@@ -290,7 +290,7 @@
     background: transparent;
     color: var(--btn-color);
     padding: 9px 16px;
-    font-family: 'Share Tech Mono', monospace;
+    font-family: 'JetBrains Mono', monospace;
     font-size: 12px;
     letter-spacing: 2px;
     cursor: pointer;
@@ -336,7 +336,7 @@
     gap: 14px;
   }
   .stage-meta {
-    font-family: 'Share Tech Mono', monospace;
+    font-family: 'JetBrains Mono', monospace;
     color: var(--dim);
     font-size: 11px;
     letter-spacing: 2px;
@@ -384,7 +384,7 @@
     bottom: 7%;
     padding: 22px 28px 24px;
     color: #f5f5f8;
-    font-family: 'Rajdhani', sans-serif;
+    font-family: 'Tektur', sans-serif;
 
     /* augmented-ui */
     --aug-border-all: 2px;
@@ -417,7 +417,7 @@
     box-shadow: 0 0 8px var(--accent);
   }
   .dialog-head .channel {
-    font-family: 'Share Tech Mono', monospace;
+    font-family: 'JetBrains Mono', monospace;
     color: rgba(255,255,255,0.55);
     font-size: 11px;
     letter-spacing: 2px;
@@ -442,6 +442,21 @@
     grid-template-columns: 56px 1fr;
     align-items: start;
   }
+  .message.right .content {
+    text-align: right;
+    align-items: flex-end;
+  }
+  .message.right.has-portrait {
+    grid-template-columns: 1fr 56px;
+  }
+  .message.right.has-portrait .portrait {
+    grid-column: 2;
+    grid-row: 1;
+  }
+  .message.right.has-portrait .content {
+    grid-column: 1;
+    grid-row: 1;
+  }
   .message + .message {
     padding-top: 10px;
     border-top: 1px dashed rgba(255,255,255,0.08);
@@ -461,7 +476,7 @@
     min-width: 0;
   }
   .message .name {
-    font-family: 'Share Tech Mono', monospace;
+    font-family: 'JetBrains Mono', monospace;
     color: var(--accent);
     font-size: 13px;
     letter-spacing: 3px;
@@ -495,7 +510,7 @@
     letter-spacing: 0.3px;
   }
   .choice .num {
-    font-family: 'Share Tech Mono', monospace;
+    font-family: 'JetBrains Mono', monospace;
     color: var(--yellow);
     font-size: 13px;
     min-width: 22px;
@@ -539,7 +554,7 @@
     border: 1px solid var(--yellow);
     color: var(--yellow);
     padding: 10px 18px;
-    font-family: 'Share Tech Mono', monospace;
+    font-family: 'JetBrains Mono', monospace;
     font-size: 12px;
     letter-spacing: 2px;
     opacity: 0;
