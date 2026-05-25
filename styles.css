@@ -199,19 +199,15 @@
     font-family: 'Tektur', sans-serif;
     font-size: 14px;
     line-height: 1.45;
-    min-height: 60px;
-    resize: vertical;
+    min-height: 38px;
+    resize: none;
+    overflow: hidden;
     outline: none;
   }
   .msg-row input:focus, .msg-row textarea:focus {
     border-color: var(--yellow);
   }
-  .msg-row-portrait {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-  }
-  .msg-row-portrait .portrait-preview {
+  .msg-row .portrait-preview {
     width: 36px;
     height: 36px;
     background: var(--panel);
@@ -220,8 +216,17 @@
     background-position: center;
     flex-shrink: 0;
   }
-  .msg-row-portrait .portrait-upload {
+  .msg-row-toolbar {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 2px;
+  }
+  .msg-row-toolbar .portrait-upload {
     cursor: pointer;
+  }
+  .toolbar-spacer {
+    flex: 1;
   }
 
   .snapshot-save {
@@ -325,6 +330,11 @@
     opacity: 0.3;
     cursor: not-allowed;
     pointer-events: none;
+  }
+  .btn .mi {
+    width: 16px;
+    height: 16px;
+    display: block;
   }
   .btn.icon { padding: 0 10px; font-size: 13px; --aug-tl: 4px; --aug-br: 4px; }
 
@@ -605,17 +615,18 @@
     left: 100%;
     top: 90px;
     width: 32px;
-    height: 56px;
+    height: 170px;
     background: var(--panel);
     color: var(--yellow);
     border: none;
-    border-left: none;
     cursor: pointer;
     display: flex;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
+    gap: 12px;
+    padding: 14px 0;
     font-family: 'JetBrains Mono', monospace;
-    font-size: 18px;
     --aug-border-all: 1px;
     --aug-border-bg: rgba(252, 238, 10, 0.45);
     --aug-inlay-all: 0px;
@@ -623,6 +634,16 @@
     --aug-tr: 10px;
     --aug-br: 10px;
     transition: color 0.15s, box-shadow 0.15s;
+  }
+  .side-toggle .label {
+    writing-mode: vertical-rl;
+    font-size: 11px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+  }
+  .side-toggle .arrow {
+    font-size: 16px;
+    line-height: 1;
   }
   .side-toggle:hover {
     color: var(--cyan);
