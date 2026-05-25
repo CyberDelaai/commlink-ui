@@ -281,7 +281,8 @@
     letter-spacing: 1px;
   }
 
-  .btn {
+  .btn,
+  label.btn {
     --btn-color: var(--yellow);
     display: inline-flex;
     align-items: center;
@@ -289,14 +290,19 @@
     gap: 8px;
     background: transparent;
     color: var(--btn-color);
-    padding: 9px 16px;
+    height: 32px;
+    padding: 0 16px;
+    box-sizing: border-box;
     font-family: 'JetBrains Mono', monospace;
     font-size: 12px;
+    line-height: 1;
     letter-spacing: 2px;
     cursor: pointer;
     text-transform: uppercase;
     transition: background 0.15s, color 0.15s, box-shadow 0.15s;
     border: none;
+    margin: 0;
+    vertical-align: middle;
 
     /* augmented-ui */
     --aug-border-all: 1px;
@@ -307,14 +313,14 @@
     --aug-br: 8px;
   }
   .btn:hover {
-    color: var(--bg);
-    --aug-inlay-bg: var(--btn-color);
-    box-shadow: 0 0 12px color-mix(in srgb, var(--btn-color) 50%, transparent);
+    background: color-mix(in srgb, var(--btn-color) 22%, transparent);
+    box-shadow: 0 0 12px color-mix(in srgb, var(--btn-color) 45%, transparent);
   }
   .btn.cyan { --btn-color: var(--cyan); }
   .btn.ghost { --btn-color: var(--dim); }
   .btn.ghost:hover { box-shadow: none; }
-  .btn.icon { padding: 6px 9px; font-size: 14px; --aug-tl: 4px; --aug-br: 4px; }
+  .btn.danger { --btn-color: var(--magenta); }
+  .btn.icon { padding: 0 10px; font-size: 13px; --aug-tl: 4px; --aug-br: 4px; }
 
   .btn-row { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 8px; }
   .actions { margin-top: 18px; padding-top: 18px; border-top: 1px solid rgba(252, 238, 10, 0.15); display: flex; gap: 10px; flex-wrap: wrap; }
@@ -564,8 +570,8 @@
   }
   .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 
-  input[type="file"] { display: none; }
+  input[type="file"],
+  .portrait-file { display: none !important; }
   .file-label {
-    display: inline-block;
     cursor: pointer;
   }

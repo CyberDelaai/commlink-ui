@@ -137,7 +137,7 @@
       <div id="choices"></div>
       <div class="btn-row">
         <button class="btn cyan icon" id="addChoice" type="button">+ ADD</button>
-        <button class="btn ghost icon" id="clearChoices" type="button">CLEAR</button>
+        <button class="btn danger icon" id="clearChoices" type="button">CLEAR</button>
       </div>
     </div>
 
@@ -166,7 +166,7 @@
       <div class="btn-row">
         <label class="file-label btn cyan" for="bgFile">UPLOAD IMG</label>
         <input type="file" id="bgFile" accept="image/*" />
-        <button class="btn ghost" id="clearBg" type="button">CLEAR</button>
+        <button class="btn danger" id="clearBg" type="button">CLEAR</button>
       </div>
     </div>
 
@@ -181,7 +181,7 @@
 
     <div class="actions">
       <button class="btn" id="exportBtn" type="button">⬇ EXPORT PNG</button>
-      <button class="btn ghost" id="resetBtn" type="button">RESET</button>
+      <button class="btn danger" id="resetBtn" type="button">RESET</button>
     </div>
   </section>
 
@@ -313,22 +313,20 @@
           <span class="idx">MSG ${String(i + 1).padStart(2, '0')}</span>
           <input type="text" class="speaker-input" maxlength="40" placeholder="Speaker" />
           <button class="btn ghost icon" type="button" data-side aria-label="toggle side">${m.side === 'right' ? 'R →' : '← L'}</button>
-          <button class="btn ghost icon" type="button" aria-label="remove" data-remove>✕</button>
+          <button class="btn danger icon" type="button" aria-label="remove" data-remove>✕</button>
         </div>
         <div class="msg-row-portrait">
           <div class="portrait-preview" data-portrait></div>
-          <label class="btn cyan icon portrait-upload">
-            <input type="file" accept="image/*" hidden />
-            PORTRAIT
-          </label>
-          <button class="btn ghost icon" type="button" data-clear-portrait>CLEAR</button>
+          <input type="file" accept="image/*" class="portrait-file" id="portrait-file-${i}" />
+          <label class="btn cyan icon portrait-upload" for="portrait-file-${i}">PORTRAIT</label>
+          <button class="btn danger icon" type="button" data-clear-portrait>CLEAR</button>
         </div>
         <textarea class="body-input" maxlength="500" placeholder="Message text..."></textarea>
       `;
       const sp = row.querySelector('.speaker-input');
       const bd = row.querySelector('.body-input');
       const portraitEl = row.querySelector('[data-portrait]');
-      const portraitInput = row.querySelector('.portrait-upload input');
+      const portraitInput = row.querySelector('.portrait-file');
       sp.value = m.speaker;
       bd.value = m.body;
       if (m.portrait) portraitEl.style.backgroundImage = `url("${m.portrait}")`;
@@ -379,7 +377,7 @@
       row.innerHTML = `
         <span class="idx">${i + 1}.</span>
         <input type="text" maxlength="120" value="" />
-        <button class="btn ghost icon" type="button" aria-label="remove">✕</button>
+        <button class="btn danger icon" type="button" aria-label="remove">✕</button>
       `;
       const input = row.querySelector('input');
       input.value = c;
@@ -490,7 +488,7 @@
         <span class="name"></span>
         <span class="meta"></span>
         <button class="btn cyan icon" type="button" data-load>LOAD</button>
-        <button class="btn ghost icon" type="button" data-del aria-label="delete">✕</button>
+        <button class="btn danger icon" type="button" data-del aria-label="delete">✕</button>
       `;
       item.querySelector('.name').textContent = name;
       item.querySelector('.meta').textContent = stamp;
