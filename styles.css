@@ -451,6 +451,11 @@
     content: 'COMMLINK';
     color: rgba(255,255,255,0.35);
   }
+  .dialog-head .channel.right {
+    margin-left: auto;
+    text-align: right;
+  }
+  .dialog-head .channel.right:empty::before { content: ''; }
 
   .messages {
     display: flex;

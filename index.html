@@ -162,6 +162,7 @@
         <div class="dialog-head">
           <span class="pip"></span>
           <span class="channel" id="pMeta"></span>
+          <span class="channel right" id="pMetaRight"></span>
         </div>
         <div class="messages" id="pMessages"></div>
         <div class="choices" id="pChoices"></div>
@@ -174,8 +175,13 @@
     <h2>// CONFIG</h2>
 
     <div class="field">
-      <label for="meta">Channel / Sub-label</label>
+      <label for="meta">Channel — Left</label>
       <input type="text" id="meta" maxlength="40" placeholder="e.g. ENCRYPTED // 04:21" />
+    </div>
+
+    <div class="field">
+      <label for="metaRight">Channel — Right</label>
+      <input type="text" id="metaRight" maxlength="40" placeholder="e.g. //SECURE_CH 7" />
     </div>
 
     <div class="field">
@@ -256,6 +262,7 @@
   // ---------- State ----------
   const defaultState = {
     meta: 'ENCRYPTED // 04:21',
+    metaRight: '',
     messages: [
       { speaker: 'JOHNNY', body: 'Wake the fuck up, samurai. We have a city to burn.', portrait: '', side: 'left' },
       { speaker: 'V', body: 'Give me a second. Head\'s still ringing.', portrait: '', side: 'right' }
@@ -312,6 +319,7 @@
   // ---------- DOM refs ----------
   const $ = (id) => document.getElementById(id);
   const metaInput = $('meta');
+  const metaRightInput = $('metaRight');
   const messagesWrap = $('messages');
   const addMessageBtn = $('addMessage');
   const choicesWrap = $('choices');
@@ -332,6 +340,7 @@
   const stageBg = $('stageBg');
   const dialog = $('dialog');
   const pMeta = $('pMeta');
+  const pMetaRight = $('pMetaRight');
   const pMessages = $('pMessages');
   const pChoices = $('pChoices');
   const charCount = $('charCount');
@@ -505,6 +514,7 @@
 
   function renderPreview() {
     pMeta.textContent = state.meta || '';
+    pMetaRight.textContent = state.metaRight || '';
 
     pMessages.innerHTML = '';
     state.messages.forEach((m) => {
@@ -564,6 +574,7 @@
 
   function syncForm() {
     metaInput.value = state.meta;
+    metaRightInput.value = state.metaRight || '';
     renderMessagesEditor();
     renderChoicesEditor();
   }
@@ -736,6 +747,7 @@
 
   // ---------- Events ----------
   metaInput.addEventListener('input', () => { state.meta = metaInput.value; renderPreview(); saveState(); });
+  metaRightInput.addEventListener('input', () => { state.metaRight = metaRightInput.value; renderPreview(); saveState(); });
 
   addMessageBtn.addEventListener('click', () => {
     if (state.messages.length >= 12) { showToast('MAX 12 MESSAGES'); return; }
