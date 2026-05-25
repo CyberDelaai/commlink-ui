@@ -1,4 +1,53 @@
-/* Config — snapshots */
+/* Config — snapshots + bg brightness */
+
+  .brightness-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 10px;
+  }
+  .brightness-row .brightness-tag,
+  .brightness-row .brightness-val {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 1.5px;
+    color: var(--dim);
+    min-width: 38px;
+  }
+  .brightness-row .brightness-val {
+    color: var(--cyan);
+    text-align: right;
+  }
+  .brightness-row input[type="range"] {
+    flex: 1;
+    -webkit-appearance: none;
+    appearance: none;
+    height: 4px;
+    background: var(--panel-2);
+    border: 1px solid rgba(0, 240, 255, 0.25);
+    outline: none;
+    cursor: pointer;
+  }
+  .brightness-row input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 12px;
+    height: 18px;
+    background: var(--cyan);
+    border: none;
+    cursor: pointer;
+    box-shadow: 0 0 6px color-mix(in srgb, var(--cyan) 60%, transparent);
+  }
+  .brightness-row input[type="range"]::-moz-range-thumb {
+    width: 12px;
+    height: 18px;
+    background: var(--cyan);
+    border: none;
+    cursor: pointer;
+    border-radius: 0;
+    box-shadow: 0 0 6px color-mix(in srgb, var(--cyan) 60%, transparent);
+  }
+
   .snapshot-save {
     display: flex;
     gap: 8px;

@@ -223,6 +223,11 @@
         <input type="file" id="bgFile" accept="image/*" />
         <button class="btn danger" id="clearBg" type="button">CLEAR</button>
       </div>
+      <div class="brightness-row">
+        <span class="brightness-tag">BRIGHT</span>
+        <input type="range" id="bgBrightness" min="0" max="1.5" step="0.05" value="0.55" />
+        <span class="brightness-val" id="bgBrightnessVal">55%</span>
+      </div>
     </div>
 
     <div class="field">
@@ -277,7 +282,8 @@
     accent: '#fcee0a',
     glitch: false,
     scanlines: true,
-    bg: ''
+    bg: '',
+    bgBrightness: 0.55
   };
 
   let state = loadState();
@@ -333,6 +339,8 @@
   const toggleScanlinesBtn = $('toggleScanlines');
   const bgFileInput = $('bgFile');
   const clearBgBtn = $('clearBg');
+  const bgBrightnessInput = $('bgBrightness');
+  const bgBrightnessVal = $('bgBrightnessVal');
   const snapshotName = $('snapshotName');
   const saveSnapshotBtn = $('saveSnapshot');
   const snapshotList = $('snapshotList');
@@ -570,6 +578,8 @@
       stageBg.style.backgroundImage = 'none';
       stageBg.style.background = 'linear-gradient(135deg, #1a0030 0%, #001530 50%, #300018 100%)';
     }
+    const bright = (typeof state.bgBrightness === 'number') ? state.bgBrightness : 0.55;
+    stageBg.style.filter = `brightness(${bright}) contrast(1.05) saturate(1.1)`;
     const visibleMessages = state.messages.filter(m => m.speaker.trim() || m.body.trim() || m.portrait);
     const totalChars = visibleMessages.reduce((s, m) => s + (m.body || '').length, 0);
     charCount.textContent = `${totalChars} chars / ${visibleMessages.length} msgs`;
@@ -590,6 +600,9 @@
   function syncForm() {
     metaInput.value = state.meta;
     metaRightInput.value = state.metaRight || '';
+    const bright = (typeof state.bgBrightness === 'number') ? state.bgBrightness : 0.55;
+    bgBrightnessInput.value = bright;
+    bgBrightnessVal.textContent = Math.round(bright * 100) + '%';
     renderMessagesEditor();
     renderChoicesEditor();
   }
@@ -819,6 +832,14 @@
     };
     reader.readAsDataURL(f);
   });
+  bgBrightnessInput.addEventListener('input', () => {
+    const val = parseFloat(bgBrightnessInput.value);
+    state.bgBrightness = isNaN(val) ? 0.55 : val;
+    bgBrightnessVal.textContent = Math.round(state.bgBrightness * 100) + '%';
+    renderPreview();
+    saveState();
+  });
+
   clearBgBtn.addEventListener('click', () => {
     state.bg = '';
     bgFileInput.value = '';
