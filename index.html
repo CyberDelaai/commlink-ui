@@ -267,8 +267,8 @@
     meta: 'ENCRYPTED // 04:21',
     metaRight: '',
     messages: [
-      { speaker: 'JOHNNY', body: 'Wake the fuck up, samurai. We have a city to burn.', portrait: '', side: 'left' },
-      { speaker: 'V', body: 'Give me a second. Head\'s still ringing.', portrait: '', side: 'right' }
+      { speaker: 'JOHNNY', body: 'Wake the fuck up, samurai. We have a city to burn.', portrait: '', side: 'left', time: '04:21' },
+      { speaker: 'V', body: 'Give me a second. Head\'s still ringing.', portrait: '', side: 'right', time: '04:22' }
     ],
     choices: [
       "I'm in. Where do we start?",
@@ -293,7 +293,7 @@
         merged.messages = [{ speaker: parsed.speaker || '', body: parsed.body || '' }];
       }
       if (!Array.isArray(merged.messages)) merged.messages = [];
-      merged.messages = merged.messages.map(m => ({ speaker: '', body: '', portrait: '', side: 'left', ...m }));
+      merged.messages = merged.messages.map(m => ({ speaker: '', body: '', portrait: '', side: 'left', time: '', ...m }));
       return merged;
     } catch {
       return clone(defaultState);
@@ -371,11 +371,18 @@
           <span class="idx">MSG ${String(i + 1).padStart(2, '0')}</span>
           <div class="portrait-preview" data-portrait></div>
           <input type="text" class="speaker-input" maxlength="40" placeholder="Speaker" />
+          <button class="btn danger icon" type="button" aria-label="remove" data-remove>✕</button>
+        </div>
+        <div class="msg-row-meta">
+          <input type="text" class="time-input" maxlength="20" placeholder="time" />
           <button class="btn cyan icon" type="button" data-save-contact aria-label="save as contact" title="Save as contact">
             <svg class="mi" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M17 3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V7l-4-4zm-5 16c-1.66 0-3-1.34-3-3s1.34-3 3-3 3 1.34 3 3-1.34 3-3 3zm3-10H5V5h10v4z"/></svg>
           </button>
-          <button class="btn ghost icon" type="button" data-side aria-label="toggle side">${m.side === 'right' ? 'R →' : '← L'}</button>
-          <button class="btn danger icon" type="button" aria-label="remove" data-remove>✕</button>
+          <button class="side-switch" type="button" data-side data-pos="${m.side === 'right' ? 'right' : 'left'}" aria-label="toggle side">
+            <span class="thumb"></span>
+            <span class="lab l">L</span>
+            <span class="lab r">R</span>
+          </button>
         </div>
         <textarea class="body-input" maxlength="500" placeholder="Message text..."></textarea>
         <div class="msg-row-toolbar">
@@ -391,13 +398,16 @@
         </div>
       `;
       const sp = row.querySelector('.speaker-input');
+      const tm = row.querySelector('.time-input');
       const bd = row.querySelector('.body-input');
       const portraitEl = row.querySelector('[data-portrait]');
       const portraitInput = row.querySelector('.portrait-file');
       sp.value = m.speaker;
+      tm.value = m.time || '';
       bd.value = m.body;
       if (m.portrait) portraitEl.style.backgroundImage = `url("${m.portrait}")`;
       sp.addEventListener('input', () => { state.messages[i].speaker = sp.value; renderPreview(); saveState(); });
+      tm.addEventListener('input', () => { state.messages[i].time = tm.value; renderPreview(); saveState(); });
       bd.addEventListener('input', () => {
         state.messages[i].body = bd.value;
         autoGrow(bd);
@@ -470,8 +480,9 @@
         showToast(`+ CONTACT "${name}"`);
       });
       row.querySelector('[data-side]').addEventListener('click', () => {
-        state.messages[i].side = state.messages[i].side === 'right' ? 'left' : 'right';
-        renderMessagesEditor();
+        const newSide = state.messages[i].side === 'right' ? 'left' : 'right';
+        state.messages[i].side = newSide;
+        row.querySelector('[data-side]').setAttribute('data-pos', newSide);
         renderPreview();
         saveState();
       });
@@ -521,16 +532,17 @@
 
     pMessages.innerHTML = '';
     state.messages.forEach((m) => {
-      if (!m.speaker.trim() && !m.body.trim() && !m.portrait) return;
+      if (!m.speaker.trim() && !m.body.trim() && !m.portrait && !(m.time && m.time.trim())) return;
       const el = document.createElement('div');
       const side = m.side === 'right' ? 'right' : 'left';
       el.className = 'message ' + side + (m.portrait ? ' has-portrait' : '');
       el.innerHTML = (m.portrait ? '<div class="portrait"></div>' : '') +
-        '<div class="content"><span class="name"></span><p class="body"></p></div>';
+        '<div class="content"><div class="meta-line"><span class="name"></span><span class="time"></span></div><p class="body"></p></div>';
       if (m.portrait) {
         el.querySelector('.portrait').style.backgroundImage = `url("${m.portrait}")`;
       }
       el.querySelector('.name').textContent = m.speaker || '—';
+      el.querySelector('.time').textContent = (m.time || '').trim();
       el.querySelector('.body').textContent = m.body || '';
       pMessages.appendChild(el);
     });
@@ -635,7 +647,7 @@
       ...snap
     };
     delete state.savedAt;
-    state.messages = (state.messages || []).map(m => ({ speaker: '', body: '', portrait: '', side: 'left', ...m }));
+    state.messages = (state.messages || []).map(m => ({ speaker: '', body: '', portrait: '', side: 'left', time: '', ...m }));
     if (!Array.isArray(state.choices)) state.choices = [];
     syncForm();
     renderPreview();
@@ -660,7 +672,8 @@
       speaker: c.name || '',
       body: '',
       portrait: c.avatar || '',
-      side: 'left'
+      side: 'left',
+      time: ''
     });
     renderMessagesEditor();
     renderPreview();
@@ -754,7 +767,7 @@
 
   addMessageBtn.addEventListener('click', () => {
     if (state.messages.length >= 12) { showToast('MAX 12 MESSAGES'); return; }
-    state.messages.push({ speaker: '', body: '', portrait: '', side: 'left' });
+    state.messages.push({ speaker: '', body: '', portrait: '', side: 'left', time: '' });
     renderMessagesEditor();
     renderPreview();
     saveState();
