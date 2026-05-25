@@ -1,0 +1,57 @@
+/* Config — snapshots */
+  .snapshot-save {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 10px;
+  }
+  .snapshot-save input[type="text"] {
+    flex: 1;
+    background: var(--panel-2);
+    border: 1px solid rgba(0, 240, 255, 0.25);
+    color: var(--text);
+    padding: 8px 10px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    letter-spacing: 1px;
+    outline: none;
+  }
+  .snapshot-save input[type="text"]:focus { border-color: var(--yellow); }
+  .snapshot-list {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    max-height: 180px;
+    overflow-y: auto;
+  }
+  .snapshot-list:empty::before {
+    content: 'NO SNAPSHOTS';
+    color: var(--dim);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 2px;
+    padding: 6px 0;
+  }
+  .snapshot-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--panel-2);
+    border-left: 2px solid var(--cyan);
+    padding: 6px 10px;
+  }
+  .snapshot-item .name {
+    flex: 1;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    letter-spacing: 1px;
+    color: var(--text);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .snapshot-item .meta {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    color: var(--dim);
+    letter-spacing: 1px;
+  }
