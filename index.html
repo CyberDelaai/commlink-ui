@@ -210,7 +210,7 @@
   <!-- Preview -->
   <section class="stage-wrap" aria-label="preview">
     <div class="stage-meta">
-      <span>// PREVIEW :: 1920×1080</span>
+      <span>// PREVIEW :: <span id="stageDims">—</span></span>
       <span id="charCount">0 chars</span>
     </div>
     <div class="stage scanlines" id="stage" data-augmented-ui="tl-clip tr-clip-x br-clip bl-clip-x border">
@@ -324,6 +324,7 @@
   const pMessages = $('pMessages');
   const pChoices = $('pChoices');
   const charCount = $('charCount');
+  const stageDims = $('stageDims');
   const toast = $('toast');
 
   const sidePanel = $('sidePanel');
@@ -346,6 +347,8 @@
         <div class="msg-row-head">
           <span class="idx">MSG ${String(i + 1).padStart(2, '0')}</span>
           <input type="text" class="speaker-input" maxlength="40" placeholder="Speaker" />
+          <button class="btn ghost icon" type="button" data-up aria-label="move up" ${i === 0 ? 'disabled' : ''}>↑</button>
+          <button class="btn ghost icon" type="button" data-down aria-label="move down" ${i === state.messages.length - 1 ? 'disabled' : ''}>↓</button>
           <button class="btn ghost icon" type="button" data-side aria-label="toggle side">${m.side === 'right' ? 'R →' : '← L'}</button>
           <button class="btn danger icon" type="button" aria-label="remove" data-remove>✕</button>
         </div>
@@ -383,6 +386,22 @@
         state.messages[i].portrait = '';
         portraitEl.style.backgroundImage = 'none';
         portraitInput.value = '';
+        renderPreview();
+        saveState();
+      });
+      row.querySelector('[data-up]').addEventListener('click', () => {
+        if (i === 0) return;
+        const [m] = state.messages.splice(i, 1);
+        state.messages.splice(i - 1, 0, m);
+        renderMessagesEditor();
+        renderPreview();
+        saveState();
+      });
+      row.querySelector('[data-down]').addEventListener('click', () => {
+        if (i === state.messages.length - 1) return;
+        const [m] = state.messages.splice(i, 1);
+        state.messages.splice(i + 1, 0, m);
+        renderMessagesEditor();
         renderPreview();
         saveState();
       });
@@ -473,8 +492,10 @@
       stageBg.style.backgroundImage = 'none';
       stageBg.style.background = 'linear-gradient(135deg, #1a0030 0%, #001530 50%, #300018 100%)';
     }
-    const totalChars = state.messages.reduce((s, m) => s + (m.body || '').length, 0);
-    charCount.textContent = `${totalChars} chars / ${state.messages.length} msgs`;
+    const visibleMessages = state.messages.filter(m => m.speaker.trim() || m.body.trim() || m.portrait);
+    const totalChars = visibleMessages.reduce((s, m) => s + (m.body || '').length, 0);
+    charCount.textContent = `${totalChars} chars / ${visibleMessages.length} msgs`;
+    updateStageDims();
 
     // Highlight active swatch
     accentsWrap.querySelectorAll('.swatch').forEach(sw => {
@@ -815,6 +836,12 @@
       exportBtn.textContent = prevText;
     }
   });
+
+  function updateStageDims() {
+    const r = stage.getBoundingClientRect();
+    stageDims.textContent = `${Math.round(r.width)}×${Math.round(r.height)} (×2 = ${Math.round(r.width * 2)}×${Math.round(r.height * 2)})`;
+  }
+  window.addEventListener('resize', () => requestAnimationFrame(updateStageDims));
 
   function showToast(msg) {
     toast.textContent = msg;
