@@ -180,6 +180,7 @@
       <div id="messages"></div>
       <div class="btn-row">
         <button class="btn cyan icon" id="addMessage" type="button">+ ADD MESSAGE</button>
+        <button class="btn danger icon" id="clearMessages" type="button">CLEAR ALL</button>
       </div>
     </div>
   </section>
@@ -565,6 +566,7 @@
   const metaRightInput = $('metaRight');
   const messagesWrap = $('messages');
   const addMessageBtn = $('addMessage');
+  const clearMessagesBtn = $('clearMessages');
   const choicesWrap = $('choices');
   const addChoiceBtn = $('addChoice');
   const clearChoicesBtn = $('clearChoices');
@@ -1097,6 +1099,15 @@
     renderMessagesEditor();
     renderPreview();
     saveState();
+  });
+  clearMessagesBtn.addEventListener('click', () => {
+    if (state.messages.length === 0) return;
+    if (!confirm(`Clear all ${state.messages.length} message(s)?`)) return;
+    state.messages = [];
+    renderMessagesEditor();
+    renderPreview();
+    saveState();
+    showToast('MESSAGES CLEARED');
   });
 
   addChoiceBtn.addEventListener('click', () => {

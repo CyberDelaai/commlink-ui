@@ -7,7 +7,7 @@ Pending issues, features, and ideas for COMMLINK. Items are removed from the lis
 1. Ability to send a message with an image
 2. Default background image
 3. Background image to be added by URL
-4. Button to clear all massages
-5. Button to clear all contacts
+4. Button to clear all contacts
+5. Warning on loading snapshots that current state will be lost
 
 # BUGS
