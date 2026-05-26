@@ -6,7 +6,8 @@ Pending issues, features, and ideas for COMMLINK. Items are removed from the lis
 
 1. Ability to send a message with an image
 2. Background image to be added by URL
-3. Add favicon
-4. Add ability to send "system messages"
+3. Add ability to send "system messages"
 
 ## BUGS
+
+1. On windows cropped image is 2 times smaller then chosen frame
