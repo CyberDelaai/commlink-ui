@@ -935,7 +935,7 @@
         saveState();
       });
       row.querySelector('[data-clone]').addEventListener('click', () => {
-        if (state.messages.length >= 12) { showToast('MAX 12 MESSAGES'); return; }
+        if (state.messages.length >= 99) { showToast('MAX 99 MESSAGES'); return; }
         const copy = { ...state.messages[i] };
         state.messages.splice(i + 1, 0, copy);
         renderMessagesEditor();
@@ -1202,7 +1202,7 @@
     return storageSet(CONTACTS_KEY, JSON.stringify(list));
   }
   function addMessageFromContact(c) {
-    if (state.messages.length >= 12) { showToast('MAX 12 MESSAGES'); return; }
+    if (state.messages.length >= 99) { showToast('MAX 99 MESSAGES'); return; }
     state.messages.push({
       speaker: c.name || '',
       body: '',
@@ -1337,7 +1337,7 @@
   metaRightInput.addEventListener('input', () => { state.metaRight = metaRightInput.value; renderPreview(); saveState(); });
 
   addMessageBtn.addEventListener('click', () => {
-    if (state.messages.length >= 12) { showToast('MAX 12 MESSAGES'); return; }
+    if (state.messages.length >= 99) { showToast('MAX 99 MESSAGES'); return; }
     state.messages.push({ speaker: '', body: '', portrait: '', portraitOriginal: '', side: 'left', time: '', bodyImage: '', bodyImageOriginal: '' });
     renderMessagesEditor();
     renderPreview();
