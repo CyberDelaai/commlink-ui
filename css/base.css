@@ -63,6 +63,24 @@
     border-left: 1px solid var(--dim);
     padding-left: 18px;
   }
+  header .tag .glitchable {
+    display: inline-block;
+    min-width: 18ch;
+    white-space: pre;
+  }
+  header .tag .glitchable.glitching {
+    color: var(--yellow);
+    text-shadow:
+      2px 0 var(--cyan),
+      -2px 0 #ff003c;
+    animation: tagGlitchJitter 0.08s steps(2) infinite;
+  }
+  @keyframes tagGlitchJitter {
+    0%, 100% { transform: translate(0, 0); }
+    25% { transform: translate(-1px, 1px); }
+    50% { transform: translate(1px, -1px); }
+    75% { transform: translate(-1px, -1px); }
+  }
   header .status {
     margin-left: auto;
     font-family: 'JetBrains Mono', monospace;

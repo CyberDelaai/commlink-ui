@@ -187,7 +187,7 @@
 
 <header>
   <div class="logo">&gt; COMMLINK_</div>
-  <div class="tag">DIALOG CONSTRUCTOR // v1.0</div>
+  <div class="tag"><span id="tagWord" class="glitchable">DIALOG CONSTRUCTOR</span> // v1.0</div>
   <div class="status"><span class="dot"></span>NETRUNNER ONLINE</div>
 </header>
 
@@ -1745,6 +1745,60 @@
   renderPreview();
   renderSnapshots();
   renderContacts();
+
+  // Occasionally glitch "DIALOG CONSTRUCTOR" -> "DIALOG FORGER" and back
+  (function startTagGlitch() {
+    const el = document.getElementById('tagWord');
+    if (!el) return;
+    const ORIGINAL = 'DIALOG CONSTRUCTOR';
+    const TARGET = 'DIALOG FORGER';
+    const MAX_LEN = Math.max(ORIGINAL.length, TARGET.length);
+    const CHARS = '!@#$%&*<>{}[]/|01ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+
+    function scrambleFrame(target, revealed) {
+      let out = '';
+      for (let i = 0; i < MAX_LEN; i++) {
+        if (i >= target.length) { out += ' '; continue; }
+        if (i < revealed) { out += target[i]; continue; }
+        out += CHARS[Math.floor(Math.random() * CHARS.length)];
+      }
+      return out;
+    }
+
+    function runScramble(target, onDone) {
+      const steps = 8;
+      let step = 0;
+      const id = setInterval(() => {
+        step++;
+        const revealed = Math.floor((step / steps) * target.length);
+        el.textContent = scrambleFrame(target, revealed);
+        if (step >= steps) {
+          clearInterval(id);
+          el.textContent = target + ' '.repeat(MAX_LEN - target.length);
+          onDone();
+        }
+      }, 40);
+    }
+
+    function runGlitch() {
+      el.classList.add('glitching');
+      runScramble(TARGET, () => {
+        setTimeout(() => {
+          runScramble(ORIGINAL, () => {
+            el.classList.remove('glitching');
+            el.textContent = ORIGINAL;
+            scheduleNext();
+          });
+        }, 700);
+      });
+    }
+
+    function scheduleNext() {
+      setTimeout(runGlitch, 14000 + Math.random() * 18000);
+    }
+
+    setTimeout(runGlitch, 8000 + Math.random() * 6000);
+  })();
 </script>
 
 </body>
