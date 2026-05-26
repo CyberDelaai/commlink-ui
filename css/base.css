@@ -225,7 +225,22 @@
     --aug-br: 12px;
   }
 
-  .color-grid { display: flex; gap: 8px; flex-wrap: wrap; }
+  .color-grid { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+  .custom-color-group {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    padding: 4px;
+    background: transparent;
+    --aug-border-all: 1px;
+    --aug-border-bg: rgba(0, 240, 255, 0.45);
+    --aug-inlay-all: 0px;
+    --aug-inlay-bg: transparent;
+    --aug-tl: 8px;
+    --aug-br: 8px;
+  }
+  .custom-color-group .swatch-pick-btn { align-self: center; margin: 0; }
   .swatch {
     width: 28px; height: 28px;
     border: 1px solid var(--dim);
@@ -234,6 +249,71 @@
   }
   .swatch:hover { transform: scale(1.1); }
   .swatch.active { border-color: #fff; box-shadow: 0 0 8px currentColor; }
+  .swatch-saved {
+    border: none !important;
+    --aug-border-all: 1px;
+    --aug-border-bg: var(--dim);
+    --aug-inlay-all: 0px;
+    --aug-tl: 7px;
+  }
+  .swatch-saved.active {
+    --aug-border-bg: #fff;
+  }
+  .swatch-pick-btn {
+    position: relative;
+    width: 28px;
+    height: 28px;
+    margin: 0;
+    padding: 0;
+    color: var(--cyan);
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+    transition: background 0.15s;
+    border: none;
+    --aug-border-all: 1px;
+    --aug-border-bg: var(--cyan);
+    --aug-inlay-all: 0px;
+    --aug-inlay-bg: transparent;
+    --aug-br: 7px;
+  }
+  .swatch-pick-btn:hover {
+    background: color-mix(in srgb, var(--cyan) 18%, transparent);
+  }
+  .swatch-pick-btn .pick-icon {
+    width: 18px;
+    height: 18px;
+    display: block;
+    pointer-events: none;
+    position: relative;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, calc(-50% + 1px));
+  }
+  .swatch-pick-btn input[type="color"] {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    width: 100%;
+    height: 100%;
+    cursor: pointer;
+    border: none;
+    padding: 0;
+  }
+  .pick-arrow {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    height: 28px;
+    color: var(--cyan);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 16px;
+    line-height: 1;
+    pointer-events: none;
+  }
+  .pick-arrow[hidden] { display: none; }
 
   .toast {
     position: fixed;
