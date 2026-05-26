@@ -183,7 +183,8 @@
     <div class="field">
       <div id="messages"></div>
       <div class="btn-row">
-        <button class="btn cyan icon" id="addMessage" type="button">+ ADD MESSAGE</button>
+        <button class="btn cyan icon" id="addMessage" type="button">+ MESSAGE</button>
+        <button class="btn cyan icon" id="addSystemMessage" type="button">+ SYSTEM MESSAGE</button>
         <button class="btn danger icon" id="clearMessages" type="button">CLEAR ALL</button>
       </div>
     </div>
@@ -354,8 +355,11 @@
     meta: '//ENCRYPTED',
     metaRight: '',
     messages: [
-      { speaker: 'JOHNNY', body: 'Wake the fuck up, samurai. We have a city to burn.', portrait: makeInitialAvatar('J', '#fcee0a'), side: 'left', time: '04:21', bodyImage: '' },
-      { speaker: 'V', body: 'Give me a second. Head\'s still ringing.', portrait: makeInitialAvatar('V', '#00f0ff'), side: 'right', time: '04:22', bodyImage: '' }
+      { type: 'normal', speaker: 'JOHNNY', body: 'Wake the fuck up, samurai. We have a city to burn.', portrait: makeInitialAvatar('J', '#fcee0a'), side: 'left', time: '04:20', bodyImage: '' },
+      { type: 'normal', speaker: 'V', body: 'Give me a sec. Head\'s still ringing.', portrait: makeInitialAvatar('V', '#00f0ff'), side: 'right', time: '04:21', bodyImage: '' },
+      { type: 'normal', speaker: 'JOHNNY', body: 'Sending you the schematics — don\'t open them on public net.', portrait: makeInitialAvatar('J', '#fcee0a'), side: 'left', time: '04:22', bodyImage: '' },
+      { type: 'system', body: 'FILE TRANSFERRED', speaker: '', portrait: '', side: 'left', time: '', bodyImage: '' },
+      { type: 'normal', speaker: 'V', body: 'Got it. Heading to the drop now.', portrait: makeInitialAvatar('V', '#00f0ff'), side: 'right', time: '04:23', bodyImage: '' }
     ],
     choices: [
       "I'm in. Where do we start?",
@@ -389,7 +393,7 @@
         merged.messages = [{ speaker: parsed.speaker || '', body: parsed.body || '' }];
       }
       if (!Array.isArray(merged.messages)) merged.messages = [];
-      merged.messages = merged.messages.map(m => ({ speaker: '', body: '', portrait: '', portraitOriginal: '', side: 'left', time: '', bodyImage: '', bodyImageOriginal: '', ...m }));
+      merged.messages = merged.messages.map(m => ({ type: 'normal', speaker: '', body: '', portrait: '', portraitOriginal: '', side: 'left', time: '', bodyImage: '', bodyImageOriginal: '', ...m }));
       // bgOriginal lives in its own key (too large for the main state JSON).
       // Migrate from old shape (when bgOriginal was inside state JSON).
       const separateBg = storageGet(BG_ORIGINAL_KEY);
@@ -644,6 +648,7 @@
   const metaRightInput = $('metaRight');
   const messagesWrap = $('messages');
   const addMessageBtn = $('addMessage');
+  const addSystemMessageBtn = $('addSystemMessage');
   const clearMessagesBtn = $('clearMessages');
   const choicesWrap = $('choices');
   const addChoiceBtn = $('addChoice');
@@ -698,10 +703,80 @@
     state.messages.forEach((m, i) => {
       const row = document.createElement('div');
       row.className = 'msg-row';
+
+      // ----- System message editor: simplified row -----
+      if (m.type === 'system') {
+        row.classList.add('system');
+        row.innerHTML = `
+          <div class="msg-row-left">
+            <span class="msg-pip"></span>
+            <span class="idx"><span class="idx-text">SYS ${String(i + 1).padStart(2, '0')}</span></span>
+            <span class="vspace"></span>
+            <button class="btn ghost reorder-btn" type="button" data-up aria-label="move up" ${i === 0 ? 'disabled' : ''}>↑</button>
+            <button class="btn ghost reorder-btn" type="button" data-down aria-label="move down" ${i === state.messages.length - 1 ? 'disabled' : ''}>↓</button>
+          </div>
+          <div class="msg-row-divider"></div>
+          <div class="msg-row-right">
+            <div class="msg-row-head">
+              <span class="sys-label">// SYSTEM MESSAGE</span>
+              <span class="toolbar-spacer"></span>
+              <button class="btn cyan icon" type="button" data-clone aria-label="clone" title="Clone">
+                <svg class="mi" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg>
+              </button>
+              <button class="btn danger icon" type="button" aria-label="remove" data-remove>✕</button>
+            </div>
+            <textarea class="body-input" maxlength="200" placeholder="System message..."></textarea>
+          </div>
+        `;
+        const sbd = row.querySelector('.body-input');
+        sbd.value = m.body;
+        sbd.addEventListener('input', () => {
+          state.messages[i].body = sbd.value;
+          autoGrow(sbd);
+          renderPreview();
+          saveState();
+        });
+        row.querySelector('[data-up]').addEventListener('click', () => {
+          if (i === 0) return;
+          const [mm] = state.messages.splice(i, 1);
+          state.messages.splice(i - 1, 0, mm);
+          renderMessagesEditor();
+          renderPreview();
+          saveState();
+        });
+        row.querySelector('[data-down]').addEventListener('click', () => {
+          if (i === state.messages.length - 1) return;
+          const [mm] = state.messages.splice(i, 1);
+          state.messages.splice(i + 1, 0, mm);
+          renderMessagesEditor();
+          renderPreview();
+          saveState();
+        });
+        row.querySelector('[data-clone]').addEventListener('click', () => {
+          if (state.messages.length >= 99) { showToast('MAX 99 MESSAGES'); return; }
+          const copy = { ...state.messages[i] };
+          state.messages.splice(i + 1, 0, copy);
+          renderMessagesEditor();
+          renderPreview();
+          saveState();
+        });
+        row.querySelector('[data-remove]').addEventListener('click', () => {
+          state.messages.splice(i, 1);
+          renderMessagesEditor();
+          renderPreview();
+          saveState();
+        });
+        messagesWrap.appendChild(row);
+        augmentButtons(row);
+        requestAnimationFrame(() => autoGrow(sbd));
+        return;
+      }
+
       row.innerHTML = `
         <div class="msg-row-left">
           <span class="msg-pip"></span>
           <span class="idx"><span class="idx-text">MSG ${String(i + 1).padStart(2, '0')}</span></span>
+          <span class="vspace"></span>
           <button class="btn ghost reorder-btn" type="button" data-up aria-label="move up" ${i === 0 ? 'disabled' : ''}>↑</button>
           <button class="btn ghost reorder-btn" type="button" data-down aria-label="move down" ${i === state.messages.length - 1 ? 'disabled' : ''}>↓</button>
         </div>
@@ -1024,6 +1099,15 @@
 
     pMessages.innerHTML = '';
     state.messages.forEach((m) => {
+      if (m.type === 'system') {
+        if (!m.body.trim()) return;
+        const sysEl = document.createElement('div');
+        sysEl.className = 'message system';
+        sysEl.innerHTML = '<hr class="sys-rule"/><p class="body"></p><hr class="sys-rule"/>';
+        sysEl.querySelector('.body').textContent = m.body;
+        pMessages.appendChild(sysEl);
+        return;
+      }
       if (!m.speaker.trim() && !m.body.trim() && !m.portrait && !(m.time && m.time.trim()) && !m.bodyImage) return;
       const el = document.createElement('div');
       const side = m.side === 'right' ? 'right' : 'left';
@@ -1198,7 +1282,7 @@
     };
     delete state.savedAt;
     delete state.contacts;
-    state.messages = (state.messages || []).map(m => ({ speaker: '', body: '', portrait: '', portraitOriginal: '', side: 'left', time: '', bodyImage: '', bodyImageOriginal: '', ...m }));
+    state.messages = (state.messages || []).map(m => ({ type: 'normal', speaker: '', body: '', portrait: '', portraitOriginal: '', side: 'left', time: '', bodyImage: '', bodyImageOriginal: '', ...m }));
     if (!Array.isArray(state.choices)) state.choices = [];
     if (Array.isArray(snap.contacts)) {
       saveContacts(snap.contacts);
@@ -1358,7 +1442,14 @@
 
   addMessageBtn.addEventListener('click', () => {
     if (state.messages.length >= 99) { showToast('MAX 99 MESSAGES'); return; }
-    state.messages.push({ speaker: '', body: '', portrait: '', portraitOriginal: '', side: 'left', time: '', bodyImage: '', bodyImageOriginal: '' });
+    state.messages.push({ type: 'normal', speaker: '', body: '', portrait: '', portraitOriginal: '', side: 'left', time: '', bodyImage: '', bodyImageOriginal: '' });
+    renderMessagesEditor();
+    renderPreview();
+    saveState();
+  });
+  addSystemMessageBtn.addEventListener('click', () => {
+    if (state.messages.length >= 99) { showToast('MAX 99 MESSAGES'); return; }
+    state.messages.push({ type: 'system', speaker: '', body: '', portrait: '', portraitOriginal: '', side: 'left', time: '', bodyImage: '', bodyImageOriginal: '' });
     renderMessagesEditor();
     renderPreview();
     saveState();
@@ -1594,7 +1685,7 @@
     return 'data:image/svg+xml;base64,' + btoa(svg);
   }
   function seedDefaults() {
-    const SEED_VERSION = '5';
+    const SEED_VERSION = '7';
     if (storageGet(SEEDED_KEY) === SEED_VERSION) return;
     const defaultContacts = [
       { id: 'def-johnny', name: 'JOHNNY', avatar: makeInitialAvatar('J', '#fcee0a') },

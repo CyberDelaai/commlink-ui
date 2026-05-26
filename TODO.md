@@ -5,10 +5,9 @@ Pending issues, features, and ideas for COMMLINK. Items are removed from the lis
 ## FEATURES
 
 1. Background image to be added by URL
-2. Add ability to send "system messages"
-3. Add DONATE button
-4. Add different themes (one more theme at first)
-5. Add different languages support
+2. Add DONATE button
+3. Add different themes (one more theme at first)
+4. Add different languages support
 
 ## BUGS
 
