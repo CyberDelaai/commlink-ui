@@ -1622,9 +1622,21 @@
     exportBtn.disabled = true;
     const prevText = exportBtn.textContent;
     exportBtn.textContent = 'RENDERING...';
+    let clonedFilterSvg = null;
     try {
-      const wasGlitching = stage.classList.contains('glitch');
-      stage.classList.remove('glitch');
+      // The glitch effect uses `filter: url(#glitch-slices)` which references
+      // an SVG filter defined at the body level. html-to-image captures only
+      // the stage subtree, so we clone the filter SVG into the stage so the
+      // url(#...) ref resolves inside the snapshot.
+      const filterSvg = document.getElementById('glitch-slices')?.closest('svg');
+      if (filterSvg && stage.classList.contains('glitch')) {
+        clonedFilterSvg = filterSvg.cloneNode(true);
+        clonedFilterSvg.style.position = 'absolute';
+        clonedFilterSvg.style.width = '0';
+        clonedFilterSvg.style.height = '0';
+        clonedFilterSvg.style.pointerEvents = 'none';
+        stage.insertBefore(clonedFilterSvg, stage.firstChild);
+      }
 
       // Make sure web fonts are loaded; otherwise SVG falls back to
       // wider system fonts and text wraps differently than on screen.
@@ -1652,7 +1664,6 @@
         cacheBust: true,
         skipFonts: false
       });
-      if (wasGlitching) stage.classList.add('glitch');
 
       // Pad with a black border around the dialog
       const img = new Image();
@@ -1678,6 +1689,7 @@
       console.error(err);
       showToast('EXPORT FAILED');
     } finally {
+      if (clonedFilterSvg) clonedFilterSvg.remove();
       exportBtn.disabled = false;
       exportBtn.textContent = prevText;
     }
