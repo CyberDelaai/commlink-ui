@@ -381,7 +381,7 @@
         merged.messages = [{ speaker: parsed.speaker || '', body: parsed.body || '' }];
       }
       if (!Array.isArray(merged.messages)) merged.messages = [];
-      merged.messages = merged.messages.map(m => ({ speaker: '', body: '', portrait: '', side: 'left', time: '', bodyImage: '', bodyImageOriginal: '', ...m }));
+      merged.messages = merged.messages.map(m => ({ speaker: '', body: '', portrait: '', portraitOriginal: '', side: 'left', time: '', bodyImage: '', bodyImageOriginal: '', ...m }));
       // bgOriginal lives in its own key (too large for the main state JSON).
       // Migrate from old shape (when bgOriginal was inside state JSON).
       const separateBg = storageGet(BG_ORIGINAL_KEY);
@@ -692,21 +692,24 @@
       row.className = 'msg-row';
       row.innerHTML = `
         <div class="msg-row-left">
-          <div class="portrait-preview" data-portrait></div>
-          <input type="file" accept="image/*" class="portrait-file" id="portrait-file-${i}" />
-          <label class="btn cyan icon portrait-upload portrait-icon" for="portrait-file-${i}" aria-label="upload portrait" title="Upload portrait">
-            <svg class="mi" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M9 16h6v-6h4l-7-7-7 7h4v6zm-4 2h14v2H5z"/></svg>
-          </label>
-          <button class="btn cyan icon portrait-icon" type="button" data-paste-portrait title="Paste from clipboard" aria-label="paste portrait">
-            <svg class="mi" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M19 2h-4.18C14.4.84 13.3 0 12 0c-1.3 0-2.4.84-2.82 2H5c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-7 0c.55 0 1 .45 1 1s-.45 1-1 1-1-.45-1-1 .45-1 1-1zm2 18H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V10h10v2z"/></svg>
-          </button>
-          <button class="btn danger icon portrait-icon" type="button" data-clear-portrait aria-label="clear portrait" title="Clear portrait">
-            <svg class="mi" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg>
-          </button>
+          <span class="msg-pip"></span>
+          <span class="idx"><span class="idx-text">MSG ${String(i + 1).padStart(2, '0')}</span></span>
+          <button class="btn ghost reorder-btn" type="button" data-up aria-label="move up" ${i === 0 ? 'disabled' : ''}>↑</button>
+          <button class="btn ghost reorder-btn" type="button" data-down aria-label="move down" ${i === state.messages.length - 1 ? 'disabled' : ''}>↓</button>
         </div>
+        <div class="msg-row-divider"></div>
         <div class="msg-row-right">
           <div class="msg-row-head">
-            <span class="idx">MSG ${String(i + 1).padStart(2, '0')}</span>
+            <div class="img-popup-wrap portrait-wrap">
+              <div class="portrait-preview" data-portrait data-portrait-toggle title="Portrait options"></div>
+              <input type="file" accept="image/*" class="portrait-file" id="portrait-file-${i}" />
+              <div class="img-popup portrait-popup" hidden>
+                <label class="btn cyan icon" for="portrait-file-${i}" title="Upload portrait">UPLOAD</label>
+                <button class="btn cyan icon" type="button" data-paste-portrait title="Paste from clipboard">PASTE</button>
+                <button class="btn cyan icon" type="button" data-recrop-portrait title="Recrop">RECROP</button>
+                <button class="btn danger icon" type="button" data-clear-portrait title="Clear portrait">CLEAR</button>
+              </div>
+            </div>
             <input type="text" class="speaker-input" maxlength="40" placeholder="Speaker" />
             <input type="text" class="time-input" maxlength="20" placeholder="time" />
             <button class="btn cyan icon" type="button" data-save-contact aria-label="save as contact" title="Save as contact">
@@ -728,15 +731,13 @@
               </div>
             </div>
             <span class="toolbar-spacer"></span>
-            <button class="btn ghost icon" type="button" data-up aria-label="move up" ${i === 0 ? 'disabled' : ''}>↑</button>
-            <button class="btn ghost icon" type="button" data-down aria-label="move down" ${i === state.messages.length - 1 ? 'disabled' : ''}>↓</button>
             <button class="btn cyan icon" type="button" data-clone aria-label="clone" title="Clone message">
               <svg class="mi" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg>
             </button>
             <button class="side-switch" type="button" data-side data-pos="${m.side === 'right' ? 'right' : 'left'}" aria-label="toggle side">
               <span class="thumb"></span>
-              <span class="lab l">L</span>
-              <span class="lab r">R</span>
+              <span class="lab l">&lt;</span>
+              <span class="lab r">&gt;</span>
             </button>
           </div>
         </div>
@@ -749,7 +750,10 @@
       sp.value = m.speaker;
       tm.value = m.time || '';
       bd.value = m.body;
-      if (m.portrait) portraitEl.style.backgroundImage = `url("${m.portrait}")`;
+      if (m.portrait) {
+        portraitEl.style.backgroundImage = `url("${m.portrait}")`;
+        portraitEl.classList.add('has-image');
+      }
       sp.addEventListener('input', () => { state.messages[i].speaker = sp.value; renderPreview(); saveState(); });
       tm.addEventListener('input', () => { state.messages[i].time = tm.value; renderPreview(); saveState(); });
       bd.addEventListener('input', () => {
@@ -758,39 +762,79 @@
         renderPreview();
         saveState();
       });
+      const portraitPopup = row.querySelector('.portrait-popup');
       const applyPortrait = (dataUrl) => {
         state.messages[i].portrait = dataUrl;
         portraitEl.style.backgroundImage = `url("${dataUrl}")`;
+        portraitEl.classList.add('has-image');
         renderPreview();
         saveState();
         showToast('PORTRAIT LOADED');
+      };
+      const openPortraitCrop = (dataUrl, isOriginal) => {
+        if (!isOriginal) {
+          state.messages[i].portraitOriginal = dataUrl;
+          saveState();
+        }
+        openCrop(dataUrl, applyPortrait);
       };
       portraitInput.addEventListener('change', (e) => {
         const f = e.target.files && e.target.files[0];
         if (!f) return;
         const reader = new FileReader();
-        reader.onload = (ev) => openCrop(ev.target.result, applyPortrait);
+        reader.onload = (ev) => openPortraitCrop(ev.target.result);
         reader.readAsDataURL(f);
         portraitInput.value = '';
       });
       row.querySelector('[data-paste-portrait]').addEventListener('click', () => {
-        tryPasteImage((dataUrl) => openCrop(dataUrl, applyPortrait));
+        tryPasteImage(openPortraitCrop);
+      });
+      row.querySelector('[data-recrop-portrait]').addEventListener('click', () => {
+        const src = state.messages[i].portraitOriginal || state.messages[i].portrait;
+        if (!src) { showToast('NO PORTRAIT'); return; }
+        openPortraitCrop(src, true);
       });
       row.querySelector('[data-clear-portrait]').addEventListener('click', () => {
         state.messages[i].portrait = '';
-        portraitEl.style.backgroundImage = 'none';
+        state.messages[i].portraitOriginal = '';
+        portraitEl.style.backgroundImage = '';
+        portraitEl.classList.remove('has-image');
         portraitInput.value = '';
+        portraitPopup.hidden = true;
         renderPreview();
         saveState();
       });
+      // Portrait popup toggle
+      const positionPortraitPopup = () => {
+        const r = portraitEl.getBoundingClientRect();
+        portraitPopup.style.left = (r.right + 8) + 'px';
+        portraitPopup.style.top = r.top + 'px';
+      };
+      portraitEl.style.cursor = 'pointer';
+      portraitEl.addEventListener('click', (e) => {
+        e.stopPropagation();
+        if (!state.messages[i].portrait) {
+          portraitInput.click();
+          return;
+        }
+        const opening = portraitPopup.hidden;
+        document.querySelectorAll('.img-popup').forEach(p => { p.hidden = true; });
+        if (opening) {
+          if (portraitPopup.parentNode !== document.body) document.body.appendChild(portraitPopup);
+          portraitPopup.hidden = false;
+          positionPortraitPopup();
+        }
+      });
+      portraitPopup.addEventListener('click', (e) => e.stopPropagation());
 
       // Body image controls (popup)
       const bodyImgPreview = row.querySelector('[data-body-img]');
       const bodyImgInput = row.querySelector('.body-img-file');
       const imgToggle = row.querySelector('[data-img-toggle]');
-      const imgPopup = row.querySelector('.img-popup');
+      const imgPopup = row.querySelector('.img-popup:not(.portrait-popup)');
       if (m.bodyImage) {
         bodyImgPreview.style.backgroundImage = `url("${m.bodyImage}")`;
+        bodyImgPreview.classList.add('has-image');
         imgToggle.style.backgroundImage = `url("${m.bodyImage}")`;
       }
       const syncImgToggle = (dataUrl) => {
@@ -805,6 +849,7 @@
       const applyBodyImage = (dataUrl) => {
         state.messages[i].bodyImage = dataUrl;
         bodyImgPreview.style.backgroundImage = `url("${dataUrl}")`;
+        bodyImgPreview.classList.add('has-image');
         syncImgToggle(dataUrl);
         renderPreview();
         saveState();
@@ -866,6 +911,7 @@
         state.messages[i].bodyImage = '';
         state.messages[i].bodyImageOriginal = '';
         bodyImgPreview.style.backgroundImage = '';
+        bodyImgPreview.classList.remove('has-image');
         syncImgToggle('');
         imgPopup.hidden = true;
         renderPreview();
@@ -1132,7 +1178,7 @@
     };
     delete state.savedAt;
     delete state.contacts;
-    state.messages = (state.messages || []).map(m => ({ speaker: '', body: '', portrait: '', side: 'left', time: '', bodyImage: '', bodyImageOriginal: '', ...m }));
+    state.messages = (state.messages || []).map(m => ({ speaker: '', body: '', portrait: '', portraitOriginal: '', side: 'left', time: '', bodyImage: '', bodyImageOriginal: '', ...m }));
     if (!Array.isArray(state.choices)) state.choices = [];
     if (Array.isArray(snap.contacts)) {
       saveContacts(snap.contacts);
@@ -1161,6 +1207,7 @@
       speaker: c.name || '',
       body: '',
       portrait: c.avatar || '',
+      portraitOriginal: '',
       side: 'left',
       time: '',
       bodyImage: '',
@@ -1291,7 +1338,7 @@
 
   addMessageBtn.addEventListener('click', () => {
     if (state.messages.length >= 12) { showToast('MAX 12 MESSAGES'); return; }
-    state.messages.push({ speaker: '', body: '', portrait: '', side: 'left', time: '', bodyImage: '', bodyImageOriginal: '' });
+    state.messages.push({ speaker: '', body: '', portrait: '', portraitOriginal: '', side: 'left', time: '', bodyImage: '', bodyImageOriginal: '' });
     renderMessagesEditor();
     renderPreview();
     saveState();
