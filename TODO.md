@@ -9,10 +9,10 @@ Pending issues, features, and ideas for COMMLINK. Items are removed from the lis
 3. Add DONATE button
 4. Add different themes (one more theme at first)
 5. Add different languages support
-6. Remove reset button, make export -> save and bigger
-7. Add max/whole button to crop menues
+6. Add max/whole button to crop menues
 
 ## BUGS
 
 1. On windows cropped image is 2 times smaller then chosen frame (inconsistent)
 2. Fix max 12 messages
+3. Make signal use accent color

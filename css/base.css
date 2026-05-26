@@ -216,6 +216,14 @@
 
   .btn-row { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 8px; }
   .actions { margin-top: 4px; display: flex; gap: 10px; flex-wrap: wrap; }
+  .btn.export-btn {
+    height: 48px;
+    width: 100%;
+    font-size: 15px;
+    letter-spacing: 3px;
+    --aug-tl: 12px;
+    --aug-br: 12px;
+  }
 
   .color-grid { display: flex; gap: 8px; flex-wrap: wrap; }
   .swatch {

@@ -297,8 +297,7 @@
     <div class="divider"></div>
 
     <div class="actions">
-      <button class="btn" id="exportBtn" type="button">⬇ EXPORT PNG</button>
-      <button class="btn danger" id="resetBtn" type="button">RESET</button>
+      <button class="btn export-btn" id="exportBtn" type="button">⬇ SAVE PNG</button>
     </div>
   </section>
 </main>
@@ -626,7 +625,6 @@
   const saveSnapshotBtn = $('saveSnapshot');
   const snapshotList = $('snapshotList');
   const exportBtn = $('exportBtn');
-  const resetBtn = $('resetBtn');
 
   const stage = $('stage');
   const stageBg = $('stageBg');
@@ -1366,15 +1364,6 @@
     bgFileInput.value = '';
     renderPreview();
     saveState();
-  });
-
-  resetBtn.addEventListener('click', () => {
-    if (!confirm('Reset everything to defaults? (Snapshots will be kept.)')) return;
-    storageDel(STATE_KEY);
-    state = clone(defaultState);
-    syncForm();
-    renderPreview();
-    showToast('RESET COMPLETE');
   });
 
   saveSnapshotBtn.addEventListener('click', () => {
