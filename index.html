@@ -970,6 +970,8 @@
     });
     dialog.style.setProperty('--accent', state.accent);
     stage.style.setProperty('--accent', state.accent);
+    const sb = document.getElementById('signalBars');
+    if (sb) sb.style.setProperty('--accent', state.accent);
     const gAmt = (typeof state.glitchAmount === 'number') ? state.glitchAmount : 38;
     glitchDisplacement.setAttribute('scale', gAmt);
     const sAmt = (typeof state.scanlinesAmount === 'number') ? state.scanlinesAmount : 0.18;

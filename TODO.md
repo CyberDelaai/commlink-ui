@@ -15,4 +15,3 @@ Pending issues, features, and ideas for COMMLINK. Items are removed from the lis
 
 1. On windows cropped image is 2 times smaller then chosen frame (inconsistent)
 2. Fix max 12 messages
-3. Make signal use accent color
