@@ -325,6 +325,7 @@
   const STATE_KEY = 'commlink:state';
   const SNAPSHOTS_KEY = 'commlink:snapshots';
   const CONTACTS_KEY = 'commlink:contacts';
+  const BG_ORIGINAL_KEY = 'commlink:bgOriginal';
   const OPEN_PANEL_KEY = 'commlink:openPanel';
   const SEEDED_KEY = 'commlink:seeded';
 
@@ -357,7 +358,7 @@
     glitchAmount: 38,
     scanlines: true,
     scanlinesAmount: 0.18,
-    bg: '',
+    bg: makeDefaultBg(),
     bgOriginal: '',
     bgBrightness: 0.55
   };
@@ -366,7 +367,11 @@
 
   function loadState() {
     const raw = storageGet(STATE_KEY);
-    if (!raw) return clone(defaultState);
+    if (!raw) {
+      const fresh = clone(defaultState);
+      fresh.bgOriginal = storageGet(BG_ORIGINAL_KEY) || '';
+      return fresh;
+    }
     try {
       const parsed = JSON.parse(raw);
       const merged = { ...clone(defaultState), ...parsed };
@@ -376,6 +381,17 @@
       }
       if (!Array.isArray(merged.messages)) merged.messages = [];
       merged.messages = merged.messages.map(m => ({ speaker: '', body: '', portrait: '', side: 'left', time: '', ...m }));
+      // bgOriginal lives in its own key (too large for the main state JSON).
+      // Migrate from old shape (when bgOriginal was inside state JSON).
+      const separateBg = storageGet(BG_ORIGINAL_KEY);
+      if (separateBg) {
+        merged.bgOriginal = separateBg;
+      } else if (parsed.bgOriginal) {
+        merged.bgOriginal = parsed.bgOriginal;
+        storageSet(BG_ORIGINAL_KEY, parsed.bgOriginal);
+      } else {
+        merged.bgOriginal = '';
+      }
       return merged;
     } catch {
       return clone(defaultState);
@@ -385,7 +401,13 @@
   function clone(o) { return JSON.parse(JSON.stringify(o)); }
 
   function saveState() {
-    storageSet(STATE_KEY, JSON.stringify(state));
+    const { bgOriginal, ...slim } = state;
+    storageSet(STATE_KEY, JSON.stringify(slim));
+    if (bgOriginal) {
+      storageSet(BG_ORIGINAL_KEY, bgOriginal);
+    } else {
+      storageDel(BG_ORIGINAL_KEY);
+    }
   }
 
   // ---------- Auto-grow textarea helper ----------
@@ -1339,8 +1361,12 @@
     const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64"><rect width="64" height="64" fill="${color}"/><text x="32" y="44" text-anchor="middle" font-family="monospace" font-size="34" font-weight="700" fill="#0b0b10">${letter}</text></svg>`;
     return 'data:image/svg+xml;base64,' + btoa(svg);
   }
+  function makeDefaultBg() {
+    const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1920 1080" preserveAspectRatio="xMidYMid slice"><defs><linearGradient id="b" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#0a0014"/><stop offset="1" stop-color="#001a2e"/></linearGradient><radialGradient id="g1" cx="0.22" cy="0.28" r="0.55"><stop offset="0" stop-color="#fcee0a" stop-opacity="0.32"/><stop offset="1" stop-color="#fcee0a" stop-opacity="0"/></radialGradient><radialGradient id="g2" cx="0.82" cy="0.75" r="0.5"><stop offset="0" stop-color="#ff003c" stop-opacity="0.38"/><stop offset="1" stop-color="#ff003c" stop-opacity="0"/></radialGradient><radialGradient id="g3" cx="0.55" cy="0.45" r="0.65"><stop offset="0" stop-color="#00f0ff" stop-opacity="0.28"/><stop offset="1" stop-color="#00f0ff" stop-opacity="0"/></radialGradient></defs><rect width="100%" height="100%" fill="url(#b)"/><rect width="100%" height="100%" fill="url(#g1)"/><rect width="100%" height="100%" fill="url(#g2)"/><rect width="100%" height="100%" fill="url(#g3)"/></svg>`;
+    return 'data:image/svg+xml;base64,' + btoa(svg);
+  }
   function seedDefaults() {
-    const SEED_VERSION = '4';
+    const SEED_VERSION = '5';
     if (storageGet(SEEDED_KEY) === SEED_VERSION) return;
     const defaultContacts = [
       { id: 'def-johnny', name: 'JOHNNY', avatar: makeInitialAvatar('J', '#fcee0a') },

@@ -5,8 +5,8 @@ Pending issues, features, and ideas for COMMLINK. Items are removed from the lis
 ## FEATURES
 
 1. Ability to send a message with an image
-2. Default background image
-3. Background image to be added by URL
+2. Background image to be added by URL
+3. Add favicon
 4. Add ability to send "system messages"
 
 ## BUGS
