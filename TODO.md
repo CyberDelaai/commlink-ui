@@ -5,9 +5,9 @@ Pending issues, features, and ideas for COMMLINK. Items are removed from the lis
 ## FEATURES
 
 1. Background image to be added by URL
-2. Add DONATE button
-3. Add different themes (one more theme at first)
-4. Add different languages support
+2. Add different themes (one more theme at first)
+3. Add different languages support
+4. Make DIALOG CONSTRUCTOR to glitch to DIALOG FORGER once in a while
 
 ## BUGS
 

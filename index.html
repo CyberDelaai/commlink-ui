@@ -153,6 +153,22 @@
   </div>
 </aside>
 
+<aside class="side-panel" id="sideDonate" data-name="donate">
+  <button class="side-toggle side-toggle-donate" id="donateToggle" type="button" aria-label="toggle donate" data-augmented-ui="tr-clip br-clip border">
+    <span class="label">DONATE</span>
+    <span class="arrow" id="donateArrow">&gt;</span>
+  </button>
+  <div class="side-inner">
+    <h2>// INCOMING TRANSMISSION</h2>
+    <div class="donate-message">
+      <p>You jacked in. You forged dialogs worth flashing across the Net.</p>
+      <p>If DIALOG_CONSTRUCTOR lit up your screen and earned a slot in your loadout — toss some into the rig.</p>
+      <p>Every signal keeps the netrunner humming and the chrome moving.</p>
+    </div>
+    <a class="btn donate-btn" href="https://boosty.to/cyberdelaai/donate" target="_blank" rel="noopener noreferrer" data-augmented-ui="tl-clip br-clip border">HELL YEAH</a>
+  </div>
+</aside>
+
 <aside class="side-panel" id="sideSnapshots" data-name="snapshots">
   <button class="side-toggle side-toggle-2" id="snapshotsToggle" type="button" aria-label="toggle snapshots" data-augmented-ui="tr-clip br-clip border">
     <span class="label">SNAPSHOTS</span>
@@ -686,10 +702,13 @@
 
   const sideContacts = $('sideContacts');
   const sideSnapshots = $('sideSnapshots');
+  const sideDonate = $('sideDonate');
   const contactsToggle = $('contactsToggle');
   const snapshotsToggle = $('snapshotsToggle');
+  const donateToggle = $('donateToggle');
   const contactsArrow = $('contactsArrow');
   const snapshotsArrow = $('snapshotsArrow');
+  const donateArrow = $('donateArrow');
   const newContactName = $('newContactName');
   const newContactAvatar = $('newContactAvatar');
   const newAvatarPreview = $('newAvatarPreview');
@@ -1358,10 +1377,13 @@
   function setOpenPanel(name) {
     sideContacts.classList.toggle('open', name === 'contacts');
     sideSnapshots.classList.toggle('open', name === 'snapshots');
-    sideContacts.classList.toggle('peer-open', name === 'snapshots');
-    sideSnapshots.classList.toggle('peer-open', name === 'contacts');
+    sideDonate.classList.toggle('open', name === 'donate');
+    sideContacts.classList.toggle('peer-open', name && name !== 'contacts');
+    sideSnapshots.classList.toggle('peer-open', name && name !== 'snapshots');
+    sideDonate.classList.toggle('peer-open', name && name !== 'donate');
     contactsArrow.textContent = name === 'contacts' ? '<' : '>';
     snapshotsArrow.textContent = name === 'snapshots' ? '<' : '>';
+    donateArrow.textContent = name === 'donate' ? '<' : '>';
     storageSet(OPEN_PANEL_KEY, name || '');
   }
   contactsToggle.addEventListener('click', () => {
@@ -1369,6 +1391,9 @@
   });
   snapshotsToggle.addEventListener('click', () => {
     setOpenPanel(sideSnapshots.classList.contains('open') ? '' : 'snapshots');
+  });
+  donateToggle.addEventListener('click', () => {
+    setOpenPanel(sideDonate.classList.contains('open') ? '' : 'donate');
   });
   setOpenPanel(storageGet(OPEN_PANEL_KEY) || '');
 
