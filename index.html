@@ -179,15 +179,12 @@
     </div>
     <div class="stage scanlines" id="stage" data-augmented-ui="tl-clip tr-clip-x br-clip bl-clip-x border">
       <div id="stageBg"></div>
+      <span class="stage-channel top" id="pMeta"></span>
       <div class="dialog" id="dialog" data-augmented-ui="tl-clip tr-clip-x br-clip bl-clip-x t-clip-x b-clip-x border">
-        <div class="dialog-head">
-          <span class="pip"></span>
-          <span class="channel" id="pMeta"></span>
-          <span class="channel right" id="pMetaRight"></span>
-        </div>
         <div class="messages" id="pMessages"></div>
         <div class="choices" id="pChoices"></div>
       </div>
+      <span class="stage-channel bottom" id="pMetaRight"></span>
     </div>
   </section>
 
@@ -196,12 +193,12 @@
     <h2>// CONFIG</h2>
 
     <div class="field">
-      <label for="meta">Channel — Left</label>
-      <input type="text" id="meta" maxlength="40" placeholder="e.g. ENCRYPTED // 04:21" />
+      <label for="meta">Channel — Top</label>
+      <input type="text" id="meta" maxlength="40" placeholder="e.g. //ENCRYPTED" />
     </div>
 
     <div class="field">
-      <label for="metaRight">Channel — Right</label>
+      <label for="metaRight">Channel — Bottom</label>
       <input type="text" id="metaRight" maxlength="40" placeholder="e.g. //SECURE_CH 7" />
     </div>
 
@@ -296,7 +293,7 @@
 
   // ---------- State ----------
   const defaultState = {
-    meta: 'ENCRYPTED // 04:21',
+    meta: '//ENCRYPTED',
     metaRight: '',
     messages: [
       { speaker: 'JOHNNY', body: 'Wake the fuck up, samurai. We have a city to burn.', portrait: '', side: 'left', time: '04:21' },
@@ -775,6 +772,7 @@
       pChoices.appendChild(row);
     });
     dialog.style.setProperty('--accent', state.accent);
+    stage.style.setProperty('--accent', state.accent);
     stage.classList.toggle('glitch', state.glitch);
     stage.classList.toggle('scanlines', state.scanlines);
     toggleGlitchBtn.textContent = `GLITCH: ${state.glitch ? 'ON' : 'OFF'}`;

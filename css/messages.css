@@ -203,7 +203,7 @@
     --accent: var(--yellow);
     position: relative;
     margin: 40px 6%;
-    padding: 22px 28px 24px;
+    padding: 32px 28px 24px;
     color: #f5f5f8;
     font-family: 'Tektur', sans-serif;
 
@@ -213,47 +213,50 @@
     --aug-inlay-all: 0px;
     --aug-inlay-bg: rgba(8, 8, 12, 0.82);
     --aug-tl: 18px;
-    --aug-tr: 4px;
+    --aug-tr: 14px;
     --aug-br: 18px;
-    --aug-bl: 4px;
-    --aug-t: 40px;
-    --aug-t-extend1: calc(50% - 15px);
-    --aug-t-height: 3px;
-    --aug-b: 32px;
+    --aug-bl: 14px;
+    --aug-t: 20px;
+    --aug-t-extend1: calc(50% - 10px);
+    --aug-t-height: 2px;
+    --aug-b: 16px;
     --aug-b-extend1: calc(50% - 8px);
-    --aug-b-height: 3px;
+    --aug-b-height: 2px;
   }
 
-  .dialog-head {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    margin-bottom: 12px;
-    padding-bottom: 10px;
-    border-bottom: 1px solid rgba(255,255,255,0.08);
-  }
-  .dialog-head .pip {
-    width: 8px; height: 8px;
-    background: var(--accent);
-    box-shadow: 0 0 8px var(--accent);
-  }
-  .dialog-head .channel {
+  .stage-channel {
+    position: absolute;
+    left: 0;
+    right: 0;
+    z-index: 3;
     font-family: 'JetBrains Mono', monospace;
     color: rgba(255,255,255,0.78);
     font-size: 13px;
     font-weight: 500;
     letter-spacing: 1.5px;
     text-transform: uppercase;
+    text-align: center;
+    text-shadow: 0 0 4px rgba(0, 0, 0, 0.7);
+    pointer-events: none;
   }
-  .dialog-head .channel:empty::before {
+  .stage-channel.top { top: 24px; }
+  .stage-channel.top:not(:empty)::before {
+    content: '';
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    background: var(--accent, var(--yellow));
+    box-shadow: 0 0 8px var(--accent, var(--yellow));
+    vertical-align: middle;
+    margin-right: 10px;
+    transform: translateY(-1px);
+  }
+  .stage-channel.bottom { bottom: 24px; }
+  .stage-channel.top:empty::before {
     content: 'COMMLINK';
     color: rgba(255,255,255,0.35);
   }
-  .dialog-head .channel.right {
-    margin-left: auto;
-    text-align: right;
-  }
-  .dialog-head .channel.right:empty::before { content: ''; }
+  .stage-channel.bottom:empty { display: none; }
 
   .messages {
     display: flex;
