@@ -858,10 +858,7 @@
         tryPasteImage(openBodyImageCrop);
       });
       row.querySelector('[data-body-img-recrop]').addEventListener('click', () => {
-        const original = state.messages[i].bodyImageOriginal;
-        const cropped = state.messages[i].bodyImage;
-        const src = original || cropped;
-        console.log('[recrop]', { i, hasOriginal: !!original, hasCropped: !!cropped, originalLen: (original || '').length, croppedLen: (cropped || '').length, usingOriginal: !!original });
+        const src = state.messages[i].bodyImageOriginal || state.messages[i].bodyImage;
         if (!src) { showToast('NO IMG'); return; }
         openBodyImageCrop(src, true);
       });
