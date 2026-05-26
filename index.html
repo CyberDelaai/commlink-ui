@@ -347,8 +347,8 @@
     meta: '//ENCRYPTED',
     metaRight: '',
     messages: [
-      { speaker: 'JOHNNY', body: 'Wake the fuck up, samurai. We have a city to burn.', portrait: makeInitialAvatar('J', '#fcee0a'), side: 'left', time: '04:21' },
-      { speaker: 'V', body: 'Give me a second. Head\'s still ringing.', portrait: makeInitialAvatar('V', '#00f0ff'), side: 'right', time: '04:22' }
+      { speaker: 'JOHNNY', body: 'Wake the fuck up, samurai. We have a city to burn.', portrait: makeInitialAvatar('J', '#fcee0a'), side: 'left', time: '04:21', bodyImage: '' },
+      { speaker: 'V', body: 'Give me a second. Head\'s still ringing.', portrait: makeInitialAvatar('V', '#00f0ff'), side: 'right', time: '04:22', bodyImage: '' }
     ],
     choices: [
       "I'm in. Where do we start?",
@@ -381,7 +381,7 @@
         merged.messages = [{ speaker: parsed.speaker || '', body: parsed.body || '' }];
       }
       if (!Array.isArray(merged.messages)) merged.messages = [];
-      merged.messages = merged.messages.map(m => ({ speaker: '', body: '', portrait: '', side: 'left', time: '', ...m }));
+      merged.messages = merged.messages.map(m => ({ speaker: '', body: '', portrait: '', side: 'left', time: '', bodyImage: '', ...m }));
       // bgOriginal lives in its own key (too large for the main state JSON).
       // Migrate from old shape (when bgOriginal was inside state JSON).
       const separateBg = storageGet(BG_ORIGINAL_KEY);
@@ -427,12 +427,14 @@
   const cropCancelBtn = document.getElementById('cropCancel');
   let cropOnConfirm = null;
   let cropAspect = 1;     // width / height
+  let cropFree = false;   // true → resize w/h independently
   let cropOutW = 256;
   let cropOutH = 256;
 
   function openCrop(dataUrl, onConfirm, opts) {
     opts = opts || {};
     cropAspect = opts.aspect || 1;
+    cropFree = !!opts.free;
     cropOutW = opts.outWidth || 256;
     cropOutH = opts.outHeight || 256;
     cropOnConfirm = onConfirm;
@@ -478,19 +480,25 @@
     let sh = Math.max(1, (frameRect.height - 2 * B) * scaleY);
     sw = Math.min(cropImg.naturalWidth - sx, sw);
     sh = Math.min(cropImg.naturalHeight - sy, sh);
-    console.log('[crop]', {
-      natural: [cropImg.naturalWidth, cropImg.naturalHeight],
-      imgRect: { w: imgRect.width, h: imgRect.height, l: imgRect.left, t: imgRect.top },
-      frameRect: { w: frameRect.width, h: frameRect.height, l: frameRect.left, t: frameRect.top },
-      scale: [scaleX, scaleY],
-      src: { sx, sy, sw, sh },
-      out: [cropOutW, cropOutH]
-    });
+    let outW = cropOutW;
+    let outH = cropOutH;
+    if (cropFree) {
+      // Output matches the crop frame's own aspect, capped to a max edge
+      const MAX = 800;
+      const a = sw / Math.max(1, sh);
+      if (sw >= sh) {
+        outW = Math.min(MAX, Math.round(sw));
+        outH = Math.max(1, Math.round(outW / a));
+      } else {
+        outH = Math.min(MAX, Math.round(sh));
+        outW = Math.max(1, Math.round(outH * a));
+      }
+    }
     const c = document.createElement('canvas');
-    c.width = cropOutW;
-    c.height = cropOutH;
+    c.width = outW;
+    c.height = outH;
     const ctx = c.getContext('2d');
-    ctx.drawImage(cropImg, sx, sy, sw, sh, 0, 0, cropOutW, cropOutH);
+    ctx.drawImage(cropImg, sx, sy, sw, sh, 0, 0, outW, outH);
     return c.toDataURL('image/png');
   }
   cropConfirmBtn.addEventListener('click', () => {
@@ -534,16 +542,22 @@
       t = Math.max(imgY0, Math.min(imgY1 - cropFrame.offsetHeight, t));
       cropFrame.style.left = l + 'px';
       cropFrame.style.top = t + 'px';
+    } else if (cropFree) {
+      // Free resize: width and height change independently
+      const maxW = imgX1 - cropDrag.left;
+      const maxH = imgY1 - cropDrag.top;
+      const newW = Math.max(32, Math.min(maxW, (cropDrag.w || cropDrag.size) + dx));
+      const newH = Math.max(32, Math.min(maxH, (cropDrag.h || cropDrag.size) + dy));
+      cropFrame.style.width = newW + 'px';
+      cropFrame.style.height = newH + 'px';
     } else {
       // Resize preserving cropAspect (width / height)
-      // Drive by the larger of dx, dy normalized to the aspect
       const wDelta = dx;
       const hDelta = dy * cropAspect;
       const delta = Math.max(wDelta, hDelta);
       const startW = cropDrag.w || cropDrag.size;
       const newW = Math.max(32, startW + delta);
       const newH = newW / cropAspect;
-      // Constrain to image bounds
       const maxW = imgX1 - cropDrag.left;
       const maxH = imgY1 - cropDrag.top;
       let finalW = Math.min(newW, maxW);
@@ -641,6 +655,8 @@
 
   // ---------- Render ----------
   function renderMessagesEditor() {
+    // Remove any image popups that were portaled to <body>
+    document.querySelectorAll('body > .img-popup').forEach(p => p.remove());
     messagesWrap.innerHTML = '';
     state.messages.forEach((m, i) => {
       const row = document.createElement('div');
@@ -664,13 +680,24 @@
             <span class="idx">MSG ${String(i + 1).padStart(2, '0')}</span>
             <input type="text" class="speaker-input" maxlength="40" placeholder="Speaker" />
             <input type="text" class="time-input" maxlength="20" placeholder="time" />
+            <button class="btn cyan icon" type="button" data-save-contact aria-label="save as contact" title="Save as contact">
+              <svg class="mi" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M17 3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V7l-4-4zm-5 16c-1.66 0-3-1.34-3-3s1.34-3 3-3 3 1.34 3 3-1.34 3-3 3zm3-10H5V5h10v4z"/></svg>
+            </button>
             <button class="btn danger icon" type="button" aria-label="remove" data-remove>✕</button>
           </div>
           <textarea class="body-input" maxlength="500" placeholder="Message text..."></textarea>
           <div class="msg-row-toolbar">
-            <button class="btn cyan icon" type="button" data-save-contact aria-label="save as contact" title="Save as contact">
-              <svg class="mi" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M17 3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V7l-4-4zm-5 16c-1.66 0-3-1.34-3-3s1.34-3 3-3 3 1.34 3 3-1.34 3-3 3zm3-10H5V5h10v4z"/></svg>
-            </button>
+            <div class="img-popup-wrap">
+              <button class="btn cyan icon img-toggle${m.bodyImage ? ' has-image' : ''}" type="button" data-img-toggle title="Image options">+ IMG</button>
+              <div class="img-popup" hidden>
+                <div class="body-img-preview" data-body-img></div>
+                <input type="file" accept="image/*" class="body-img-file" id="body-img-${i}" />
+                <label class="btn cyan icon body-img-upload" for="body-img-${i}" title="Upload image">UPLOAD</label>
+                <button class="btn cyan icon" type="button" data-body-img-paste title="Paste image">PASTE</button>
+                <button class="btn cyan icon" type="button" data-body-img-recrop title="Recrop current image">RECROP</button>
+                <button class="btn danger icon" type="button" data-body-img-clear title="Remove image">CLEAR</button>
+              </div>
+            </div>
             <span class="toolbar-spacer"></span>
             <button class="btn ghost icon" type="button" data-up aria-label="move up" ${i === 0 ? 'disabled' : ''}>↑</button>
             <button class="btn ghost icon" type="button" data-down aria-label="move down" ${i === state.messages.length - 1 ? 'disabled' : ''}>↓</button>
@@ -727,6 +754,90 @@
         renderPreview();
         saveState();
       });
+
+      // Body image controls (popup)
+      const bodyImgPreview = row.querySelector('[data-body-img]');
+      const bodyImgInput = row.querySelector('.body-img-file');
+      const imgToggle = row.querySelector('[data-img-toggle]');
+      const imgPopup = row.querySelector('.img-popup');
+      if (m.bodyImage) {
+        bodyImgPreview.style.backgroundImage = `url("${m.bodyImage}")`;
+        imgToggle.style.backgroundImage = `url("${m.bodyImage}")`;
+      }
+      const syncImgToggle = (dataUrl) => {
+        if (dataUrl) {
+          imgToggle.classList.add('has-image');
+          imgToggle.style.backgroundImage = `url("${dataUrl}")`;
+        } else {
+          imgToggle.classList.remove('has-image');
+          imgToggle.style.backgroundImage = '';
+        }
+      };
+      const applyBodyImage = (dataUrl) => {
+        state.messages[i].bodyImage = dataUrl;
+        bodyImgPreview.style.backgroundImage = `url("${dataUrl}")`;
+        syncImgToggle(dataUrl);
+        renderPreview();
+        saveState();
+        showToast('IMG ATTACHED');
+      };
+      // Toggle popup open/close — portal to <body> so it escapes the panel's clip-path
+      const positionPopup = () => {
+        const r = imgToggle.getBoundingClientRect();
+        imgPopup.style.left = r.left + 'px';
+        imgPopup.style.top = (r.bottom + 6) + 'px';
+      };
+      imgToggle.addEventListener('click', (e) => {
+        e.stopPropagation();
+        // No image yet → go straight to file picker
+        if (!state.messages[i].bodyImage) {
+          bodyImgInput.click();
+          return;
+        }
+        const opening = imgPopup.hidden;
+        document.querySelectorAll('.img-popup').forEach(p => { p.hidden = true; });
+        if (opening) {
+          if (imgPopup.parentNode !== document.body) document.body.appendChild(imgPopup);
+          imgPopup.hidden = false;
+          positionPopup();
+        }
+      });
+      imgPopup.addEventListener('click', (e) => e.stopPropagation());
+      // Crop modal in free mode — width and height resize independently
+      const openBodyImageCrop = (dataUrl) => {
+        const probe = new Image();
+        probe.onload = () => {
+          const aspect = probe.naturalWidth / Math.max(1, probe.naturalHeight);
+          openCrop(dataUrl, applyBodyImage, { aspect, free: true });
+        };
+        probe.onerror = () => applyBodyImage(dataUrl);
+        probe.src = dataUrl;
+      };
+      bodyImgInput.addEventListener('change', (e) => {
+        const f = e.target.files && e.target.files[0];
+        if (!f) return;
+        const reader = new FileReader();
+        reader.onload = (ev) => openBodyImageCrop(ev.target.result);
+        reader.readAsDataURL(f);
+        bodyImgInput.value = '';
+      });
+      row.querySelector('[data-body-img-paste]').addEventListener('click', () => {
+        tryPasteImage(openBodyImageCrop);
+      });
+      row.querySelector('[data-body-img-recrop]').addEventListener('click', () => {
+        const src = state.messages[i].bodyImage;
+        if (!src) { showToast('NO IMG'); return; }
+        openBodyImageCrop(src);
+      });
+      row.querySelector('[data-body-img-clear]').addEventListener('click', () => {
+        state.messages[i].bodyImage = '';
+        bodyImgPreview.style.backgroundImage = '';
+        syncImgToggle('');
+        imgPopup.hidden = true;
+        renderPreview();
+        saveState();
+      });
+
       row.querySelector('[data-up]').addEventListener('click', () => {
         if (i === 0) return;
         const [m] = state.messages.splice(i, 1);
@@ -825,7 +936,7 @@
 
     pMessages.innerHTML = '';
     state.messages.forEach((m) => {
-      if (!m.speaker.trim() && !m.body.trim() && !m.portrait && !(m.time && m.time.trim())) return;
+      if (!m.speaker.trim() && !m.body.trim() && !m.portrait && !(m.time && m.time.trim()) && !m.bodyImage) return;
       const el = document.createElement('div');
       const side = m.side === 'right' ? 'right' : 'left';
       el.className = 'message ' + side + (m.portrait ? ' has-portrait' : '');
@@ -837,6 +948,13 @@
       el.querySelector('.name').textContent = m.speaker || '—';
       el.querySelector('.time').textContent = (m.time || '').trim();
       el.querySelector('.body').textContent = m.body || '';
+      if (m.bodyImage) {
+        const img = document.createElement('img');
+        img.className = 'body-image';
+        img.src = m.bodyImage;
+        img.alt = '';
+        el.querySelector('.content').appendChild(img);
+      }
       pMessages.appendChild(el);
     });
 
@@ -978,7 +1096,7 @@
     };
     delete state.savedAt;
     delete state.contacts;
-    state.messages = (state.messages || []).map(m => ({ speaker: '', body: '', portrait: '', side: 'left', time: '', ...m }));
+    state.messages = (state.messages || []).map(m => ({ speaker: '', body: '', portrait: '', side: 'left', time: '', bodyImage: '', ...m }));
     if (!Array.isArray(state.choices)) state.choices = [];
     if (Array.isArray(snap.contacts)) {
       saveContacts(snap.contacts);
@@ -1008,7 +1126,8 @@
       body: '',
       portrait: c.avatar || '',
       side: 'left',
-      time: ''
+      time: '',
+      bodyImage: ''
     });
     renderMessagesEditor();
     renderPreview();
@@ -1065,11 +1184,15 @@
   // Close any open side panel when clicking outside it
   document.addEventListener('click', (e) => {
     const openPanel = document.querySelector('.side-panel.open');
-    if (!openPanel) return;
-    if (openPanel.contains(e.target)) return;
-    // Don't close when clicking inside the crop modal either
-    if (cropModal && !cropModal.hidden && cropModal.contains(e.target)) return;
-    setOpenPanel('');
+    if (openPanel && !openPanel.contains(e.target) && !(cropModal && !cropModal.hidden && cropModal.contains(e.target))) {
+      setOpenPanel('');
+    }
+    // Close any open image popup if click is outside its wrap
+    document.querySelectorAll('.img-popup').forEach((popup) => {
+      if (popup.hidden) return;
+      const wrap = popup.closest('.img-popup-wrap');
+      if (wrap && !wrap.contains(e.target)) popup.hidden = true;
+    });
   });
 
   // New-contact form
@@ -1131,7 +1254,7 @@
 
   addMessageBtn.addEventListener('click', () => {
     if (state.messages.length >= 12) { showToast('MAX 12 MESSAGES'); return; }
-    state.messages.push({ speaker: '', body: '', portrait: '', side: 'left', time: '' });
+    state.messages.push({ speaker: '', body: '', portrait: '', side: 'left', time: '', bodyImage: '' });
     renderMessagesEditor();
     renderPreview();
     saveState();

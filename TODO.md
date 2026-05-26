@@ -4,10 +4,15 @@ Pending issues, features, and ideas for COMMLINK. Items are removed from the lis
 
 ## FEATURES
 
-1. Ability to send a message with an image
-2. Background image to be added by URL
-3. Add ability to send "system messages"
+1. Background image to be added by URL
+2. Add ability to send "system messages"
+3. Add DONATE button
+4. Add different themes (one more theme at first)
+5. Add different languages support
+6. Remove reset button, make export -> save and bigger
+7. Add max/whole button to crop menues
 
 ## BUGS
 
-1. On windows cropped image is 2 times smaller then chosen frame
+1. On windows cropped image is 2 times smaller then chosen frame (inconsistent)
+2. Fix max 12 messages
