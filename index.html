@@ -314,6 +314,7 @@
       </div>
     </div>
     <div class="crop-actions">
+      <button class="btn cyan" id="cropMax" type="button" title="Select whole image">MAX</button>
       <button class="btn" id="cropConfirm" type="button">USE</button>
       <button class="btn danger" id="cropCancel" type="button">CANCEL</button>
     </div>
@@ -380,7 +381,7 @@
         merged.messages = [{ speaker: parsed.speaker || '', body: parsed.body || '' }];
       }
       if (!Array.isArray(merged.messages)) merged.messages = [];
-      merged.messages = merged.messages.map(m => ({ speaker: '', body: '', portrait: '', side: 'left', time: '', bodyImage: '', ...m }));
+      merged.messages = merged.messages.map(m => ({ speaker: '', body: '', portrait: '', side: 'left', time: '', bodyImage: '', bodyImageOriginal: '', ...m }));
       // bgOriginal lives in its own key (too large for the main state JSON).
       // Migrate from old shape (when bgOriginal was inside state JSON).
       const separateBg = storageGet(BG_ORIGINAL_KEY);
@@ -424,6 +425,7 @@
   const cropHandle = document.getElementById('cropHandle');
   const cropConfirmBtn = document.getElementById('cropConfirm');
   const cropCancelBtn = document.getElementById('cropCancel');
+  const cropMaxBtn = document.getElementById('cropMax');
   let cropOnConfirm = null;
   let cropAspect = 1;     // width / height
   let cropFree = false;   // true → resize w/h independently
@@ -437,6 +439,8 @@
     cropOutW = opts.outWidth || 256;
     cropOutH = opts.outHeight || 256;
     cropOnConfirm = onConfirm;
+    // Close any image popup so it doesn't overlay the crop modal
+    document.querySelectorAll('.img-popup').forEach(p => { p.hidden = true; });
     cropImg.onload = () => {
       requestAnimationFrame(() => {
         const stageRect = cropStage.getBoundingClientRect();
@@ -464,6 +468,8 @@
     cropModal.hidden = true;
     cropOnConfirm = null;
     cropImg.src = '';
+    // Also close any open image popup
+    document.querySelectorAll('.img-popup').forEach(p => { p.hidden = true; });
   }
   function doCrop() {
     const imgRect = cropImg.getBoundingClientRect();
@@ -507,6 +513,31 @@
     if (cb) cb(result);
   });
   cropCancelBtn.addEventListener('click', closeCrop);
+  cropMaxBtn.addEventListener('click', () => {
+    const stageRect = cropStage.getBoundingClientRect();
+    const imgRect = cropImg.getBoundingClientRect();
+    const sx = imgRect.left - stageRect.left;
+    const sy = imgRect.top - stageRect.top;
+    if (cropFree) {
+      cropFrame.style.left = sx + 'px';
+      cropFrame.style.top = sy + 'px';
+      cropFrame.style.width = imgRect.width + 'px';
+      cropFrame.style.height = imgRect.height + 'px';
+    } else {
+      let w, h;
+      if (imgRect.width / Math.max(1, imgRect.height) > cropAspect) {
+        h = imgRect.height;
+        w = h * cropAspect;
+      } else {
+        w = imgRect.width;
+        h = w / cropAspect;
+      }
+      cropFrame.style.width = w + 'px';
+      cropFrame.style.height = h + 'px';
+      cropFrame.style.left = (sx + (imgRect.width - w) / 2) + 'px';
+      cropFrame.style.top = (sy + (imgRect.height - h) / 2) + 'px';
+    }
+  });
   cropModal.addEventListener('click', (e) => { if (e.target === cropModal) closeCrop(); });
 
   // Drag + resize for the crop frame
@@ -802,7 +833,11 @@
       });
       imgPopup.addEventListener('click', (e) => e.stopPropagation());
       // Crop modal in free mode — width and height resize independently
-      const openBodyImageCrop = (dataUrl) => {
+      const openBodyImageCrop = (dataUrl, isOriginal) => {
+        if (!isOriginal) {
+          state.messages[i].bodyImageOriginal = dataUrl;
+          saveState();
+        }
         const probe = new Image();
         probe.onload = () => {
           const aspect = probe.naturalWidth / Math.max(1, probe.naturalHeight);
@@ -823,12 +858,16 @@
         tryPasteImage(openBodyImageCrop);
       });
       row.querySelector('[data-body-img-recrop]').addEventListener('click', () => {
-        const src = state.messages[i].bodyImage;
+        const original = state.messages[i].bodyImageOriginal;
+        const cropped = state.messages[i].bodyImage;
+        const src = original || cropped;
+        console.log('[recrop]', { i, hasOriginal: !!original, hasCropped: !!cropped, originalLen: (original || '').length, croppedLen: (cropped || '').length, usingOriginal: !!original });
         if (!src) { showToast('NO IMG'); return; }
-        openBodyImageCrop(src);
+        openBodyImageCrop(src, true);
       });
       row.querySelector('[data-body-img-clear]').addEventListener('click', () => {
         state.messages[i].bodyImage = '';
+        state.messages[i].bodyImageOriginal = '';
         bodyImgPreview.style.backgroundImage = '';
         syncImgToggle('');
         imgPopup.hidden = true;
@@ -1096,7 +1135,7 @@
     };
     delete state.savedAt;
     delete state.contacts;
-    state.messages = (state.messages || []).map(m => ({ speaker: '', body: '', portrait: '', side: 'left', time: '', bodyImage: '', ...m }));
+    state.messages = (state.messages || []).map(m => ({ speaker: '', body: '', portrait: '', side: 'left', time: '', bodyImage: '', bodyImageOriginal: '', ...m }));
     if (!Array.isArray(state.choices)) state.choices = [];
     if (Array.isArray(snap.contacts)) {
       saveContacts(snap.contacts);
@@ -1127,7 +1166,8 @@
       portrait: c.avatar || '',
       side: 'left',
       time: '',
-      bodyImage: ''
+      bodyImage: '',
+      bodyImageOriginal: ''
     });
     renderMessagesEditor();
     renderPreview();
@@ -1254,7 +1294,7 @@
 
   addMessageBtn.addEventListener('click', () => {
     if (state.messages.length >= 12) { showToast('MAX 12 MESSAGES'); return; }
-    state.messages.push({ speaker: '', body: '', portrait: '', side: 'left', time: '', bodyImage: '' });
+    state.messages.push({ speaker: '', body: '', portrait: '', side: 'left', time: '', bodyImage: '', bodyImageOriginal: '' });
     renderMessagesEditor();
     renderPreview();
     saveState();

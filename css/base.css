@@ -352,3 +352,4 @@
     justify-content: flex-end;
     margin-top: 18px;
   }
+  .crop-actions #cropMax { margin-right: auto; }

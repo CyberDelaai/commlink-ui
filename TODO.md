@@ -9,7 +9,6 @@ Pending issues, features, and ideas for COMMLINK. Items are removed from the lis
 3. Add DONATE button
 4. Add different themes (one more theme at first)
 5. Add different languages support
-6. Add max/whole button to crop menues
 
 ## BUGS
 
