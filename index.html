@@ -944,6 +944,7 @@
     const snaps = loadSnapshots();
     const snap = snaps[name];
     if (!snap) return;
+    if (!confirm(`Load snapshot "${name}"? Your current dialog and contacts will be replaced.`)) return;
     state = {
       ...clone(defaultState),
       ...snap
