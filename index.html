@@ -1688,7 +1688,7 @@
     return 'data:image/svg+xml;base64,' + btoa(svg);
   }
   function seedDefaults() {
-    const SEED_VERSION = '7';
+    const SEED_VERSION = '8';
     if (storageGet(SEEDED_KEY) === SEED_VERSION) return;
     const defaultContacts = [
       { id: 'def-johnny', name: 'JOHNNY', avatar: makeInitialAvatar('J', '#fcee0a') },
