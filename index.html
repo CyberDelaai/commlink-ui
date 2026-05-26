@@ -146,6 +146,9 @@
       </div>
     </div>
     <div class="contact-list" id="contactList"></div>
+    <div class="contact-list-footer">
+      <button class="btn danger icon" id="clearContacts" type="button">CLEAR ALL</button>
+    </div>
   </div>
 </aside>
 
@@ -609,6 +612,7 @@
   const newContactAvatar = $('newContactAvatar');
   const newAvatarPreview = $('newAvatarPreview');
   const clearNewAvatarBtn = $('clearNewAvatar');
+  const clearContactsBtn = $('clearContacts');
   const addContactBtn = $('addContact');
   const contactList = $('contactList');
 
@@ -1065,6 +1069,14 @@
     newAvatarData = '';
     newContactAvatar.value = '';
     newAvatarPreview.style.backgroundImage = 'none';
+  });
+  clearContactsBtn.addEventListener('click', () => {
+    const list = loadContacts();
+    if (list.length === 0) return;
+    if (!confirm(`Delete all ${list.length} contact(s)?`)) return;
+    saveContacts([]);
+    renderContacts();
+    showToast('CONTACTS CLEARED');
   });
   addContactBtn.addEventListener('click', () => {
     const name = newContactName.value.trim();

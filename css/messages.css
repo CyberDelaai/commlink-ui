@@ -1,4 +1,6 @@
 /* Messages — editor rows + dialog frame + message/choice preview */
+  #clearMessages { margin-left: auto; }
+
   .msg-row {
     background: var(--panel-2);
     padding: 10px 12px;

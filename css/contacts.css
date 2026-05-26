@@ -109,6 +109,14 @@
   }
   .contact-form-row input[type="text"]:focus { border-color: var(--yellow); }
 
+  .contact-list-footer {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 10px;
+  }
+  .contact-list:empty + .contact-list-footer {
+    display: none;
+  }
   .contact-list {
     display: flex;
     flex-direction: column;
