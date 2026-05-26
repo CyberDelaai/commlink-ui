@@ -117,6 +117,42 @@
     color: var(--bg);
     font-weight: 700;
   }
+
+  /* FX toggles (GLITCH / SCANLINES) — same shape, accent-colored active label */
+  .fx-grid {
+    display: grid;
+    grid-template-columns: auto auto 1fr;
+    gap: 8px 10px;
+    align-items: center;
+  }
+  .fx-grid .side-switch.fx { justify-self: end; }
+  .fx-toggle {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .fx-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 1.5px;
+    color: var(--cyan);
+    text-transform: uppercase;
+  }
+  .side-switch.fx { width: 70px; }
+  .side-switch.fx:hover { border-color: var(--cyan); }
+  .side-switch.fx .thumb {
+    background: color-mix(in srgb, var(--cyan) 22%, transparent);
+  }
+  .side-switch.fx[data-pos="left"] .lab.l,
+  .side-switch.fx[data-pos="right"] .lab.r {
+    color: var(--cyan);
+    font-weight: 700;
+  }
+  .side-switch.fx[data-pos="left"] .lab.r,
+  .side-switch.fx[data-pos="right"] .lab.l {
+    color: var(--dim);
+    font-weight: 400;
+  }
   .msg-row textarea {
     width: 100%;
     background: var(--panel);
@@ -213,11 +249,11 @@
     --aug-inlay-all: 0px;
     --aug-inlay-bg: rgba(8, 8, 12, 0.82);
     --aug-tl: 18px;
-    --aug-tr: 14px;
+    --aug-tr: 20px;
     --aug-br: 18px;
     --aug-bl: 14px;
-    --aug-t: 20px;
-    --aug-t-extend1: calc(50% - 10px);
+    --aug-t: 16px;
+    --aug-t-extend1: calc(50% - 8px);
     --aug-t-height: 2px;
     --aug-b: 16px;
     --aug-b-extend1: calc(50% - 8px);
@@ -366,14 +402,39 @@
     margin-right: 2px;
   }
 
-  .stage.glitch .dialog .message .body {
-    animation: textGlitch 4.5s infinite;
+  /* ---------- Signal-strength bars ---------- */
+  .stage-wrap { position: relative; }
+  .signal-bars {
+    position: absolute;
+    top: 30px;
+    right: 30px;
+    z-index: 5;
+    display: flex;
+    align-items: flex-end;
+    gap: 3px;
+    height: 16px;
+    pointer-events: none;
   }
-  @keyframes textGlitch {
-    0%, 92%, 100% { transform: translate(0,0); text-shadow: 0 0 1px rgba(0,0,0,0.6); }
-    93% { transform: translate(-1px, 0); text-shadow: 1px 0 var(--magenta), -1px 0 var(--cyan); }
-    95% { transform: translate(1px, 0); text-shadow: -1px 0 var(--magenta), 1px 0 var(--cyan); }
-    97% { transform: translate(0, 1px); text-shadow: 0 0 1px rgba(0,0,0,0.6); }
+  .signal-bars .bar {
+    display: block;
+    width: 3px;
+    background: rgba(255, 255, 255, 0.18);
+    transition: background 0.15s, box-shadow 0.15s;
+  }
+  .signal-bars .bar:nth-child(1) { height: 3px; }
+  .signal-bars .bar:nth-child(2) { height: 7px; }
+  .signal-bars .bar:nth-child(3) { height: 10px; }
+  .signal-bars .bar:nth-child(4) { height: 13px; }
+  .signal-bars .bar:nth-child(5) { height: 16px; }
+  .signal-bars .bar.on {
+    background: var(--accent, var(--yellow));
+    box-shadow: 0 0 5px var(--accent, var(--yellow));
+  }
+
+  /* ---------- Glitch (static hard-slice tearing) ---------- */
+  .stage.glitch .dialog,
+  .stage.glitch .stage-channel {
+    filter: url(#glitch-slices);
   }
 
   .stage.scanlines::before {
@@ -383,8 +444,8 @@
     pointer-events: none;
     background: repeating-linear-gradient(
       0deg,
-      rgba(0,0,0,0.18) 0px,
-      rgba(0,0,0,0.18) 1px,
+      rgba(0, 0, 0, var(--scanline-alpha, 0.18)) 0px,
+      rgba(0, 0, 0, var(--scanline-alpha, 0.18)) 1px,
       transparent 1px,
       transparent 3px
     );

@@ -215,7 +215,7 @@
   .btn.icon { padding: 0 10px; font-size: 13px; --aug-tl: 4px; --aug-br: 4px; }
 
   .btn-row { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 8px; }
-  .actions { margin-top: 18px; padding-top: 18px; border-top: 1px solid rgba(252, 238, 10, 0.15); display: flex; gap: 10px; flex-wrap: wrap; }
+  .actions { margin-top: 4px; display: flex; gap: 10px; flex-wrap: wrap; }
 
   .color-grid { display: flex; gap: 8px; flex-wrap: wrap; }
   .swatch {
@@ -252,6 +252,19 @@
 
   .file-label {
     cursor: pointer;
+  }
+
+  .divider {
+    height: 1px;
+    margin: 16px 0;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      rgba(0, 240, 255, 0.35) 20%,
+      rgba(252, 238, 10, 0.35) 50%,
+      rgba(0, 240, 255, 0.35) 80%,
+      transparent
+    );
   }
 
   /* ---------- Crop modal ---------- */

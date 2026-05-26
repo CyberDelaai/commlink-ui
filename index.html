@@ -111,6 +111,19 @@
 </head>
 <body>
 
+<svg width="0" height="0" style="position:absolute;width:0;height:0" aria-hidden="true">
+  <defs>
+    <filter id="glitch-slices" x="-10%" y="0%" width="120%" height="100%" color-interpolation-filters="sRGB">
+      <feTurbulence type="fractalNoise" baseFrequency="0.0008 0.09" numOctaves="1" seed="7" result="noise" />
+      <feColorMatrix in="noise" type="matrix" result="constMap" values="1 0 0 0 0   0 0 0 0 0.5   0 0 0 0 0   0 0 0 0 1" />
+      <feComponentTransfer in="constMap" result="discMap">
+        <feFuncR type="discrete" tableValues="0.46 0.52 0.5 0.48 0.55 0.5 0.45 0.53 0.5 0.49" />
+      </feComponentTransfer>
+      <feDisplacementMap id="glitchDisplacement" in="SourceGraphic" in2="discMap" scale="38" xChannelSelector="R" yChannelSelector="G" />
+    </filter>
+  </defs>
+</svg>
+
 <aside class="side-panel" id="sideContacts" data-name="contacts">
   <button class="side-toggle" id="contactsToggle" type="button" aria-label="toggle contacts" data-augmented-ui="tr-clip br-clip border">
     <span class="label">CONTACTS</span>
@@ -186,6 +199,13 @@
       </div>
       <span class="stage-channel bottom" id="pMetaRight"></span>
     </div>
+    <div class="signal-bars" id="signalBars" aria-hidden="true">
+      <span class="bar"></span>
+      <span class="bar"></span>
+      <span class="bar"></span>
+      <span class="bar"></span>
+      <span class="bar"></span>
+    </div>
   </section>
 
   <!-- Config -->
@@ -223,13 +243,35 @@
       </div>
     </div>
 
+    <div class="divider"></div>
+
     <div class="field">
       <label>FX</label>
-      <div class="btn-row">
-        <button class="btn ghost" id="toggleGlitch" type="button">GLITCH: OFF</button>
-        <button class="btn ghost" id="toggleScanlines" type="button">SCANLINES: ON</button>
+      <div class="fx-grid">
+        <span class="fx-label">GLITCH</span>
+        <button class="side-switch fx" id="toggleGlitch" type="button" data-pos="left" aria-label="toggle glitch">
+          <span class="thumb"></span>
+          <span class="lab l">OFF</span>
+          <span class="lab r">ON</span>
+        </button>
+        <div class="inline-slider-group">
+          <input type="range" id="glitchAmount" min="0" max="80" step="2" value="38" />
+          <span class="brightness-val" id="glitchAmountVal">38</span>
+        </div>
+        <span class="fx-label">SCANLINES</span>
+        <button class="side-switch fx" id="toggleScanlines" type="button" data-pos="left" aria-label="toggle scanlines">
+          <span class="thumb"></span>
+          <span class="lab l">OFF</span>
+          <span class="lab r">ON</span>
+        </button>
+        <div class="inline-slider-group">
+          <input type="range" id="scanlinesAmount" min="0" max="1" step="0.02" value="0.18" />
+          <span class="brightness-val" id="scanlinesAmountVal">18%</span>
+        </div>
       </div>
     </div>
+
+    <div class="divider"></div>
 
     <div class="field">
       <label>Background</label>
@@ -246,6 +288,8 @@
         <span class="brightness-val" id="bgBrightnessVal">55%</span>
       </div>
     </div>
+
+    <div class="divider"></div>
 
     <div class="actions">
       <button class="btn" id="exportBtn" type="button">⬇ EXPORT PNG</button>
@@ -305,7 +349,9 @@
     ],
     accent: '#fcee0a',
     glitch: false,
+    glitchAmount: 38,
     scanlines: true,
+    scanlinesAmount: 0.18,
     bg: '',
     bgOriginal: '',
     bgBrightness: 0.55
@@ -528,6 +574,11 @@
   const clearBgBtn = $('clearBg');
   const bgBrightnessInput = $('bgBrightness');
   const bgBrightnessVal = $('bgBrightnessVal');
+  const glitchAmountInput = $('glitchAmount');
+  const glitchAmountVal = $('glitchAmountVal');
+  const glitchDisplacement = $('glitchDisplacement');
+  const scanlinesAmountInput = $('scanlinesAmount');
+  const scanlinesAmountVal = $('scanlinesAmountVal');
   const snapshotName = $('snapshotName');
   const saveSnapshotBtn = $('saveSnapshot');
   const snapshotList = $('snapshotList');
@@ -773,10 +824,29 @@
     });
     dialog.style.setProperty('--accent', state.accent);
     stage.style.setProperty('--accent', state.accent);
+    const gAmt = (typeof state.glitchAmount === 'number') ? state.glitchAmount : 38;
+    glitchDisplacement.setAttribute('scale', gAmt);
+    const sAmt = (typeof state.scanlinesAmount === 'number') ? state.scanlinesAmount : 0.18;
+    stage.style.setProperty('--scanline-alpha', sAmt);
+    // Signal bars: when glitch is off, full signal; otherwise scale by slider
+    const maxG = parseFloat(glitchAmountInput.max) || 80;
+    const effectiveGlitch = state.glitch ? gAmt : 0;
+    const litCount = Math.max(1, Math.round(5 * (1 - effectiveGlitch / maxG)));
+    const signalBars = document.getElementById('signalBars');
+    signalBars.querySelectorAll('.bar').forEach((bar, i) => {
+      bar.classList.toggle('on', i < litCount);
+    });
+    // Align signal bars to the dialog's top-right corner (inside the notch)
+    requestAnimationFrame(() => {
+      const dRect = dialog.getBoundingClientRect();
+      const wRect = signalBars.parentNode.getBoundingClientRect();
+      signalBars.style.top = (dRect.top - wRect.top - 4) + 'px';
+      signalBars.style.right = Math.max(0, wRect.right - dRect.right + 5) + 'px';
+    });
     stage.classList.toggle('glitch', state.glitch);
     stage.classList.toggle('scanlines', state.scanlines);
-    toggleGlitchBtn.textContent = `GLITCH: ${state.glitch ? 'ON' : 'OFF'}`;
-    toggleScanlinesBtn.textContent = `SCANLINES: ${state.scanlines ? 'ON' : 'OFF'}`;
+    toggleGlitchBtn.setAttribute('data-pos', state.glitch ? 'right' : 'left');
+    toggleScanlinesBtn.setAttribute('data-pos', state.scanlines ? 'right' : 'left');
     if (state.bg) {
       stageBg.style.backgroundImage = `url("${state.bg}")`;
     } else {
@@ -808,6 +878,12 @@
     const bright = (typeof state.bgBrightness === 'number') ? state.bgBrightness : 0.55;
     bgBrightnessInput.value = bright;
     bgBrightnessVal.textContent = Math.round(bright * 100) + '%';
+    const gAmt = (typeof state.glitchAmount === 'number') ? state.glitchAmount : 38;
+    glitchAmountInput.value = gAmt;
+    glitchAmountVal.textContent = String(gAmt);
+    const sAmt = (typeof state.scanlinesAmount === 'number') ? state.scanlinesAmount : 0.18;
+    scanlinesAmountInput.value = sAmt;
+    scanlinesAmountVal.textContent = Math.round(sAmt * 100) + '%';
     renderMessagesEditor();
     renderChoicesEditor();
   }
@@ -1076,6 +1152,20 @@
     renderPreview();
     saveState();
   });
+  glitchAmountInput.addEventListener('input', () => {
+    const val = parseFloat(glitchAmountInput.value);
+    state.glitchAmount = isNaN(val) ? 38 : val;
+    glitchAmountVal.textContent = String(state.glitchAmount);
+    renderPreview();
+    saveState();
+  });
+  scanlinesAmountInput.addEventListener('input', () => {
+    const val = parseFloat(scanlinesAmountInput.value);
+    state.scanlinesAmount = isNaN(val) ? 0.18 : val;
+    scanlinesAmountVal.textContent = Math.round(state.scanlinesAmount * 100) + '%';
+    renderPreview();
+    saveState();
+  });
 
   clearBgBtn.addEventListener('click', () => {
     state.bg = '';
@@ -1180,6 +1270,13 @@
   function updateStageDims() {
     const r = stage.getBoundingClientRect();
     stageDims.textContent = `${Math.round(r.width)}×${Math.round(r.height)} (×2 = ${Math.round(r.width * 2)}×${Math.round(r.height * 2)})`;
+    const sb = document.getElementById('signalBars');
+    if (sb) {
+      const dRect = dialog.getBoundingClientRect();
+      const wRect = sb.parentNode.getBoundingClientRect();
+      sb.style.top = (dRect.top - wRect.top - 4) + 'px';
+      sb.style.right = Math.max(0, wRect.right - dRect.right + 5) + 'px';
+    }
   }
   window.addEventListener('resize', () => requestAnimationFrame(updateStageDims));
 
