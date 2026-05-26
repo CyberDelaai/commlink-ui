@@ -322,6 +322,7 @@
   const SNAPSHOTS_KEY = 'commlink:snapshots';
   const CONTACTS_KEY = 'commlink:contacts';
   const OPEN_PANEL_KEY = 'commlink:openPanel';
+  const SEEDED_KEY = 'commlink:seeded';
 
   function storageSet(key, value) {
     try { localStorage.setItem(key, value); return true; }
@@ -340,8 +341,8 @@
     meta: '//ENCRYPTED',
     metaRight: '',
     messages: [
-      { speaker: 'JOHNNY', body: 'Wake the fuck up, samurai. We have a city to burn.', portrait: '', side: 'left', time: '04:21' },
-      { speaker: 'V', body: 'Give me a second. Head\'s still ringing.', portrait: '', side: 'right', time: '04:22' }
+      { speaker: 'JOHNNY', body: 'Wake the fuck up, samurai. We have a city to burn.', portrait: makeInitialAvatar('J', '#fcee0a'), side: 'left', time: '04:21' },
+      { speaker: 'V', body: 'Give me a second. Head\'s still ringing.', portrait: makeInitialAvatar('V', '#00f0ff'), side: 'right', time: '04:22' }
     ],
     choices: [
       "I'm in. Where do we start?",
@@ -900,6 +901,7 @@
   function snapshotFromState() {
     return {
       ...clone(state),
+      contacts: loadContacts(),
       savedAt: Date.now()
     };
   }
@@ -912,22 +914,26 @@
       item.className = 'snapshot-item';
       const date = new Date(snaps[name].savedAt || 0);
       const stamp = isNaN(date.getTime()) ? '' : date.toISOString().slice(5, 16).replace('T', ' ');
+      const isExample = name === 'EXAMPLE';
       item.innerHTML = `
         <span class="name"></span>
         <span class="meta"></span>
         <button class="btn cyan icon" type="button" data-load>LOAD</button>
-        <button class="btn danger icon" type="button" data-del aria-label="delete">✕</button>
+        ${isExample ? '' : '<button class="btn danger icon" type="button" data-del aria-label="delete">✕</button>'}
       `;
       item.querySelector('.name').textContent = name;
       item.querySelector('.meta').textContent = stamp;
       item.querySelector('[data-load]').addEventListener('click', () => loadSnapshotInto(name));
-      item.querySelector('[data-del]').addEventListener('click', () => {
-        if (!confirm(`Delete snapshot "${name}"?`)) return;
-        const s = loadSnapshots();
-        delete s[name];
-        persistSnapshots(s);
-        renderSnapshots();
-      });
+      const delBtn = item.querySelector('[data-del]');
+      if (delBtn) {
+        delBtn.addEventListener('click', () => {
+          if (!confirm(`Delete snapshot "${name}"?`)) return;
+          const s = loadSnapshots();
+          delete s[name];
+          persistSnapshots(s);
+          renderSnapshots();
+        });
+      }
       snapshotList.appendChild(item);
     });
     augmentButtons(snapshotList);
@@ -941,8 +947,13 @@
       ...snap
     };
     delete state.savedAt;
+    delete state.contacts;
     state.messages = (state.messages || []).map(m => ({ speaker: '', body: '', portrait: '', side: 'left', time: '', ...m }));
     if (!Array.isArray(state.choices)) state.choices = [];
+    if (Array.isArray(snap.contacts)) {
+      saveContacts(snap.contacts);
+      renderContacts();
+    }
     syncForm();
     renderPreview();
     saveState();
@@ -1007,6 +1018,8 @@
   function setOpenPanel(name) {
     sideContacts.classList.toggle('open', name === 'contacts');
     sideSnapshots.classList.toggle('open', name === 'snapshots');
+    sideContacts.classList.toggle('peer-open', name === 'snapshots');
+    sideSnapshots.classList.toggle('peer-open', name === 'contacts');
     contactsArrow.textContent = name === 'contacts' ? '<' : '>';
     snapshotsArrow.textContent = name === 'snapshots' ? '<' : '>';
     storageSet(OPEN_PANEL_KEY, name || '');
@@ -1018,6 +1031,16 @@
     setOpenPanel(sideSnapshots.classList.contains('open') ? '' : 'snapshots');
   });
   setOpenPanel(storageGet(OPEN_PANEL_KEY) || '');
+
+  // Close any open side panel when clicking outside it
+  document.addEventListener('click', (e) => {
+    const openPanel = document.querySelector('.side-panel.open');
+    if (!openPanel) return;
+    if (openPanel.contains(e.target)) return;
+    // Don't close when clicking inside the crop modal either
+    if (cropModal && !cropModal.hidden && cropModal.contains(e.target)) return;
+    setOpenPanel('');
+  });
 
   // New-contact form
   const applyNewAvatar = (dataUrl) => {
@@ -1287,7 +1310,39 @@
     showToast._t = setTimeout(() => toast.classList.remove('show'), 1800);
   }
 
+  // ---------- One-time defaults seeding ----------
+  function makeInitialAvatar(letter, color) {
+    const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64"><rect width="64" height="64" fill="${color}"/><text x="32" y="44" text-anchor="middle" font-family="monospace" font-size="34" font-weight="700" fill="#0b0b10">${letter}</text></svg>`;
+    return 'data:image/svg+xml;base64,' + btoa(svg);
+  }
+  function seedDefaults() {
+    const SEED_VERSION = '4';
+    if (storageGet(SEEDED_KEY) === SEED_VERSION) return;
+    const defaultContacts = [
+      { id: 'def-johnny', name: 'JOHNNY', avatar: makeInitialAvatar('J', '#fcee0a') },
+      { id: 'def-v', name: 'V', avatar: makeInitialAvatar('V', '#00f0ff') },
+      { id: 'def-alt', name: 'ALT', avatar: makeInitialAvatar('A', '#c800ff') },
+      { id: 'def-takemura', name: 'TAKEMURA', avatar: makeInitialAvatar('T', '#ff8800') }
+    ];
+    // Default contacts (only if user has none)
+    if (loadContacts().length === 0) {
+      saveContacts(defaultContacts);
+    }
+    // Always rewrite the example snapshot to match the current defaultState
+    const snaps = loadSnapshots();
+    // Drop any earlier example name if it lingered
+    delete snaps['EXAMPLE // wake up samurai'];
+    snaps['EXAMPLE'] = {
+      ...clone(defaultState),
+      contacts: defaultContacts,
+      savedAt: Date.now()
+    };
+    persistSnapshots(snaps);
+    storageSet(SEEDED_KEY, SEED_VERSION);
+  }
+
   // ---------- Init ----------
+  seedDefaults();
   augmentButtons();
   syncForm();
   renderPreview();
