@@ -366,7 +366,7 @@
       "Need a minute."
     ],
     accent: '#fcee0a',
-    customAccent: '',
+    customAccent: '#ff00aa',
     glitch: false,
     glitchAmount: 38,
     scanlines: true,
@@ -388,6 +388,9 @@
     try {
       const parsed = JSON.parse(raw);
       const merged = { ...clone(defaultState), ...parsed };
+      // Backfill empty customAccent with the default so the saved-swatch
+      // shows up for users created before this field had a default.
+      if (!merged.customAccent) merged.customAccent = defaultState.customAccent;
       // Migrate old shape (speaker + body) → messages[]
       if ((!Array.isArray(merged.messages) || merged.messages.length === 0) && (parsed.speaker || parsed.body)) {
         merged.messages = [{ speaker: parsed.speaker || '', body: parsed.body || '' }];
