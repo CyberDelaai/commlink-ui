@@ -1653,29 +1653,42 @@
       // Two frames so any reflow settles before we snapshot
       await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)));
 
-      const rect = stage.getBoundingClientRect();
+      // Capture .stage-wrap (so the signal-bars sibling is included), then
+      // crop off the .stage-meta header band above the stage itself.
+      const stageWrap = stage.parentNode;
+      const wrapRect = stageWrap.getBoundingClientRect();
+      const stageRect = stage.getBoundingClientRect();
       const PIXEL_RATIO = 2;
       const PAD_CSS = 15;
-      const innerDataUrl = await htmlToImage.toPng(stage, {
-        width: rect.width,
-        height: rect.height,
+      const innerDataUrl = await htmlToImage.toPng(stageWrap, {
+        width: wrapRect.width,
+        height: wrapRect.height,
         pixelRatio: PIXEL_RATIO,
         backgroundColor: '#000',
         cacheBust: true,
         skipFonts: false
       });
 
-      // Pad with a black border around the dialog
       const img = new Image();
       await new Promise((res, rej) => { img.onload = res; img.onerror = rej; img.src = innerDataUrl; });
+
+      // Crop out everything above the stage's top edge (stage-meta + gap).
+      const cropTopPx = Math.max(0, (stageRect.top - wrapRect.top) * PIXEL_RATIO);
+      const cropped = document.createElement('canvas');
+      cropped.width = img.width;
+      cropped.height = Math.max(1, img.height - cropTopPx);
+      const cctx = cropped.getContext('2d');
+      cctx.drawImage(img, 0, -cropTopPx);
+
+      // Pad with a black border around the result
       const padPx = PAD_CSS * PIXEL_RATIO;
       const padded = document.createElement('canvas');
-      padded.width = img.width + padPx * 2;
-      padded.height = img.height + padPx * 2;
+      padded.width = cropped.width + padPx * 2;
+      padded.height = cropped.height + padPx * 2;
       const ctx = padded.getContext('2d');
       ctx.fillStyle = '#000';
       ctx.fillRect(0, 0, padded.width, padded.height);
-      ctx.drawImage(img, padPx, padPx);
+      ctx.drawImage(cropped, padPx, padPx);
       const dataUrl = padded.toDataURL('image/png');
 
       const link = document.createElement('a');
