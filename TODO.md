@@ -15,4 +15,3 @@ Pending issues, features, and ideas for COMMLINK. Items are removed from the lis
 4. License info
 5. Search engines visibility enhancements
 6. Contact editing 
-7. Visualize links between contacts and displayed messages

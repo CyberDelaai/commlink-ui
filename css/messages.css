@@ -12,6 +12,31 @@
     gap: 0 8px;
     align-items: stretch;
   }
+  /* Messages without a resolvable contact link — red accent + visible badge */
+  .msg-row.no-contact {
+    border-left-color: #ff003c;
+    background: color-mix(in srgb, #ff003c 6%, var(--panel-2));
+  }
+  /* Linked-to-contact rows: speaker + avatar are locked, save-as-contact hidden */
+  .msg-row.linked .speaker-input { opacity: 0.7; cursor: default; }
+  .msg-row.linked .portrait-preview { cursor: default; }
+  .msg-row.linked [data-save-contact] { display: none; }
+  /* Sits between + IMG and the clone button in the toolbar — fills the
+     spacer so the right-side controls stay anchored. Visible only when
+     the row carries .no-contact. */
+  .no-contact-badge {
+    flex: 1;
+    text-align: center;
+    font-family: 'JetBrains Mono', monospace;
+    color: #ff003c;
+    font-size: 10px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    white-space: nowrap;
+    text-shadow: 0 0 4px color-mix(in srgb, #ff003c 50%, transparent);
+    visibility: hidden;
+  }
+  .msg-row.no-contact .no-contact-badge { visibility: visible; }
   .msg-row-divider {
     background: rgba(0, 240, 255, 0.22);
   }

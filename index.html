@@ -376,7 +376,7 @@
   //   X (first)  — almost certainly never bumped.
   //   Y (second) — bumped for major features.
   //   Z (third)  — bumped for all small changes (tweaks, fixes, polish).
-  const APP_VERSION = '1.2.7';
+  const APP_VERSION = '1.2.8';
 
   // ---------- External links ----------
   const DONATE_URL = 'https://boosty.to/cyberdelaai/donate';
@@ -510,7 +510,7 @@
         merged.messages = [{ speaker: parsed.speaker || '', body: parsed.body || '' }];
       }
       if (!Array.isArray(merged.messages)) merged.messages = [];
-      merged.messages = merged.messages.map(m => ({ type: 'normal', contactId: '', speaker: '', body: '', portrait: '', portraitOriginal: '', side: 'left', time: '', bodyImage: '', bodyImageOriginal: '', ...m }));
+      merged.messages = merged.messages.map(m => ({ type: 'normal', contactId: '', chainId: '', speaker: '', body: '', portrait: '', portraitOriginal: '', side: 'left', time: '', bodyImage: '', bodyImageOriginal: '', ...m }));
       // bgOriginal lives in its own key (too large for the main state JSON).
       // Migrate from old shape (when bgOriginal was inside state JSON).
       const separateBg = storageGet(BG_ORIGINAL_KEY);
@@ -529,6 +529,20 @@
   }
 
   function clone(o) { return JSON.parse(JSON.stringify(o)); }
+
+  function genId() {
+    return Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
+  }
+  // Two messages share a chain if they're linked to the same contact OR they
+  // carry the same chainId. Messages with empty contactId AND empty chainId
+  // are standalone.
+  function inSameChain(a, b) {
+    if (!a || !b) return false;
+    if (a === b) return true;
+    if (a.contactId && a.contactId === b.contactId) return true;
+    if (a.chainId && a.chainId === b.chainId) return true;
+    return false;
+  }
 
   // Resolve a message's display speaker + portrait. If the message is linked
   // to a contact (m.contactId), live values from the contact win; otherwise
@@ -859,6 +873,21 @@
     // Remove any image popups that were portaled to <body>
     document.querySelectorAll('body > .img-popup').forEach(p => p.remove());
     messagesWrap.innerHTML = '';
+    const initialContactIds = new Set(loadContacts().map(c => c.id));
+    // Toggle the .no-contact class for a normal-type row based on whether
+    // its message has a resolvable contact link. Pass a precomputed Set for
+    // bulk paths; handlers omit it and we re-read the contacts list.
+    function refreshNoContact(row, m, knownIds) {
+      if (!row || !m || m.type === 'system') return;
+      const ids = knownIds || new Set(loadContacts().map(c => c.id));
+      const linked = !!(m.contactId && ids.has(m.contactId));
+      row.classList.toggle('no-contact', !linked);
+      // While linked, speaker + avatar are locked. Save-as-contact is hidden
+      // (the message is already linked, nothing to save).
+      row.classList.toggle('linked', linked);
+      const sp = row.querySelector('.speaker-input');
+      if (sp) sp.disabled = linked;
+    }
     state.messages.forEach((m, i) => {
       const row = document.createElement('div');
       row.className = 'msg-row';
@@ -971,7 +1000,7 @@
                 <button class="btn danger icon" type="button" data-body-img-clear title="Remove image">CLEAR</button>
               </div>
             </div>
-            <span class="toolbar-spacer"></span>
+            <span class="no-contact-badge">${t('badge.noContact')}</span>
             <button class="btn cyan icon" type="button" data-clone aria-label="clone" title="Clone message">
               <svg class="mi" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg>
             </button>
@@ -992,6 +1021,8 @@
       sp.value = resolved.name;
       tm.value = m.time || '';
       bd.value = m.body;
+      // Lock the row's editable controls if it's linked to an existing contact.
+      refreshNoContact(row, m, initialContactIds);
       if (resolved.avatar) {
         portraitEl.style.backgroundImage = `url("${resolved.avatar}")`;
         portraitEl.classList.add('has-image');
@@ -1006,6 +1037,8 @@
         }
         cur.speaker = sp.value;
         cur.contactId = '';
+        cur.chainId = '';
+        refreshNoContact(row, cur);
         renderPreview();
         saveState();
       });
@@ -1027,8 +1060,11 @@
         }
         cur.portrait = dataUrl;
         cur.contactId = '';
+        cur.chainId = '';
         portraitEl.style.backgroundImage = `url("${dataUrl}")`;
         portraitEl.classList.add('has-image');
+        sp.value = cur.speaker;
+        refreshNoContact(row, cur);
         renderPreview();
         saveState();
         showToast(t('toast.portraitLoaded'));
@@ -1057,10 +1093,13 @@
         cur.portrait = '';
         cur.portraitOriginal = '';
         cur.contactId = '';
+        cur.chainId = '';
         portraitEl.style.backgroundImage = '';
         portraitEl.classList.remove('has-image');
         portraitInput.value = '';
         portraitPopup.hidden = true;
+        sp.value = cur.speaker;
+        refreshNoContact(row, cur);
         renderPreview();
         saveState();
       });
@@ -1073,6 +1112,8 @@
       portraitEl.style.cursor = 'pointer';
       portraitEl.addEventListener('click', (e) => {
         e.stopPropagation();
+        // Locked while linked to a contact — speaker + avatar are read-only.
+        if (state.messages[i].contactId) return;
         if (!state.messages[i].portrait) {
           portraitInput.click();
           return;
@@ -1196,7 +1237,12 @@
       });
       row.querySelector('[data-clone]').addEventListener('click', () => {
         if (state.messages.length >= 99) { showToast(t('toast.maxMessages')); return; }
-        const copy = { ...state.messages[i] };
+        const src = state.messages[i];
+        // Cloned messages chain-link to the source. If source isn't linked to
+        // a contact and hasn't been chained yet, assign a fresh chainId to it
+        // so both source and clone share membership.
+        if (!src.contactId && !src.chainId) src.chainId = genId();
+        const copy = { ...src };
         state.messages.splice(i + 1, 0, copy);
         renderMessagesEditor();
         renderPreview();
@@ -1217,14 +1263,21 @@
           showToast(t('toast.storageFull'));
           return;
         }
-        // Link this message to the newly created contact so future updates
-        // to the contact will propagate. Drop the cached speaker/portrait now
-        // that they live solely on the contact — saves storage.
-        state.messages[i].contactId = newId;
-        state.messages[i].speaker = '';
-        state.messages[i].portrait = '';
+        // Link this message AND every message in its chain to the new contact.
+        // The chain is defined by a shared chainId or a shared contactId.
+        const anchor = state.messages[i];
+        state.messages.forEach(m => {
+          if (!m || m.type === 'system') return;
+          if (inSameChain(m, anchor)) {
+            m.contactId = newId;
+            m.speaker = '';
+            m.portrait = '';
+          }
+        });
         saveState();
         renderContacts();
+        renderMessagesEditor();
+        renderPreview();
         showToast(t('toast.contactAdded', { name }));
       });
       row.querySelector('[data-side]').addEventListener('click', () => {
@@ -1469,7 +1522,7 @@
     };
     delete state.savedAt;
     delete state.contacts;
-    state.messages = (state.messages || []).map(m => ({ type: 'normal', contactId: '', speaker: '', body: '', portrait: '', portraitOriginal: '', side: 'left', time: '', bodyImage: '', bodyImageOriginal: '', ...m }));
+    state.messages = (state.messages || []).map(m => ({ type: 'normal', contactId: '', chainId: '', speaker: '', body: '', portrait: '', portraitOriginal: '', side: 'left', time: '', bodyImage: '', bodyImageOriginal: '', ...m }));
     if (!Array.isArray(state.choices)) state.choices = [];
     if (Array.isArray(snap.contacts)) {
       saveContacts(snap.contacts);
@@ -1519,6 +1572,7 @@
     contacts.forEach((c) => {
       const item = document.createElement('div');
       item.className = 'contact';
+      item.dataset.contactId = c.id;
       item.innerHTML = `
         <div class="contact-avatar"></div>
         <span class="contact-name"></span>
@@ -1534,13 +1588,16 @@
         e.stopPropagation();
         if (!confirm(`Delete contact "${c.name}"?`)) return;
         // Inline the contact's data into any messages that referenced it so
-        // the display survives the contact removal.
+        // the display survives the contact removal. Preserve the chain by
+        // assigning a shared chainId across the freshly-detached messages.
         let touched = false;
+        const sharedChainId = genId();
         state.messages.forEach(m => {
           if (m && m.contactId === c.id) {
             m.speaker = c.name || '';
             m.portrait = c.avatar || '';
             m.contactId = '';
+            if (!m.chainId) m.chainId = sharedChainId;
             touched = true;
           }
         });
@@ -1618,7 +1675,9 @@
     if (list.length === 0) return;
     if (!confirm(`Delete all ${list.length} contact(s)?`)) return;
     // Inline cached data into linked messages so they keep their display.
+    // Preserve per-contact chains: assign one fresh chainId per former contact.
     const byId = new Map(list.map(c => [c.id, c]));
+    const chainPerContact = new Map();
     let touched = false;
     state.messages.forEach(m => {
       if (m && m.contactId) {
@@ -1626,6 +1685,10 @@
         if (c) {
           m.speaker = c.name || '';
           m.portrait = c.avatar || '';
+        }
+        if (!m.chainId) {
+          if (!chainPerContact.has(m.contactId)) chainPerContact.set(m.contactId, genId());
+          m.chainId = chainPerContact.get(m.contactId);
         }
         m.contactId = '';
         touched = true;
@@ -1666,7 +1729,7 @@
 
   addMessageBtn.addEventListener('click', () => {
     if (state.messages.length >= 99) { showToast(t('toast.maxMessages')); return; }
-    state.messages.push({ type: 'normal', contactId: '', speaker: '', body: '', portrait: '', portraitOriginal: '', side: 'left', time: '', bodyImage: '', bodyImageOriginal: '' });
+    state.messages.push({ type: 'normal', contactId: '', chainId: genId(), speaker: '', body: '', portrait: '', portraitOriginal: '', side: 'left', time: '', bodyImage: '', bodyImageOriginal: '' });
     renderMessagesEditor();
     renderPreview();
     saveState();
