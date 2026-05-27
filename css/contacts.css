@@ -118,6 +118,43 @@
     --aug-border-bg: var(--cyan);
     box-shadow: 0 0 18px color-mix(in srgb, var(--cyan) 50%, transparent);
   }
+  #sideDonate .side-inner {
+    display: flex;
+    flex-direction: column;
+  }
+  .donate-qr-wrap {
+    margin-top: auto;
+    padding-top: 24px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+  }
+  .donate-qr-caption {
+    font-family: 'JetBrains Mono', monospace;
+    color: var(--dim);
+    font-size: 10px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin: 0;
+  }
+  .donate-qr {
+    padding: 10px;
+    background: #0a0800;
+    --aug-border-all: 1px;
+    --aug-border-bg: var(--yellow);
+    --aug-inlay-all: 0px;
+    --aug-tl: 8px;
+    --aug-br: 8px;
+    box-shadow: 0 0 14px color-mix(in srgb, var(--yellow) 30%, transparent);
+    line-height: 0;
+  }
+  .donate-qr img,
+  .donate-qr svg {
+    display: block;
+    width: 150px;
+    height: 150px;
+  }
   .side-inner h2 {
     margin: 0 0 18px 0;
     font-family: 'JetBrains Mono', monospace;

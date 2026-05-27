@@ -105,6 +105,7 @@
 </style>
 <link rel="stylesheet" href="https://unpkg.com/augmented-ui@2/augmented-ui.min.css" />
 <script src="https://cdn.jsdelivr.net/npm/html-to-image@1.11.11/dist/html-to-image.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.min.js"></script>
 <link rel="stylesheet" href="css/base.css" />
 <link rel="stylesheet" href="css/messages.css" />
 <link rel="stylesheet" href="css/config.css" />
@@ -165,7 +166,11 @@
       <p>If DIALOG_CONSTRUCTOR lit up your screen and earned a slot in your loadout — toss some into the rig.</p>
       <p>Every signal keeps the netrunner humming and the chrome moving.</p>
     </div>
-    <a class="btn donate-btn" href="https://boosty.to/cyberdelaai/donate" target="_blank" rel="noopener noreferrer" data-augmented-ui="tl-clip br-clip border">HELL YEAH</a>
+    <a class="btn donate-btn" id="donateLink" target="_blank" rel="noopener noreferrer" data-augmented-ui="tl-clip br-clip border">HELL YEAH</a>
+    <div class="donate-qr-wrap">
+      <p class="donate-qr-caption">// OR SCAN TO JACK IN</p>
+      <div class="donate-qr" id="donateQr" data-augmented-ui="tl-clip br-clip border"></div>
+    </div>
   </div>
 </aside>
 
@@ -351,7 +356,10 @@
   //   X (first)  — almost certainly never bumped.
   //   Y (second) — bumped for major features.
   //   Z (third)  — bumped for all small changes (tweaks, fixes, polish).
-  const APP_VERSION = '1.1.1';
+  const APP_VERSION = '1.1.2';
+
+  // ---------- External links ----------
+  const DONATE_URL = 'https://boosty.to/cyberdelaai/donate';
 
   // ---------- Storage helpers (localStorage-backed) ----------
   const STATE_KEY = 'commlink:state';
@@ -1770,6 +1778,33 @@
 
   // ---------- Init ----------
   document.getElementById('tagVersion').textContent = APP_VERSION;
+  document.getElementById('donateLink').href = DONATE_URL;
+  // Render donate QR code (qrcode-generator from CDN) — yellow cells on dark bg
+  (function renderDonateQr() {
+    const host = document.getElementById('donateQr');
+    if (!host || typeof qrcode !== 'function') return;
+    const qr = qrcode(0, 'M');
+    qr.addData(DONATE_URL);
+    qr.make();
+    const count = qr.getModuleCount();
+    const CELL = 4;
+    const size = count * CELL;
+    const DARK = '#fcee0a';
+    const LIGHT = '#0a0800';
+    let path = '';
+    for (let r = 0; r < count; r++) {
+      for (let c = 0; c < count; c++) {
+        if (qr.isDark(r, c)) {
+          path += `M${c * CELL} ${r * CELL}h${CELL}v${CELL}h-${CELL}z`;
+        }
+      }
+    }
+    host.innerHTML =
+      `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${size} ${size}" shape-rendering="crispEdges">` +
+        `<rect width="${size}" height="${size}" fill="${LIGHT}"/>` +
+        `<path d="${path}" fill="${DARK}"/>` +
+      `</svg>`;
+  })();
   seedDefaults();
   augmentButtons();
   syncForm();
