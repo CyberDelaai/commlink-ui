@@ -187,7 +187,7 @@
 
 <header>
   <div class="logo">&gt; COMMLINK_</div>
-  <div class="tag"><span id="tagWord" class="glitchable">DIALOG CONSTRUCTOR</span> // v1.0</div>
+  <div class="tag"><span id="tagWord" class="glitchable">DIALOG CONSTRUCTOR</span> // v<span id="tagVersion"></span></div>
   <div class="status"><span class="dot"></span>NETRUNNER ONLINE</div>
 </header>
 
@@ -346,6 +346,13 @@
 </div>
 
 <script>
+  // ---------- App version (single source of truth for header tag, exports, etc.) ----------
+  // Versioning scheme — X.Y.Z:
+  //   X (first)  — almost certainly never bumped.
+  //   Y (second) — bumped for major features.
+  //   Z (third)  — bumped for all small changes (tweaks, fixes, polish).
+  const APP_VERSION = '1.1.0';
+
   // ---------- Storage helpers (localStorage-backed) ----------
   const STATE_KEY = 'commlink:state';
   const SNAPSHOTS_KEY = 'commlink:snapshots';
@@ -1764,6 +1771,7 @@
   }
 
   // ---------- Init ----------
+  document.getElementById('tagVersion').textContent = APP_VERSION;
   seedDefaults();
   augmentButtons();
   syncForm();
