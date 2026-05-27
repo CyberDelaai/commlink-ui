@@ -9,8 +9,7 @@ Pending issues, features, and ideas for COMMLINK. Items are removed from the lis
 3. Add different languages support
 4. Toggle to more smartphone-like view (slimmer message box)
 5. Ability to print different case letters for contacts' names
-6. Make saved file name to be 'commlink_dialog_<timestamp>'
-7. Add qr code for donations at the bottom of donation tab
+6. Add qr code for donations at the bottom of donation tab
 
 ## BUGS
 

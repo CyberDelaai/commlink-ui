@@ -351,7 +351,7 @@
   //   X (first)  — almost certainly never bumped.
   //   Y (second) — bumped for major features.
   //   Z (third)  — bumped for all small changes (tweaks, fixes, polish).
-  const APP_VERSION = '1.1.0';
+  const APP_VERSION = '1.1.1';
 
   // ---------- Storage helpers (localStorage-backed) ----------
   const STATE_KEY = 'commlink:state';
@@ -1699,9 +1699,7 @@
       const dataUrl = padded.toDataURL('image/png');
 
       const link = document.createElement('a');
-      const firstSpeaker = (state.messages.find(m => m.speaker.trim()) || {}).speaker || 'dialog';
-      const safeName = firstSpeaker.toLowerCase().replace(/[^a-z0-9]+/g, '-').slice(0, 24) || 'dialog';
-      link.download = `commlink-${safeName}-${Date.now()}.png`;
+      link.download = `commlink_dialog_${Date.now()}.png`;
       link.href = dataUrl;
       link.click();
       showToast('PNG EXPORTED');
