@@ -11,4 +11,5 @@ Pending issues, features, and ideas for COMMLINK. Items are removed from the lis
 
 1. Background image to be added by URL
 2. Toggle to more smartphone-like view (slimmer message box)
-3. Resize avatars to store smaller pictures in storage
+3. Move image data (avatars, body images, bg + their *_Original) to IndexedDB; keep state JSON in localStorage. Reduces localStorage usage drastically.
+4. Make messages created by pressing on contact to use contact's info by links (same for copied message)

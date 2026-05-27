@@ -376,10 +376,17 @@
   //   X (first)  — almost certainly never bumped.
   //   Y (second) — bumped for major features.
   //   Z (third)  — bumped for all small changes (tweaks, fixes, polish).
-  const APP_VERSION = '1.2.5';
+  const APP_VERSION = '1.2.6';
 
   // ---------- External links ----------
   const DONATE_URL = 'https://boosty.to/cyberdelaai/donate';
+
+  // ---------- Image crop defaults ----------
+  // Avatars (message portraits + contact avatars) are crammed into many slots
+  // and pushed into localStorage as base64. Resizing to 128×128 WEBP at ~0.82
+  // typically shrinks them 10–30× vs full-res PNG without visible loss at the
+  // displayed 56×56 / 32×32 sizes.
+  const AVATAR_CROP_OPTS = { outWidth: 128, outHeight: 128, mime: 'image/webp', quality: 0.82 };
 
   // ---------- i18n ----------
   const LANG_KEY = 'commlink:lang';
@@ -525,6 +532,16 @@
 
   function saveState() {
     const { bgOriginal, ...slim } = state;
+    // Avatar recrop was removed — portraitOriginal is dead weight. Strip it
+    // from messages before persisting to keep the state JSON small.
+    if (Array.isArray(slim.messages)) {
+      slim.messages = slim.messages.map(m => {
+        if (!m || !m.portraitOriginal) return m;
+        const copy = { ...m };
+        copy.portraitOriginal = '';
+        return copy;
+      });
+    }
     storageSet(STATE_KEY, JSON.stringify(slim));
     if (bgOriginal) {
       storageSet(BG_ORIGINAL_KEY, bgOriginal);
@@ -553,6 +570,8 @@
   let cropFree = false;   // true → resize w/h independently
   let cropOutW = 256;
   let cropOutH = 256;
+  let cropMime = 'image/png';
+  let cropQuality = 0.92;
 
   function openCrop(dataUrl, onConfirm, opts) {
     opts = opts || {};
@@ -560,6 +579,8 @@
     cropFree = !!opts.free;
     cropOutW = opts.outWidth || 256;
     cropOutH = opts.outHeight || 256;
+    cropMime = opts.mime || 'image/png';
+    cropQuality = typeof opts.quality === 'number' ? opts.quality : 0.92;
     cropOnConfirm = onConfirm;
     // Close any image popup so it doesn't overlay the crop modal
     document.querySelectorAll('.img-popup').forEach(p => { p.hidden = true; });
@@ -626,7 +647,7 @@
     c.height = outH;
     const ctx = c.getContext('2d');
     ctx.drawImage(cropImg, sx, sy, sw, sh, 0, 0, outW, outH);
-    return c.toDataURL('image/png');
+    return c.toDataURL(cropMime, cropQuality);
   }
   cropConfirmBtn.addEventListener('click', () => {
     const result = doCrop();
@@ -905,7 +926,6 @@
               <div class="img-popup portrait-popup" hidden>
                 <label class="btn cyan icon" for="portrait-file-${i}" title="Upload portrait">UPLOAD</label>
                 <button class="btn cyan icon" type="button" data-paste-portrait title="Paste from clipboard">PASTE</button>
-                <button class="btn cyan icon" type="button" data-recrop-portrait title="Recrop">RECROP</button>
                 <button class="btn danger icon" type="button" data-clear-portrait title="Clear portrait">CLEAR</button>
               </div>
             </div>
@@ -970,12 +990,8 @@
         saveState();
         showToast(t('toast.portraitLoaded'));
       };
-      const openPortraitCrop = (dataUrl, isOriginal) => {
-        if (!isOriginal) {
-          state.messages[i].portraitOriginal = dataUrl;
-          saveState();
-        }
-        openCrop(dataUrl, applyPortrait);
+      const openPortraitCrop = (dataUrl) => {
+        openCrop(dataUrl, applyPortrait, AVATAR_CROP_OPTS);
       };
       portraitInput.addEventListener('change', (e) => {
         const f = e.target.files && e.target.files[0];
@@ -987,11 +1003,6 @@
       });
       row.querySelector('[data-paste-portrait]').addEventListener('click', () => {
         tryPasteImage(openPortraitCrop);
-      });
-      row.querySelector('[data-recrop-portrait]').addEventListener('click', () => {
-        const src = state.messages[i].portraitOriginal || state.messages[i].portrait;
-        if (!src) { showToast(t('toast.noPortrait')); return; }
-        openPortraitCrop(src, true);
       });
       row.querySelector('[data-clear-portrait]').addEventListener('click', () => {
         state.messages[i].portrait = '';
@@ -1518,12 +1529,12 @@
     const f = e.target.files && e.target.files[0];
     if (!f) return;
     const reader = new FileReader();
-    reader.onload = (ev) => openCrop(ev.target.result, applyNewAvatar);
+    reader.onload = (ev) => openCrop(ev.target.result, applyNewAvatar, AVATAR_CROP_OPTS);
     reader.readAsDataURL(f);
     newContactAvatar.value = '';
   });
   document.getElementById('pasteNewAvatar').addEventListener('click', () => {
-    tryPasteImage((dataUrl) => openCrop(dataUrl, applyNewAvatar));
+    tryPasteImage((dataUrl) => openCrop(dataUrl, applyNewAvatar, AVATAR_CROP_OPTS));
   });
   clearNewAvatarBtn.addEventListener('click', () => {
     newAvatarData = '';
@@ -1928,8 +1939,22 @@
   }
 
   function seedDefaults() {
-    const SEED_VERSION = '14';
+    const SEED_VERSION = '15';
     if (storageGet(SEEDED_KEY) === SEED_VERSION) return;
+    // One-time cleanup: strip portraitOriginal (dead since avatar-recrop was
+    // removed) from any existing saved snapshots to reclaim localStorage.
+    const existingSnaps = loadSnapshots();
+    let snapsChanged = false;
+    Object.keys(existingSnaps).forEach(name => {
+      const snap = existingSnaps[name];
+      if (!snap || !Array.isArray(snap.messages)) return;
+      snap.messages = snap.messages.map(m => {
+        if (!m || !m.portraitOriginal) return m;
+        snapsChanged = true;
+        return { ...m, portraitOriginal: '' };
+      });
+    });
+    if (snapsChanged) persistSnapshots(existingSnaps);
     const defaultContacts = [
       { id: 'def-johnny', name: 'JOHNNY', avatar: makeInitialAvatar('J', '#fcee0a') },
       { id: 'def-v', name: 'V', avatar: makeInitialAvatar('V', '#00f0ff') },
