@@ -356,7 +356,7 @@
   //   X (first)  — almost certainly never bumped.
   //   Y (second) — bumped for major features.
   //   Z (third)  — bumped for all small changes (tweaks, fixes, polish).
-  const APP_VERSION = '1.1.4';
+  const APP_VERSION = '1.1.5';
 
   // ---------- External links ----------
   const DONATE_URL = 'https://boosty.to/cyberdelaai/donate';
@@ -393,8 +393,8 @@
       { type: 'normal', speaker: 'V', body: 'Got it. Heading to the drop now.', portrait: makeInitialAvatar('V', '#00f0ff'), side: 'right', time: '04:23', bodyImage: '' }
     ],
     choices: [
-      "I'm in. Where do we start?",
-      "Need a minute."
+      "Who am I meeting at the drop?",
+      "Stay in my head, Silverhand."
     ],
     accent: '#fcee0a',
     customAccent: '#ff00aa',
@@ -1751,7 +1751,7 @@
     return 'data:image/svg+xml;base64,' + btoa(svg);
   }
   function seedDefaults() {
-    const SEED_VERSION = '8';
+    const SEED_VERSION = '9';
     if (storageGet(SEEDED_KEY) === SEED_VERSION) return;
     const defaultContacts = [
       { id: 'def-johnny', name: 'JOHNNY', avatar: makeInitialAvatar('J', '#fcee0a') },
