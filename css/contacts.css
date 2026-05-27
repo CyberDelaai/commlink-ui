@@ -54,6 +54,12 @@
     letter-spacing: 3px;
     text-transform: uppercase;
   }
+  /* CJK reads top-to-bottom natively in vertical-rl, so the 180° flip
+     used for Latin would render the labels upside down. */
+  html[lang="ja"] .side-toggle .label,
+  html[lang="zh"] .side-toggle .label {
+    transform: none;
+  }
   .side-toggle .arrow {
     font-size: 16px;
     line-height: 1;

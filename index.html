@@ -206,6 +206,7 @@
     <option value="de">DE</option>
     <option value="es">ES</option>
     <option value="it">IT</option>
+    <option value="ja">JP</option>
   </select>
 </header>
 
@@ -374,14 +375,14 @@
   //   X (first)  — almost certainly never bumped.
   //   Y (second) — bumped for major features.
   //   Z (third)  — bumped for all small changes (tweaks, fixes, polish).
-  const APP_VERSION = '1.2.2';
+  const APP_VERSION = '1.2.3';
 
   // ---------- External links ----------
   const DONATE_URL = 'https://boosty.to/cyberdelaai/donate';
 
   // ---------- i18n ----------
   const LANG_KEY = 'commlink:lang';
-  const SUPPORTED_LANGS = ['en', 'ru', 'fr', 'de', 'es', 'it'];
+  const SUPPORTED_LANGS = ['en', 'ru', 'fr', 'de', 'es', 'it', 'ja'];
   let currentLang = (function () {
     try {
       const saved = localStorage.getItem(LANG_KEY);
@@ -1926,7 +1927,7 @@
   }
 
   function seedDefaults() {
-    const SEED_VERSION = '11';
+    const SEED_VERSION = '12';
     if (storageGet(SEEDED_KEY) === SEED_VERSION) return;
     const defaultContacts = [
       { id: 'def-johnny', name: 'JOHNNY', avatar: makeInitialAvatar('J', '#fcee0a') },
@@ -2028,14 +2029,19 @@
   (function startTagGlitch() {
     const el = document.getElementById('tagWord');
     if (!el) return;
-    const CHARS = '!@#$%&*<>{}[]/|01ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    const CHARS_LATIN = '!@#$%&*<>{}[]/|01ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    const CHARS_KANA  = 'アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲンッー!@#$%0123456789';
+    function scrambleAlphabet() {
+      return currentLang === 'ja' ? CHARS_KANA : CHARS_LATIN;
+    }
 
     function scrambleFrame(target, revealed, maxLen) {
+      const chars = scrambleAlphabet();
       let out = '';
       for (let i = 0; i < maxLen; i++) {
         if (i >= target.length) { out += ' '; continue; }
         if (i < revealed) { out += target[i]; continue; }
-        out += CHARS[Math.floor(Math.random() * CHARS.length)];
+        out += chars[Math.floor(Math.random() * chars.length)];
       }
       return out;
     }

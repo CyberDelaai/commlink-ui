@@ -583,5 +583,102 @@ window.I18N = {
       stateImported: 'STATO IMPORTATO',
       importFailed: 'IMPORT FALLITO'
     }
+  },
+
+  ja: {
+    tag: { app: 'ダイアログ コンストラクター', glitch: 'ダイアログ フォージャー' },
+    status: 'ネットランナー オンライン',
+    panel: {
+      contacts: 'コンタクト',
+      snapshots: '状態',
+      donate: '支援',
+      messages: '// メッセージ',
+      preview: '// プレビュー',
+      config: '// 設定'
+    },
+    donate: {
+      title: '// 着信通信',
+      line1: 'ジャックインした。ネットで光る価値あるダイアログを鍛えた。',
+      line2: 'ダイアログ_コンストラクターが画面を灯し、装備のスロットを勝ち取ったなら—エディをリグに投げ込め。',
+      line3: 'すべてのシグナルがネットランナーを動かし、クロームを流す。',
+      cta: '上等！',
+      scan: '// またはスキャンで接続'
+    },
+    field: {
+      channelTop: 'チャネル — 上',
+      channelBottom: 'チャネル — 下',
+      choices: '選択肢',
+      accent: 'アクセントカラー',
+      fx: 'エフェクト',
+      bg: '背景',
+      bright: '明るさ'
+    },
+    fx: { glitch: 'グリッチ', scanlines: 'スキャンライン' },
+    btn: {
+      addMessage: '+ メッセージ',
+      addSysMessage: '+ システム',
+      clearAll: '全クリア',
+      add: '+ 追加',
+      clear: 'クリア',
+      savePng: '⬇ PNG保存',
+      exportJson: '⬇ エクスポート',
+      importJson: '⬆ インポート',
+      avatar: 'アバター',
+      paste: 'ペースト',
+      recrop: '再切抜',
+      uploadImg: 'アップロード',
+      load: 'ロード'
+    },
+    placeholder: {
+      contactName: 'コンタクト名...',
+      snapshotName: '状態名...',
+      meta: '例: //暗号化'
+    },
+    empty: {
+      contacts: 'コンタクトなし'
+    },
+    confirm: {
+      import: 'インポートすると現在の状態とコンタクトが置き換えられます。\n\n保存したい場合は、まず状態を保存してください。\n\n続行しますか?'
+    },
+    snapshot: { showExamples: 'サンプル表示' },
+    example: {
+      meta: '//暗号化',
+      messages: [
+        { speaker: 'JOHNNY', body: '起きろ、サムライ。燃やすべき街がある。', side: 'left', time: '04:20' },
+        { speaker: 'V', body: 'ちょっと待て。頭がまだ鳴ってる。', side: 'right', time: '04:21' },
+        { speaker: 'JOHNNY', body: '図面を送る—パブリックネットで開くな。', side: 'left', time: '04:22' },
+        { type: 'system', body: 'ファイル転送完了' },
+        { speaker: 'V', body: '了解。ドロップ地点へ向かう。', side: 'right', time: '04:23' }
+      ],
+      choices: ['ドロップで誰と会う?', '頭の中にいろ、シルバーハンド。']
+    },
+    toast: {
+      noImageClipboard: 'クリップボードに画像なし',
+      clipboardBlocked: 'クリップボードブロック',
+      maxMessages: '最大99メッセージ',
+      portraitLoaded: 'アバター読込完了',
+      noPortrait: 'アバターなし',
+      imgAttached: '画像添付',
+      noImg: '画像なし',
+      speakerRequired: '話者必須',
+      alreadySaved: '"{name}" 既に保存済み',
+      storageFull: 'ストレージ満杯',
+      contactAdded: '+ コンタクト "{name}"',
+      loaded: '読込 "{name}"',
+      contactSelected: '+ "{name}"',
+      messagesCleared: 'メッセージクリア',
+      contactsCleared: 'コンタクトクリア',
+      nameRequired: '名前必須',
+      saved: '保存 "{name}"',
+      maxChoices: '最大6選択肢',
+      imgLoaded: '画像読込完了',
+      noBgYet: '背景未設定',
+      storageFullDelete: 'ストレージ満杯 // 削除必要',
+      pngExported: 'PNG出力完了',
+      exportFailed: 'エクスポート失敗',
+      stateExported: '状態エクスポート完了',
+      stateImported: '状態インポート完了',
+      importFailed: 'インポート失敗'
+    }
   }
 };
