@@ -97,12 +97,70 @@
     animation: blink 1.5s infinite;
   }
   @keyframes blink { 50% { opacity: 0.3; } }
+  header .lang-select {
+    background: var(--panel);
+    color: var(--cyan);
+    border: 1px solid var(--cyan);
+    padding: 6px 26px 6px 12px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    cursor: pointer;
+    outline: none;
+    margin-left: 16px;
+    appearance: none;
+    -webkit-appearance: none;
+    /* Custom chevron drawn with two diagonal gradients */
+    background-image:
+      linear-gradient(45deg, transparent 50%, var(--cyan) 50%),
+      linear-gradient(135deg, var(--cyan) 50%, transparent 50%);
+    background-position: calc(100% - 14px) 52%, calc(100% - 9px) 52%;
+    background-size: 5px 5px, 5px 5px;
+    background-repeat: no-repeat;
+    box-shadow:
+      inset 0 0 0 1px rgba(0, 240, 255, 0.12),
+      0 0 8px rgba(0, 240, 255, 0.2);
+    text-shadow: 0 0 4px rgba(0, 240, 255, 0.45);
+    /* Notched corners — top-left + bottom-right cut at 8px */
+    clip-path: polygon(
+      8px 0,
+      100% 0,
+      100% calc(100% - 8px),
+      calc(100% - 8px) 100%,
+      0 100%,
+      0 8px
+    );
+    transition: color 0.15s, box-shadow 0.15s, text-shadow 0.15s;
+  }
+  header .lang-select:hover {
+    color: var(--yellow);
+    text-shadow: 0 0 6px rgba(252, 238, 10, 0.6);
+    background-image:
+      linear-gradient(45deg, transparent 50%, var(--yellow) 50%),
+      linear-gradient(135deg, var(--yellow) 50%, transparent 50%);
+    box-shadow:
+      inset 0 0 0 1px rgba(252, 238, 10, 0.18),
+      0 0 14px rgba(0, 240, 255, 0.45);
+  }
+  header .lang-select:focus {
+    box-shadow:
+      inset 0 0 0 1px rgba(252, 238, 10, 0.25),
+      0 0 16px rgba(252, 238, 10, 0.5);
+  }
+  header .lang-select option {
+    background: var(--bg);
+    color: var(--cyan);
+    font-weight: 700;
+    letter-spacing: 2px;
+  }
 
   main {
     position: relative;
     z-index: 2;
     display: grid;
-    grid-template-columns: minmax(360px, 460px) 1fr minmax(320px, 380px);
+    grid-template-columns: minmax(360px, 460px) 1fr minmax(350px, 410px);
     gap: 18px;
     padding: 28px 32px;
     max-width: 1700px;

@@ -106,6 +106,7 @@
 <link rel="stylesheet" href="https://unpkg.com/augmented-ui@2/augmented-ui.min.css" />
 <script src="https://cdn.jsdelivr.net/npm/html-to-image@1.11.11/dist/html-to-image.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.min.js"></script>
+<script src="js/i18n.js"></script>
 <link rel="stylesheet" href="css/base.css" />
 <link rel="stylesheet" href="css/messages.css" />
 <link rel="stylesheet" href="css/config.css" />
@@ -128,19 +129,19 @@
 
 <aside class="side-panel" id="sideContacts" data-name="contacts">
   <button class="side-toggle" id="contactsToggle" type="button" aria-label="toggle contacts" data-augmented-ui="tr-clip br-clip border">
-    <span class="label">CONTACTS</span>
+    <span class="label" data-i18n="panel.contacts">CONTACTS</span>
     <span class="arrow" id="contactsArrow">&gt;</span>
   </button>
   <div class="side-inner">
     <div class="contact-form">
       <div class="contact-form-row">
         <div class="contact-avatar-preview" id="newAvatarPreview"></div>
-        <input type="text" id="newContactName" maxlength="40" placeholder="Contact name..." />
+        <input type="text" id="newContactName" maxlength="40" data-i18n-placeholder="placeholder.contactName" placeholder="Contact name..." />
       </div>
       <div class="contact-form-row">
         <input type="file" class="avatar-file" id="newContactAvatar" accept="image/*" />
-        <label class="btn cyan icon" for="newContactAvatar">AVATAR</label>
-        <button class="btn cyan icon" id="pasteNewAvatar" type="button" title="Paste from clipboard">PASTE</button>
+        <label class="btn cyan icon" for="newContactAvatar" data-i18n="btn.avatar">AVATAR</label>
+        <button class="btn cyan icon" id="pasteNewAvatar" type="button" title="Paste from clipboard" data-i18n="btn.paste">PASTE</button>
         <button class="btn cyan icon" id="addContact" type="button" aria-label="save contact" title="Save contact">
           <svg class="mi" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M17 3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V7l-4-4zm-5 16c-1.66 0-3-1.34-3-3s1.34-3 3-3 3 1.34 3 3-1.34 3-3 3zm3-10H5V5h10v4z"/></svg>
         </button>
@@ -149,26 +150,26 @@
     </div>
     <div class="contact-list" id="contactList"></div>
     <div class="contact-list-footer">
-      <button class="btn danger icon" id="clearContacts" type="button">CLEAR ALL</button>
+      <button class="btn danger icon" id="clearContacts" type="button" data-i18n="btn.clearAll">CLEAR ALL</button>
     </div>
   </div>
 </aside>
 
 <aside class="side-panel" id="sideDonate" data-name="donate">
   <button class="side-toggle side-toggle-donate" id="donateToggle" type="button" aria-label="toggle donate" data-augmented-ui="tr-clip br-clip border">
-    <span class="label">DONATE</span>
+    <span class="label" data-i18n="panel.donate">DONATE</span>
     <span class="arrow" id="donateArrow">&gt;</span>
   </button>
   <div class="side-inner">
-    <h2>// INCOMING TRANSMISSION</h2>
+    <h2 data-i18n="donate.title">// INCOMING TRANSMISSION</h2>
     <div class="donate-message">
-      <p>You jacked in. You forged dialogs worth flashing across the Net.</p>
-      <p>If DIALOG_CONSTRUCTOR lit up your screen and earned a slot in your loadout — toss some into the rig.</p>
-      <p>Every signal keeps the netrunner humming and the chrome moving.</p>
+      <p data-i18n="donate.line1">You jacked in. You forged dialogs worth flashing across the Net.</p>
+      <p data-i18n="donate.line2">If DIALOG_CONSTRUCTOR lit up your screen and earned a slot in your loadout — toss some into the rig.</p>
+      <p data-i18n="donate.line3">Every signal keeps the netrunner humming and the chrome moving.</p>
     </div>
-    <a class="btn donate-btn" id="donateLink" target="_blank" rel="noopener noreferrer" data-augmented-ui="tl-clip br-clip border">HELL YEAH</a>
+    <a class="btn donate-btn" id="donateLink" target="_blank" rel="noopener noreferrer" data-augmented-ui="tl-clip br-clip border" data-i18n="donate.cta">HELL YEAH</a>
     <div class="donate-qr-wrap">
-      <p class="donate-qr-caption">// OR SCAN TO JACK IN</p>
+      <p class="donate-qr-caption" data-i18n="donate.scan">// OR SCAN TO JACK IN</p>
       <div class="donate-qr" id="donateQr" data-augmented-ui="tl-clip br-clip border"></div>
     </div>
   </div>
@@ -176,12 +177,12 @@
 
 <aside class="side-panel" id="sideSnapshots" data-name="snapshots">
   <button class="side-toggle side-toggle-2" id="snapshotsToggle" type="button" aria-label="toggle snapshots" data-augmented-ui="tr-clip br-clip border">
-    <span class="label">SNAPSHOTS</span>
+    <span class="label" data-i18n="panel.snapshots">SNAPSHOTS</span>
     <span class="arrow" id="snapshotsArrow">&gt;</span>
   </button>
   <div class="side-inner">
     <div class="snapshot-save">
-      <input type="text" id="snapshotName" maxlength="32" placeholder="snapshot name..." />
+      <input type="text" id="snapshotName" maxlength="32" data-i18n-placeholder="placeholder.snapshotName" placeholder="snapshot name..." />
       <button class="btn cyan icon" id="saveSnapshot" type="button" aria-label="save snapshot" title="Save snapshot">
         <svg class="mi" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M17 3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V7l-4-4zm-5 16c-1.66 0-3-1.34-3-3s1.34-3 3-3 3 1.34 3 3-1.34 3-3 3zm3-10H5V5h10v4z"/></svg>
       </button>
@@ -193,20 +194,28 @@
 <header>
   <div class="logo">&gt; COMMLINK_</div>
   <div class="tag"><span id="tagWord" class="glitchable">DIALOG CONSTRUCTOR</span> // v<span id="tagVersion"></span></div>
-  <div class="status"><span class="dot"></span>NETRUNNER ONLINE</div>
+  <div class="status"><span class="dot"></span><span data-i18n="status">NETRUNNER ONLINE</span></div>
+  <select class="lang-select" id="langSelect" aria-label="language">
+    <option value="en">EN</option>
+    <option value="ru">RU</option>
+    <option value="fr">FR</option>
+    <option value="de">DE</option>
+    <option value="es">ES</option>
+    <option value="it">IT</option>
+  </select>
 </header>
 
 <main>
   <!-- Messages editor -->
   <section class="panel" aria-label="messages editor" data-augmented-ui="tl-clip tr-clip br-clip bl-clip border">
-    <h2>// MESSAGES</h2>
+    <h2 data-i18n="panel.messages">// MESSAGES</h2>
 
     <div class="field">
       <div id="messages"></div>
       <div class="btn-row">
-        <button class="btn cyan icon" id="addMessage" type="button">+ MESSAGE</button>
-        <button class="btn cyan icon" id="addSystemMessage" type="button">+ SYSTEM MESSAGE</button>
-        <button class="btn danger icon" id="clearMessages" type="button">CLEAR ALL</button>
+        <button class="btn cyan icon" id="addMessage" type="button" data-i18n="btn.addMessage">+ MESSAGE</button>
+        <button class="btn cyan icon" id="addSystemMessage" type="button" data-i18n="btn.addSysMessage">+ SYSTEM MESSAGE</button>
+        <button class="btn danger icon" id="clearMessages" type="button" data-i18n="btn.clearAll">CLEAR ALL</button>
       </div>
     </div>
   </section>
@@ -214,7 +223,7 @@
   <!-- Preview -->
   <section class="stage-wrap" aria-label="preview">
     <div class="stage-meta">
-      <span>// PREVIEW :: <span id="stageDims">—</span></span>
+      <span><span data-i18n="panel.preview">// PREVIEW</span> :: <span id="stageDims">—</span></span>
       <span id="charCount">0 chars</span>
     </div>
     <div class="stage scanlines" id="stage" data-augmented-ui="tl-clip tr-clip-x br-clip bl-clip-x border">
@@ -237,29 +246,29 @@
 
   <!-- Config -->
   <section class="panel" aria-label="config" data-augmented-ui="tl-clip tr-clip br-clip bl-clip border">
-    <h2>// CONFIG</h2>
+    <h2 data-i18n="panel.config">// CONFIG</h2>
 
     <div class="field">
-      <label for="meta">Channel — Top</label>
-      <input type="text" id="meta" maxlength="40" placeholder="e.g. //ENCRYPTED" />
+      <label for="meta" data-i18n="field.channelTop">Channel — Top</label>
+      <input type="text" id="meta" maxlength="40" data-i18n-placeholder="placeholder.meta" placeholder="e.g. //ENCRYPTED" />
     </div>
 
     <div class="field">
-      <label for="metaRight">Channel — Bottom</label>
-      <input type="text" id="metaRight" maxlength="40" placeholder="e.g. //SECURE_CH 7" />
+      <label for="metaRight" data-i18n="field.channelBottom">Channel — Bottom</label>
+      <input type="text" id="metaRight" maxlength="40" data-i18n-placeholder="placeholder.meta" placeholder="e.g. //SECURE_CH 7" />
     </div>
 
     <div class="field">
-      <label>Choices</label>
+      <label data-i18n="field.choices">Choices</label>
       <div id="choices"></div>
       <div class="btn-row">
-        <button class="btn cyan icon" id="addChoice" type="button">+ ADD</button>
-        <button class="btn danger icon" id="clearChoices" type="button">CLEAR</button>
+        <button class="btn cyan icon" id="addChoice" type="button" data-i18n="btn.add">+ ADD</button>
+        <button class="btn danger icon" id="clearChoices" type="button" data-i18n="btn.clear">CLEAR</button>
       </div>
     </div>
 
     <div class="field">
-      <label>Accent Color</label>
+      <label data-i18n="field.accent">Accent Color</label>
       <div class="color-grid" id="accents">
         <div class="swatch" data-color="#fcee0a" style="background:#fcee0a; color:#fcee0a"></div>
         <div class="swatch" data-color="#00f0ff" style="background:#00f0ff; color:#00f0ff"></div>
@@ -280,9 +289,9 @@
     <div class="divider"></div>
 
     <div class="field">
-      <label>FX</label>
+      <label data-i18n="field.fx">FX</label>
       <div class="fx-grid">
-        <span class="fx-label">GLITCH</span>
+        <span class="fx-label" data-i18n="fx.glitch">GLITCH</span>
         <button class="side-switch fx" id="toggleGlitch" type="button" data-pos="left" aria-label="toggle glitch">
           <span class="thumb"></span>
           <span class="lab l">OFF</span>
@@ -292,7 +301,7 @@
           <input type="range" id="glitchAmount" min="0" max="80" step="2" value="38" />
           <span class="brightness-val" id="glitchAmountVal">38</span>
         </div>
-        <span class="fx-label">SCANLINES</span>
+        <span class="fx-label" data-i18n="fx.scanlines">SCANLINES</span>
         <button class="side-switch fx" id="toggleScanlines" type="button" data-pos="left" aria-label="toggle scanlines">
           <span class="thumb"></span>
           <span class="lab l">OFF</span>
@@ -308,16 +317,16 @@
     <div class="divider"></div>
 
     <div class="field">
-      <label>Background</label>
+      <label data-i18n="field.bg">Background</label>
       <div class="btn-row">
-        <label class="file-label btn cyan" for="bgFile">UPLOAD IMG</label>
+        <label class="file-label btn cyan" for="bgFile" data-i18n="btn.uploadImg">UPLOAD IMG</label>
         <input type="file" id="bgFile" accept="image/*" />
-        <button class="btn cyan" id="pasteBg" type="button" title="Paste from clipboard">PASTE</button>
-        <button class="btn cyan" id="recropBg" type="button" title="Recrop current background">RECROP</button>
-        <button class="btn danger" id="clearBg" type="button">CLEAR</button>
+        <button class="btn cyan" id="pasteBg" type="button" title="Paste from clipboard" data-i18n="btn.paste">PASTE</button>
+        <button class="btn cyan" id="recropBg" type="button" title="Recrop current background" data-i18n="btn.recrop">RECROP</button>
+        <button class="btn danger icon" id="clearBg" type="button" aria-label="clear background">✕</button>
       </div>
       <div class="brightness-row">
-        <span class="brightness-tag">BRIGHT</span>
+        <span class="brightness-tag" data-i18n="field.bright">BRIGHT</span>
         <input type="range" id="bgBrightness" min="0" max="1.5" step="0.05" value="0.55" />
         <span class="brightness-val" id="bgBrightnessVal">55%</span>
       </div>
@@ -326,11 +335,11 @@
     <div class="divider"></div>
 
     <div class="actions">
-      <button class="btn export-btn" id="exportBtn" type="button">⬇ SAVE PNG</button>
+      <button class="btn export-btn" id="exportBtn" type="button" data-i18n="btn.savePng">⬇ SAVE PNG</button>
       <div class="state-io">
-        <button class="btn cyan" id="exportStateBtn" type="button" title="Export state and contacts as JSON">⬇ EXPORT JSON</button>
+        <button class="btn cyan" id="exportStateBtn" type="button" title="Export state and contacts as JSON" data-i18n="btn.exportJson">⬇ EXPORT JSON</button>
         <input type="file" id="importStateFile" accept="application/json,.json" hidden />
-        <label class="btn cyan" for="importStateFile" title="Import state and contacts from JSON">⬆ IMPORT JSON</label>
+        <label class="btn cyan" for="importStateFile" title="Import state and contacts from JSON" data-i18n="btn.importJson">⬆ IMPORT JSON</label>
       </div>
     </div>
   </section>
@@ -361,10 +370,54 @@
   //   X (first)  — almost certainly never bumped.
   //   Y (second) — bumped for major features.
   //   Z (third)  — bumped for all small changes (tweaks, fixes, polish).
-  const APP_VERSION = '1.1.7';
+  const APP_VERSION = '1.2.0';
 
   // ---------- External links ----------
   const DONATE_URL = 'https://boosty.to/cyberdelaai/donate';
+
+  // ---------- i18n ----------
+  const LANG_KEY = 'commlink:lang';
+  const SUPPORTED_LANGS = ['en', 'ru', 'fr', 'de', 'es', 'it'];
+  let currentLang = (function () {
+    try {
+      const saved = localStorage.getItem(LANG_KEY);
+      if (saved && SUPPORTED_LANGS.includes(saved)) return saved;
+    } catch (e) { /* ignore */ }
+    const browser = (navigator.language || 'en').slice(0, 2).toLowerCase();
+    return SUPPORTED_LANGS.includes(browser) ? browser : 'en';
+  })();
+  function t(key) {
+    const parts = key.split('.');
+    function lookup(dict) {
+      let v = dict;
+      for (const p of parts) {
+        if (v && typeof v === 'object') v = v[p];
+        else return undefined;
+      }
+      return typeof v === 'string' ? v : undefined;
+    }
+    const v = (window.I18N && lookup(window.I18N[currentLang]));
+    if (v !== undefined) return v;
+    const fallback = window.I18N && lookup(window.I18N.en);
+    return fallback !== undefined ? fallback : key;
+  }
+  function applyI18n() {
+    document.querySelectorAll('[data-i18n]').forEach(el => {
+      el.textContent = t(el.getAttribute('data-i18n'));
+    });
+    document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
+      el.placeholder = t(el.getAttribute('data-i18n-placeholder'));
+    });
+    document.querySelectorAll('[data-i18n-title]').forEach(el => {
+      el.title = t(el.getAttribute('data-i18n-title'));
+    });
+    // CSS ::before content for the empty contacts state
+    document.documentElement.style.setProperty(
+      '--empty-contacts',
+      `"${(t('empty.contacts') || '').replace(/"/g, '\\"')}"`
+    );
+    document.documentElement.lang = currentLang;
+  }
 
   // ---------- Storage helpers (localStorage-backed) ----------
   const STATE_KEY = 'commlink:state';
@@ -1295,7 +1348,7 @@
       item.innerHTML = `
         <span class="name"></span>
         <span class="meta"></span>
-        <button class="btn cyan icon" type="button" data-load>LOAD</button>
+        <button class="btn cyan icon" type="button" data-load>${t('btn.load')}</button>
         ${isExample ? '' : '<button class="btn danger icon" type="button" data-del aria-label="delete">✕</button>'}
       `;
       item.querySelector('.name').textContent = name;
@@ -1756,11 +1809,7 @@
   importStateFile.addEventListener('change', (e) => {
     const file = e.target.files && e.target.files[0];
     if (!file) return;
-    const proceed = confirm(
-      'Importing will replace your current state and contacts.\n\n' +
-      'If you want to keep them, save a snapshot first.\n\n' +
-      'Proceed?'
-    );
+    const proceed = confirm(t('confirm.import'));
     if (!proceed) {
       importStateFile.value = '';
       return;
@@ -1858,8 +1907,28 @@
   }
 
   // ---------- Init ----------
+  applyI18n();
+  document.getElementById('tagWord').textContent = t('tag.app');
   document.getElementById('tagVersion').textContent = APP_VERSION;
   document.getElementById('donateLink').href = DONATE_URL;
+  // Wire up language switcher
+  (function setupLangSwitcher() {
+    const sel = document.getElementById('langSelect');
+    if (!sel) return;
+    sel.value = currentLang;
+    sel.addEventListener('change', () => {
+      currentLang = sel.value;
+      try { localStorage.setItem(LANG_KEY, currentLang); } catch (e) { /* ignore */ }
+      applyI18n();
+      // Re-sync the glitch tag text to the new locale
+      const tagWord = document.getElementById('tagWord');
+      if (tagWord) tagWord.textContent = t('tag.app');
+      // The dynamic empty-state pseudo for contacts uses the old content;
+      // we re-render contacts to pick up the new label.
+      if (typeof renderContacts === 'function') renderContacts();
+      if (typeof renderSnapshots === 'function') renderSnapshots();
+    });
+  })();
   // Render donate QR code (qrcode-generator from CDN) — yellow cells on dark bg
   (function renderDonateQr() {
     const host = document.getElementById('donateQr');
@@ -1893,18 +1962,16 @@
   renderSnapshots();
   renderContacts();
 
-  // Occasionally glitch "DIALOG CONSTRUCTOR" -> "DIALOG FORGER" and back
+  // Occasionally glitch the app tag <-> the "glitch" alias and back.
+  // ORIGINAL/TARGET are read fresh on each cycle so language changes apply.
   (function startTagGlitch() {
     const el = document.getElementById('tagWord');
     if (!el) return;
-    const ORIGINAL = 'DIALOG CONSTRUCTOR';
-    const TARGET = 'DIALOG FORGER';
-    const MAX_LEN = Math.max(ORIGINAL.length, TARGET.length);
     const CHARS = '!@#$%&*<>{}[]/|01ABCDEFGHIJKLMNOPQRSTUVWXYZ';
 
-    function scrambleFrame(target, revealed) {
+    function scrambleFrame(target, revealed, maxLen) {
       let out = '';
-      for (let i = 0; i < MAX_LEN; i++) {
+      for (let i = 0; i < maxLen; i++) {
         if (i >= target.length) { out += ' '; continue; }
         if (i < revealed) { out += target[i]; continue; }
         out += CHARS[Math.floor(Math.random() * CHARS.length)];
@@ -1912,26 +1979,29 @@
       return out;
     }
 
-    function runScramble(target, onDone) {
+    function runScramble(target, maxLen, onDone) {
       const steps = 8;
       let step = 0;
       const id = setInterval(() => {
         step++;
         const revealed = Math.floor((step / steps) * target.length);
-        el.textContent = scrambleFrame(target, revealed);
+        el.textContent = scrambleFrame(target, revealed, maxLen);
         if (step >= steps) {
           clearInterval(id);
-          el.textContent = target + ' '.repeat(MAX_LEN - target.length);
+          el.textContent = target + ' '.repeat(maxLen - target.length);
           onDone();
         }
       }, 40);
     }
 
     function runGlitch() {
+      const ORIGINAL = t('tag.app');
+      const TARGET = t('tag.glitch');
+      const maxLen = Math.max(ORIGINAL.length, TARGET.length);
       el.classList.add('glitching');
-      runScramble(TARGET, () => {
+      runScramble(TARGET, maxLen, () => {
         setTimeout(() => {
-          runScramble(ORIGINAL, () => {
+          runScramble(ORIGINAL, maxLen, () => {
             el.classList.remove('glitching');
             el.textContent = ORIGINAL;
             scheduleNext();

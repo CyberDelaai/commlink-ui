@@ -210,7 +210,7 @@
     gap: 6px;
   }
   .contact-list:empty::before {
-    content: 'NO CONTACTS';
+    content: var(--empty-contacts, 'NO CONTACTS');
     color: var(--dim);
     font-family: 'JetBrains Mono', monospace;
     font-size: 11px;
