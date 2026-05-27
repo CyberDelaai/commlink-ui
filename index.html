@@ -370,7 +370,7 @@
   //   X (first)  — almost certainly never bumped.
   //   Y (second) — bumped for major features.
   //   Z (third)  — bumped for all small changes (tweaks, fixes, polish).
-  const APP_VERSION = '1.2.0';
+  const APP_VERSION = '1.2.1';
 
   // ---------- External links ----------
   const DONATE_URL = 'https://boosty.to/cyberdelaai/donate';
@@ -386,7 +386,7 @@
     const browser = (navigator.language || 'en').slice(0, 2).toLowerCase();
     return SUPPORTED_LANGS.includes(browser) ? browser : 'en';
   })();
-  function t(key) {
+  function t(key, vars) {
     const parts = key.split('.');
     function lookup(dict) {
       let v = dict;
@@ -396,10 +396,13 @@
       }
       return typeof v === 'string' ? v : undefined;
     }
-    const v = (window.I18N && lookup(window.I18N[currentLang]));
-    if (v !== undefined) return v;
-    const fallback = window.I18N && lookup(window.I18N.en);
-    return fallback !== undefined ? fallback : key;
+    let v = (window.I18N && lookup(window.I18N[currentLang]));
+    if (v === undefined) v = window.I18N && lookup(window.I18N.en);
+    if (v === undefined) return key;
+    if (vars) {
+      v = v.replace(/\{(\w+)\}/g, (_, k) => (vars[k] !== undefined ? vars[k] : `{${k}}`));
+    }
+    return v;
   }
   function applyI18n() {
     document.querySelectorAll('[data-i18n]').forEach(el => {
@@ -720,10 +723,10 @@
           }
         }
       }
-      showToast('NO IMAGE IN CLIPBOARD');
+      showToast(t('toast.noImageClipboard'));
     } catch (err) {
       console.warn(err);
-      showToast('CLIPBOARD BLOCKED');
+      showToast(t('toast.clipboardBlocked'));
     }
   }
 
@@ -850,7 +853,7 @@
           saveState();
         });
         row.querySelector('[data-clone]').addEventListener('click', () => {
-          if (state.messages.length >= 99) { showToast('MAX 99 MESSAGES'); return; }
+          if (state.messages.length >= 99) { showToast(t('toast.maxMessages')); return; }
           const copy = { ...state.messages[i] };
           state.messages.splice(i + 1, 0, copy);
           renderMessagesEditor();
@@ -949,7 +952,7 @@
         portraitEl.classList.add('has-image');
         renderPreview();
         saveState();
-        showToast('PORTRAIT LOADED');
+        showToast(t('toast.portraitLoaded'));
       };
       const openPortraitCrop = (dataUrl, isOriginal) => {
         if (!isOriginal) {
@@ -971,7 +974,7 @@
       });
       row.querySelector('[data-recrop-portrait]').addEventListener('click', () => {
         const src = state.messages[i].portraitOriginal || state.messages[i].portrait;
-        if (!src) { showToast('NO PORTRAIT'); return; }
+        if (!src) { showToast(t('toast.noPortrait')); return; }
         openPortraitCrop(src, true);
       });
       row.querySelector('[data-clear-portrait]').addEventListener('click', () => {
@@ -1033,7 +1036,7 @@
         syncImgToggle(dataUrl);
         renderPreview();
         saveState();
-        showToast('IMG ATTACHED');
+        showToast(t('toast.imgAttached'));
       };
       // Toggle popup open/close — portal to <body> so it escapes the panel's clip-path
       const positionPopup = () => {
@@ -1084,7 +1087,7 @@
       });
       row.querySelector('[data-body-img-recrop]').addEventListener('click', () => {
         const src = state.messages[i].bodyImageOriginal || state.messages[i].bodyImage;
-        if (!src) { showToast('NO IMG'); return; }
+        if (!src) { showToast(t('toast.noImg')); return; }
         openBodyImageCrop(src, true);
       });
       row.querySelector('[data-body-img-clear]').addEventListener('click', () => {
@@ -1115,7 +1118,7 @@
         saveState();
       });
       row.querySelector('[data-clone]').addEventListener('click', () => {
-        if (state.messages.length >= 99) { showToast('MAX 99 MESSAGES'); return; }
+        if (state.messages.length >= 99) { showToast(t('toast.maxMessages')); return; }
         const copy = { ...state.messages[i] };
         state.messages.splice(i + 1, 0, copy);
         renderMessagesEditor();
@@ -1125,10 +1128,10 @@
       row.querySelector('[data-save-contact]').addEventListener('click', () => {
         const cur = state.messages[i];
         const name = (cur.speaker || '').trim();
-        if (!name) { showToast('SPEAKER REQUIRED'); return; }
+        if (!name) { showToast(t('toast.speakerRequired')); return; }
         const list = loadContacts();
         if (list.find(c => c.name === name && (c.avatar || '') === (cur.portrait || ''))) {
-          showToast(`"${name}" ALREADY SAVED`);
+          showToast(t('toast.alreadySaved', { name }));
           return;
         }
         list.push({
@@ -1137,11 +1140,11 @@
           avatar: cur.portrait || ''
         });
         if (!saveContacts(list)) {
-          showToast('STORAGE FULL');
+          showToast(t('toast.storageFull'));
           return;
         }
         renderContacts();
-        showToast(`+ CONTACT "${name}"`);
+        showToast(t('toast.contactAdded', { name }));
       });
       row.querySelector('[data-side]').addEventListener('click', () => {
         const newSide = state.messages[i].side === 'right' ? 'left' : 'right';
@@ -1388,7 +1391,7 @@
     syncForm();
     renderPreview();
     saveState();
-    showToast(`LOADED "${name}"`);
+    showToast(t('toast.loaded', { name }));
   }
 
   // ---------- Contacts (sidebar) ----------
@@ -1403,7 +1406,7 @@
     return storageSet(CONTACTS_KEY, JSON.stringify(list));
   }
   function addMessageFromContact(c) {
-    if (state.messages.length >= 99) { showToast('MAX 99 MESSAGES'); return; }
+    if (state.messages.length >= 99) { showToast(t('toast.maxMessages')); return; }
     state.messages.push({
       speaker: c.name || '',
       body: '',
@@ -1417,7 +1420,7 @@
     renderMessagesEditor();
     renderPreview();
     saveState();
-    showToast(`+ "${c.name || 'contact'}"`);
+    showToast(t('toast.contactSelected', { name: c.name || 'contact' }));
   }
   function renderContacts() {
     const contacts = loadContacts();
@@ -1513,11 +1516,11 @@
     if (!confirm(`Delete all ${list.length} contact(s)?`)) return;
     saveContacts([]);
     renderContacts();
-    showToast('CONTACTS CLEARED');
+    showToast(t('toast.contactsCleared'));
   });
   addContactBtn.addEventListener('click', () => {
     const name = newContactName.value.trim();
-    if (!name) { showToast('NAME REQUIRED'); newContactName.focus(); return; }
+    if (!name) { showToast(t('toast.nameRequired')); newContactName.focus(); return; }
     const list = loadContacts();
     list.push({
       id: Date.now().toString(36) + Math.random().toString(36).slice(2, 6),
@@ -1525,7 +1528,7 @@
       avatar: newAvatarData
     });
     if (!saveContacts(list)) {
-      showToast('STORAGE FULL');
+      showToast(t('toast.storageFull'));
       return;
     }
     newContactName.value = '';
@@ -1533,7 +1536,7 @@
     newContactAvatar.value = '';
     newAvatarPreview.style.backgroundImage = 'none';
     renderContacts();
-    showToast(`SAVED "${name}"`);
+    showToast(t('toast.saved', { name }));
   });
   newContactName.addEventListener('keydown', (e) => {
     if (e.key === 'Enter') { e.preventDefault(); addContactBtn.click(); }
@@ -1544,14 +1547,14 @@
   metaRightInput.addEventListener('input', () => { state.metaRight = metaRightInput.value; renderPreview(); saveState(); });
 
   addMessageBtn.addEventListener('click', () => {
-    if (state.messages.length >= 99) { showToast('MAX 99 MESSAGES'); return; }
+    if (state.messages.length >= 99) { showToast(t('toast.maxMessages')); return; }
     state.messages.push({ type: 'normal', speaker: '', body: '', portrait: '', portraitOriginal: '', side: 'left', time: '', bodyImage: '', bodyImageOriginal: '' });
     renderMessagesEditor();
     renderPreview();
     saveState();
   });
   addSystemMessageBtn.addEventListener('click', () => {
-    if (state.messages.length >= 99) { showToast('MAX 99 MESSAGES'); return; }
+    if (state.messages.length >= 99) { showToast(t('toast.maxMessages')); return; }
     state.messages.push({ type: 'system', speaker: '', body: '', portrait: '', portraitOriginal: '', side: 'left', time: '', bodyImage: '', bodyImageOriginal: '' });
     renderMessagesEditor();
     renderPreview();
@@ -1564,11 +1567,11 @@
     renderMessagesEditor();
     renderPreview();
     saveState();
-    showToast('MESSAGES CLEARED');
+    showToast(t('toast.messagesCleared'));
   });
 
   addChoiceBtn.addEventListener('click', () => {
-    if (state.choices.length >= 6) { showToast('MAX 6 CHOICES'); return; }
+    if (state.choices.length >= 6) { showToast(t('toast.maxChoices')); return; }
     state.choices.push('');
     renderChoicesEditor();
     renderPreview();
@@ -1622,7 +1625,7 @@
     state.bg = dataUrl;
     renderPreview();
     saveState();
-    showToast('IMG LOADED');
+    showToast(t('toast.imgLoaded'));
   }
   function loadBgFromDataUrl(dataUrl) {
     state.bgOriginal = dataUrl;
@@ -1642,7 +1645,7 @@
   });
   document.getElementById('recropBg').addEventListener('click', () => {
     const src = state.bgOriginal || state.bg;
-    if (!src) { showToast('NO BG YET'); return; }
+    if (!src) { showToast(t('toast.noBgYet')); return; }
     openCrop(src, applyBg, bgCropOptions());
   });
   bgBrightnessInput.addEventListener('input', () => {
@@ -1677,17 +1680,17 @@
 
   saveSnapshotBtn.addEventListener('click', () => {
     const name = snapshotName.value.trim();
-    if (!name) { showToast('NAME REQUIRED'); snapshotName.focus(); return; }
+    if (!name) { showToast(t('toast.nameRequired')); snapshotName.focus(); return; }
     const snaps = loadSnapshots();
     if (snaps[name] && !confirm(`Overwrite snapshot "${name}"?`)) return;
     snaps[name] = snapshotFromState();
     if (!persistSnapshots(snaps)) {
-      showToast('STORAGE FULL // DELETE SOME');
+      showToast(t('toast.storageFullDelete'));
       return;
     }
     snapshotName.value = '';
     renderSnapshots();
-    showToast(`SAVED "${name}"`);
+    showToast(t('toast.saved', { name }));
   });
   snapshotName.addEventListener('keydown', (e) => {
     if (e.key === 'Enter') { e.preventDefault(); saveSnapshotBtn.click(); }
@@ -1770,10 +1773,10 @@
       link.download = `commlink_dialog_${Date.now()}.png`;
       link.href = dataUrl;
       link.click();
-      showToast('PNG EXPORTED');
+      showToast(t('toast.pngExported'));
     } catch (err) {
       console.error(err);
-      showToast('EXPORT FAILED');
+      showToast(t('toast.exportFailed'));
     } finally {
       if (clonedFilterSvg) clonedFilterSvg.remove();
       exportBtn.disabled = false;
@@ -1798,10 +1801,10 @@
       link.href = url;
       link.click();
       setTimeout(() => URL.revokeObjectURL(url), 1000);
-      showToast('STATE EXPORTED');
+      showToast(t('toast.stateExported'));
     } catch (err) {
       console.error(err);
-      showToast('EXPORT FAILED');
+      showToast(t('toast.exportFailed'));
     }
   });
 
@@ -1836,16 +1839,16 @@
         saveState();
         syncForm();
         renderPreview();
-        showToast('STATE IMPORTED');
+        showToast(t('toast.stateImported'));
       } catch (err) {
         console.error(err);
-        showToast('IMPORT FAILED');
+        showToast(t('toast.importFailed'));
       } finally {
         importStateFile.value = '';
       }
     };
     reader.onerror = () => {
-      showToast('IMPORT FAILED');
+      showToast(t('toast.importFailed'));
       importStateFile.value = '';
     };
     reader.readAsText(file);

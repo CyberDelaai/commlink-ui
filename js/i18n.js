@@ -57,6 +57,34 @@ window.I18N = {
     },
     confirm: {
       import: 'Importing will replace your current state and contacts.\n\nIf you want to keep them, save a snapshot first.\n\nProceed?'
+    },
+    toast: {
+      noImageClipboard: 'NO IMAGE IN CLIPBOARD',
+      clipboardBlocked: 'CLIPBOARD BLOCKED',
+      maxMessages: 'MAX 99 MESSAGES',
+      portraitLoaded: 'PORTRAIT LOADED',
+      noPortrait: 'NO PORTRAIT',
+      imgAttached: 'IMG ATTACHED',
+      noImg: 'NO IMG',
+      speakerRequired: 'SPEAKER REQUIRED',
+      alreadySaved: '"{name}" ALREADY SAVED',
+      storageFull: 'STORAGE FULL',
+      contactAdded: '+ CONTACT "{name}"',
+      loaded: 'LOADED "{name}"',
+      contactSelected: '+ "{name}"',
+      messagesCleared: 'MESSAGES CLEARED',
+      contactsCleared: 'CONTACTS CLEARED',
+      nameRequired: 'NAME REQUIRED',
+      saved: 'SAVED "{name}"',
+      maxChoices: 'MAX 6 CHOICES',
+      imgLoaded: 'IMG LOADED',
+      noBgYet: 'NO BG YET',
+      storageFullDelete: 'STORAGE FULL // DELETE SOME',
+      pngExported: 'PNG EXPORTED',
+      exportFailed: 'EXPORT FAILED',
+      stateExported: 'STATE EXPORTED',
+      stateImported: 'STATE IMPORTED',
+      importFailed: 'IMPORT FAILED'
     }
   },
 
@@ -114,6 +142,34 @@ window.I18N = {
     },
     confirm: {
       import: 'Импорт заменит текущее состояние и контакты.\n\nЕсли хочешь их сохранить, сначала сделай слепок.\n\nПродолжить?'
+    },
+    toast: {
+      noImageClipboard: 'НЕТ ИЗОБРАЖЕНИЯ В БУФЕРЕ',
+      clipboardBlocked: 'БУФЕР ЗАБЛОКИРОВАН',
+      maxMessages: 'МАКС 99 СООБЩЕНИЙ',
+      portraitLoaded: 'АВАТАР ЗАГРУЖЕН',
+      noPortrait: 'НЕТ АВАТАРА',
+      imgAttached: 'ИЗО. ПРИКРЕПЛЕНО',
+      noImg: 'НЕТ ИЗО.',
+      speakerRequired: 'НУЖНО ИМЯ',
+      alreadySaved: '"{name}" УЖЕ СОХРАНЁН',
+      storageFull: 'ХРАНИЛИЩЕ ПЕРЕПОЛНЕНО',
+      contactAdded: '+ КОНТАКТ "{name}"',
+      loaded: 'ЗАГРУЖЕН "{name}"',
+      contactSelected: '+ "{name}"',
+      messagesCleared: 'СООБЩЕНИЯ ОЧИЩЕНЫ',
+      contactsCleared: 'КОНТАКТЫ ОЧИЩЕНЫ',
+      nameRequired: 'НУЖНО ИМЯ',
+      saved: 'СОХРАНЁН "{name}"',
+      maxChoices: 'МАКС 6 ВАРИАНТОВ',
+      imgLoaded: 'ИЗО. ЗАГРУЖЕНО',
+      noBgYet: 'НЕТ ФОНА',
+      storageFullDelete: 'ХРАНИЛИЩЕ ПЕРЕПОЛНЕНО // УДАЛИ ЧТО-ТО',
+      pngExported: 'PNG ЭКСПОРТИРОВАН',
+      exportFailed: 'ОШИБКА ЭКСПОРТА',
+      stateExported: 'СОСТОЯНИЕ ЭКСПОРТИРОВАНО',
+      stateImported: 'СОСТОЯНИЕ ИМПОРТИРОВАНО',
+      importFailed: 'ОШИБКА ИМПОРТА'
     }
   },
 
@@ -171,6 +227,34 @@ window.I18N = {
     },
     confirm: {
       import: "L'importation va remplacer ton état actuel et tes contacts.\n\nSi tu veux les garder, sauvegarde d'abord un snapshot.\n\nContinuer ?"
+    },
+    toast: {
+      noImageClipboard: 'AUCUNE IMG DANS LE PRESSE-PAPIERS',
+      clipboardBlocked: 'PRESSE-PAPIERS BLOQUÉ',
+      maxMessages: 'MAX 99 MESSAGES',
+      portraitLoaded: 'PORTRAIT CHARGÉ',
+      noPortrait: 'PAS DE PORTRAIT',
+      imgAttached: 'IMG ATTACHÉE',
+      noImg: "PAS D'IMG",
+      speakerRequired: 'NOM REQUIS',
+      alreadySaved: '"{name}" DÉJÀ SAUVEGARDÉ',
+      storageFull: 'STOCKAGE PLEIN',
+      contactAdded: '+ CONTACT "{name}"',
+      loaded: 'CHARGÉ "{name}"',
+      contactSelected: '+ "{name}"',
+      messagesCleared: 'MESSAGES EFFACÉS',
+      contactsCleared: 'CONTACTS EFFACÉS',
+      nameRequired: 'NOM REQUIS',
+      saved: 'SAUVEGARDÉ "{name}"',
+      maxChoices: 'MAX 6 CHOIX',
+      imgLoaded: 'IMG CHARGÉE',
+      noBgYet: 'PAS DE FOND',
+      storageFullDelete: 'STOCKAGE PLEIN // SUPPRIMER',
+      pngExported: 'PNG EXPORTÉ',
+      exportFailed: 'ÉCHEC EXPORT',
+      stateExported: 'ÉTAT EXPORTÉ',
+      stateImported: 'ÉTAT IMPORTÉ',
+      importFailed: 'ÉCHEC IMPORT'
     }
   },
 
@@ -228,6 +312,34 @@ window.I18N = {
     },
     confirm: {
       import: 'Der Import ersetzt deinen aktuellen Zustand und deine Kontakte.\n\nWenn du sie behalten willst, speichere zuerst einen Snapshot.\n\nFortfahren?'
+    },
+    toast: {
+      noImageClipboard: 'KEIN BILD IN ZWISCHENABLAGE',
+      clipboardBlocked: 'ZWISCHENABLAGE BLOCKIERT',
+      maxMessages: 'MAX 99 NACHRICHTEN',
+      portraitLoaded: 'PORTRAIT GELADEN',
+      noPortrait: 'KEIN PORTRAIT',
+      imgAttached: 'BILD ANGEHÄNGT',
+      noImg: 'KEIN BILD',
+      speakerRequired: 'NAME ERFORDERLICH',
+      alreadySaved: '"{name}" SCHON GESPEICHERT',
+      storageFull: 'SPEICHER VOLL',
+      contactAdded: '+ KONTAKT "{name}"',
+      loaded: 'GELADEN "{name}"',
+      contactSelected: '+ "{name}"',
+      messagesCleared: 'NACHRICHTEN GELÖSCHT',
+      contactsCleared: 'KONTAKTE GELÖSCHT',
+      nameRequired: 'NAME ERFORDERLICH',
+      saved: 'GESPEICHERT "{name}"',
+      maxChoices: 'MAX 6 OPTIONEN',
+      imgLoaded: 'BILD GELADEN',
+      noBgYet: 'KEIN HINTERGRUND',
+      storageFullDelete: 'SPEICHER VOLL // LÖSCHE',
+      pngExported: 'PNG EXPORTIERT',
+      exportFailed: 'EXPORT FEHLGESCHL.',
+      stateExported: 'ZUSTAND EXPORTIERT',
+      stateImported: 'ZUSTAND IMPORTIERT',
+      importFailed: 'IMPORT FEHLGESCHL.'
     }
   },
 
@@ -285,6 +397,34 @@ window.I18N = {
     },
     confirm: {
       import: 'La importación reemplazará tu estado actual y contactos.\n\nSi quieres conservarlos, guarda una instantánea primero.\n\n¿Continuar?'
+    },
+    toast: {
+      noImageClipboard: 'SIN IMG EN PORTAPAPELES',
+      clipboardBlocked: 'PORTAPAPELES BLOQUEADO',
+      maxMessages: 'MÁX 99 MENSAJES',
+      portraitLoaded: 'AVATAR CARGADO',
+      noPortrait: 'SIN AVATAR',
+      imgAttached: 'IMG ADJUNTA',
+      noImg: 'SIN IMG',
+      speakerRequired: 'NOMBRE REQ.',
+      alreadySaved: '"{name}" YA GUARDADO',
+      storageFull: 'ALMACÉN LLENO',
+      contactAdded: '+ CONTACTO "{name}"',
+      loaded: 'CARGADO "{name}"',
+      contactSelected: '+ "{name}"',
+      messagesCleared: 'MENSAJES BORRADOS',
+      contactsCleared: 'CONTACTOS BORRADOS',
+      nameRequired: 'NOMBRE REQ.',
+      saved: 'GUARDADO "{name}"',
+      maxChoices: 'MÁX 6 OPCIONES',
+      imgLoaded: 'IMG CARGADA',
+      noBgYet: 'SIN FONDO',
+      storageFullDelete: 'ALMACÉN LLENO // BORRA ALGO',
+      pngExported: 'PNG EXPORTADO',
+      exportFailed: 'EXPORT FALLÓ',
+      stateExported: 'ESTADO EXPORTADO',
+      stateImported: 'ESTADO IMPORTADO',
+      importFailed: 'IMPORT FALLÓ'
     }
   },
 
@@ -342,6 +482,34 @@ window.I18N = {
     },
     confirm: {
       import: "L'importazione sostituirà lo stato e i contatti correnti.\n\nSe vuoi conservarli, salva prima un'istantanea.\n\nContinuare?"
+    },
+    toast: {
+      noImageClipboard: 'NESSUNA IMG NEGLI APPUNTI',
+      clipboardBlocked: 'APPUNTI BLOCCATI',
+      maxMessages: 'MAX 99 MESSAGGI',
+      portraitLoaded: 'AVATAR CARICATO',
+      noPortrait: 'NESSUN AVATAR',
+      imgAttached: 'IMG ALLEGATA',
+      noImg: 'NESSUNA IMG',
+      speakerRequired: 'NOME RICHIESTO',
+      alreadySaved: '"{name}" GIÀ SALVATO',
+      storageFull: 'ARCHIVIO PIENO',
+      contactAdded: '+ CONTATTO "{name}"',
+      loaded: 'CARICATO "{name}"',
+      contactSelected: '+ "{name}"',
+      messagesCleared: 'MESSAGGI CANCELLATI',
+      contactsCleared: 'CONTATTI CANCELLATI',
+      nameRequired: 'NOME RICHIESTO',
+      saved: 'SALVATO "{name}"',
+      maxChoices: 'MAX 6 SCELTE',
+      imgLoaded: 'IMG CARICATA',
+      noBgYet: 'NESSUNO SFONDO',
+      storageFullDelete: 'ARCHIVIO PIENO // CANCELLA',
+      pngExported: 'PNG ESPORTATO',
+      exportFailed: 'EXPORT FALLITO',
+      stateExported: 'STATO ESPORTATO',
+      stateImported: 'STATO IMPORTATO',
+      importFailed: 'IMPORT FALLITO'
     }
   }
 };
