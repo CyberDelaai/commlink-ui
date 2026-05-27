@@ -327,6 +327,11 @@
 
     <div class="actions">
       <button class="btn export-btn" id="exportBtn" type="button">⬇ SAVE PNG</button>
+      <div class="state-io">
+        <button class="btn cyan" id="exportStateBtn" type="button" title="Export state and contacts as JSON">⬇ EXPORT JSON</button>
+        <input type="file" id="importStateFile" accept="application/json,.json" hidden />
+        <label class="btn cyan" for="importStateFile" title="Import state and contacts from JSON">⬆ IMPORT JSON</label>
+      </div>
     </div>
   </section>
 </main>
@@ -356,7 +361,7 @@
   //   X (first)  — almost certainly never bumped.
   //   Y (second) — bumped for major features.
   //   Z (third)  — bumped for all small changes (tweaks, fixes, polish).
-  const APP_VERSION = '1.1.6';
+  const APP_VERSION = '1.1.7';
 
   // ---------- External links ----------
   const DONATE_URL = 'https://boosty.to/cyberdelaai/donate';
@@ -703,6 +708,8 @@
   const saveSnapshotBtn = $('saveSnapshot');
   const snapshotList = $('snapshotList');
   const exportBtn = $('exportBtn');
+  const exportStateBtn = $('exportStateBtn');
+  const importStateFile = $('importStateFile');
 
   const stage = $('stage');
   const stageBg = $('stageBg');
@@ -1719,6 +1726,80 @@
       exportBtn.disabled = false;
       exportBtn.textContent = prevText;
     }
+  });
+
+  // Export state + contacts as JSON
+  exportStateBtn.addEventListener('click', () => {
+    try {
+      const payload = {
+        app: 'commlink',
+        version: APP_VERSION,
+        exportedAt: Date.now(),
+        state: state,
+        contacts: loadContacts()
+      };
+      const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.download = `commlink_state_${Date.now()}.json`;
+      link.href = url;
+      link.click();
+      setTimeout(() => URL.revokeObjectURL(url), 1000);
+      showToast('STATE EXPORTED');
+    } catch (err) {
+      console.error(err);
+      showToast('EXPORT FAILED');
+    }
+  });
+
+  // Import state + contacts from JSON
+  importStateFile.addEventListener('change', (e) => {
+    const file = e.target.files && e.target.files[0];
+    if (!file) return;
+    const proceed = confirm(
+      'Importing will replace your current state and contacts.\n\n' +
+      'If you want to keep them, save a snapshot first.\n\n' +
+      'Proceed?'
+    );
+    if (!proceed) {
+      importStateFile.value = '';
+      return;
+    }
+    const reader = new FileReader();
+    reader.onload = () => {
+      try {
+        const data = JSON.parse(reader.result);
+        if (!data || typeof data !== 'object' || !data.state || typeof data.state !== 'object') {
+          throw new Error('Missing state');
+        }
+        const merged = { ...clone(defaultState), ...data.state };
+        if (!Array.isArray(merged.messages)) merged.messages = [];
+        merged.messages = merged.messages.map(m => ({
+          type: 'normal', speaker: '', body: '', portrait: '', portraitOriginal: '',
+          side: 'left', time: '', bodyImage: '', bodyImageOriginal: '', ...m
+        }));
+        if (!Array.isArray(merged.choices)) merged.choices = [];
+        state = merged;
+        if (Array.isArray(data.contacts)) {
+          saveContacts(data.contacts);
+          renderContacts();
+        }
+        saveState();
+        syncForm();
+        renderPreview();
+        showToast('STATE IMPORTED');
+      } catch (err) {
+        console.error(err);
+        showToast('IMPORT FAILED');
+      } finally {
+        importStateFile.value = '';
+      }
+    };
+    reader.onerror = () => {
+      showToast('IMPORT FAILED');
+      importStateFile.value = '';
+    };
+    reader.readAsText(file);
   });
 
   function updateStageDims() {

@@ -242,6 +242,15 @@
     --aug-tl: 12px;
     --aug-br: 12px;
   }
+  .state-io {
+    display: flex;
+    gap: 10px;
+    width: 100%;
+  }
+  .state-io .btn {
+    flex: 1;
+    justify-content: center;
+  }
 
   .color-grid { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
   .custom-color-group {
