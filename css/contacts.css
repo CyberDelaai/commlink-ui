@@ -48,6 +48,7 @@
   }
   .side-toggle .label {
     writing-mode: vertical-rl;
+    transform: rotate(180deg);
     font-size: 14px;
     font-weight: 700;
     letter-spacing: 3px;
