@@ -11,5 +11,4 @@ Pending issues, features, and ideas for COMMLINK. Items are removed from the lis
 
 1. Background image to be added by URL
 2. Toggle to more smartphone-like view (slimmer message box)
-3. Add CN lang
-4. Resize avatars to store smaller pictures in storage
+3. Resize avatars to store smaller pictures in storage

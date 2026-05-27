@@ -207,6 +207,7 @@
     <option value="es">ES</option>
     <option value="it">IT</option>
     <option value="ja">JP</option>
+    <option value="zh">CN</option>
   </select>
 </header>
 
@@ -375,14 +376,14 @@
   //   X (first)  — almost certainly never bumped.
   //   Y (second) — bumped for major features.
   //   Z (third)  — bumped for all small changes (tweaks, fixes, polish).
-  const APP_VERSION = '1.2.3';
+  const APP_VERSION = '1.2.4';
 
   // ---------- External links ----------
   const DONATE_URL = 'https://boosty.to/cyberdelaai/donate';
 
   // ---------- i18n ----------
   const LANG_KEY = 'commlink:lang';
-  const SUPPORTED_LANGS = ['en', 'ru', 'fr', 'de', 'es', 'it', 'ja'];
+  const SUPPORTED_LANGS = ['en', 'ru', 'fr', 'de', 'es', 'it', 'ja', 'zh'];
   let currentLang = (function () {
     try {
       const saved = localStorage.getItem(LANG_KEY);
@@ -1927,7 +1928,7 @@
   }
 
   function seedDefaults() {
-    const SEED_VERSION = '12';
+    const SEED_VERSION = '14';
     if (storageGet(SEEDED_KEY) === SEED_VERSION) return;
     const defaultContacts = [
       { id: 'def-johnny', name: 'JOHNNY', avatar: makeInitialAvatar('J', '#fcee0a') },
@@ -1941,13 +1942,18 @@
     }
     // Rewrite example snapshots — one per supported language, each tagged
     // with `lang` so the SHOW EXAMPLES toggle can filter them.
+    // Snapshot-key suffix uses the dropdown's display code (zh→CN), not the
+    // ISO-639-1 lang code, so users see EXAMPLE_CN / EXAMPLE_JP-style names.
+    const LANG_SUFFIX = { zh: 'CN' };
     const snaps = loadSnapshots();
     delete snaps['EXAMPLE // wake up samurai'];
     delete snaps['EXAMPLE'];
+    delete snaps['EXAMPLE_ZH']; // migrate older seed naming
     SUPPORTED_LANGS.forEach(lang => {
       const tr = window.I18N && window.I18N[lang];
       if (!tr || !tr.example) return;
-      const key = `EXAMPLE_${lang.toUpperCase()}`;
+      const suffix = LANG_SUFFIX[lang] || lang.toUpperCase();
+      const key = `EXAMPLE_${suffix}`;
       snaps[key] = {
         ...clone(defaultState),
         meta: tr.example.meta || defaultState.meta,
@@ -2031,8 +2037,11 @@
     if (!el) return;
     const CHARS_LATIN = '!@#$%&*<>{}[]/|01ABCDEFGHIJKLMNOPQRSTUVWXYZ';
     const CHARS_KANA  = 'アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲンッー!@#$%0123456789';
+    const CHARS_HAN   = '数据网络代码系统终端连接信号传输零一二三四五六七八九!@#$%';
     function scrambleAlphabet() {
-      return currentLang === 'ja' ? CHARS_KANA : CHARS_LATIN;
+      if (currentLang === 'ja') return CHARS_KANA;
+      if (currentLang === 'zh') return CHARS_HAN;
+      return CHARS_LATIN;
     }
 
     function scrambleFrame(target, revealed, maxLen) {

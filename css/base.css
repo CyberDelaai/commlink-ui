@@ -68,6 +68,13 @@
     min-width: 18ch;
     white-space: pre;
   }
+  /* CJK targets are short but each glyph is ~1em wide, so the 18ch reserve
+     (sized for Latin) leaves a trailing gap before the version number. The
+     scramble already pads to MAX_LEN, so width stays stable without it. */
+  html[lang="ja"] header .tag .glitchable,
+  html[lang="zh"] header .tag .glitchable {
+    min-width: 0;
+  }
   header .tag .glitchable.glitching {
     color: var(--yellow);
     text-shadow:

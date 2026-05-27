@@ -680,5 +680,102 @@ window.I18N = {
       stateImported: '状態インポート完了',
       importFailed: 'インポート失敗'
     }
+  },
+
+  zh: {
+    tag: { app: '对话构造器', glitch: '对话伪造器' },
+    status: '网络流浪者在线',
+    panel: {
+      contacts: '联系人',
+      snapshots: '状态',
+      donate: '赞助',
+      messages: '// 消息',
+      preview: '// 预览',
+      config: '// 配置'
+    },
+    donate: {
+      title: '// 信号传入',
+      line1: '你已接入。你打造了值得在网络上闪耀的对话。',
+      line2: '如果对话构造器点亮了你的屏幕，赢得了你装备中的一席之地——往机柜里扔点电子币吧。',
+      line3: '每个信号都让网络流浪者保持运转，铬合金持续流动。',
+      cta: '干吧！',
+      scan: '// 或扫描以接入'
+    },
+    field: {
+      channelTop: '频道 — 上',
+      channelBottom: '频道 — 下',
+      choices: '选项',
+      accent: '强调色',
+      fx: '特效',
+      bg: '背景',
+      bright: '亮度'
+    },
+    fx: { glitch: '故障', scanlines: '扫描线' },
+    btn: {
+      addMessage: '+ 消息',
+      addSysMessage: '+ 系统',
+      clearAll: '全部清除',
+      add: '+ 添加',
+      clear: '清除',
+      savePng: '⬇ 保存PNG',
+      exportJson: '⬇ 导出',
+      importJson: '⬆ 导入',
+      avatar: '头像',
+      paste: '粘贴',
+      recrop: '重剪',
+      uploadImg: '上传',
+      load: '加载'
+    },
+    placeholder: {
+      contactName: '联系人姓名...',
+      snapshotName: '状态名...',
+      meta: '例: //加密'
+    },
+    empty: {
+      contacts: '无联系人'
+    },
+    confirm: {
+      import: '导入将替换您当前的状态和联系人。\n\n如果想保留它们，请先保存状态。\n\n继续?'
+    },
+    snapshot: { showExamples: '显示示例' },
+    example: {
+      meta: '//加密',
+      messages: [
+        { speaker: 'JOHNNY', body: '醒醒，武士。我们有座城要烧。', side: 'left', time: '04:20' },
+        { speaker: 'V', body: '等等。脑子还在嗡嗡叫。', side: 'right', time: '04:21' },
+        { speaker: 'JOHNNY', body: '把图纸发给你——别在公共网上打开。', side: 'left', time: '04:22' },
+        { type: 'system', body: '文件已传输' },
+        { speaker: 'V', body: '收到。正赶往交付点。', side: 'right', time: '04:23' }
+      ],
+      choices: ['交付点我去见谁?', '留在我脑子里，银手。']
+    },
+    toast: {
+      noImageClipboard: '剪贴板无图片',
+      clipboardBlocked: '剪贴板被屏蔽',
+      maxMessages: '最多99条消息',
+      portraitLoaded: '头像已加载',
+      noPortrait: '无头像',
+      imgAttached: '图片已附加',
+      noImg: '无图片',
+      speakerRequired: '需要发言者',
+      alreadySaved: '"{name}" 已保存',
+      storageFull: '存储已满',
+      contactAdded: '+ 联系人 "{name}"',
+      loaded: '已加载 "{name}"',
+      contactSelected: '+ "{name}"',
+      messagesCleared: '消息已清除',
+      contactsCleared: '联系人已清除',
+      nameRequired: '需要名称',
+      saved: '已保存 "{name}"',
+      maxChoices: '最多6个选项',
+      imgLoaded: '图片已加载',
+      noBgYet: '无背景',
+      storageFullDelete: '存储已满 // 删除一些',
+      pngExported: 'PNG导出完成',
+      exportFailed: '导出失败',
+      stateExported: '状态导出完成',
+      stateImported: '状态导入完成',
+      importFailed: '导入失败'
+    }
   }
 };
