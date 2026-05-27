@@ -376,7 +376,7 @@
   //   X (first)  — almost certainly never bumped.
   //   Y (second) — bumped for major features.
   //   Z (third)  — bumped for all small changes (tweaks, fixes, polish).
-  const APP_VERSION = '1.2.6';
+  const APP_VERSION = '1.2.7';
 
   // ---------- External links ----------
   const DONATE_URL = 'https://boosty.to/cyberdelaai/donate';
@@ -510,7 +510,7 @@
         merged.messages = [{ speaker: parsed.speaker || '', body: parsed.body || '' }];
       }
       if (!Array.isArray(merged.messages)) merged.messages = [];
-      merged.messages = merged.messages.map(m => ({ type: 'normal', speaker: '', body: '', portrait: '', portraitOriginal: '', side: 'left', time: '', bodyImage: '', bodyImageOriginal: '', ...m }));
+      merged.messages = merged.messages.map(m => ({ type: 'normal', contactId: '', speaker: '', body: '', portrait: '', portraitOriginal: '', side: 'left', time: '', bodyImage: '', bodyImageOriginal: '', ...m }));
       // bgOriginal lives in its own key (too large for the main state JSON).
       // Migrate from old shape (when bgOriginal was inside state JSON).
       const separateBg = storageGet(BG_ORIGINAL_KEY);
@@ -530,16 +530,38 @@
 
   function clone(o) { return JSON.parse(JSON.stringify(o)); }
 
+  // Resolve a message's display speaker + portrait. If the message is linked
+  // to a contact (m.contactId), live values from the contact win; otherwise
+  // the cached m.speaker / m.portrait fields are used as inline storage.
+  function resolveSpeaker(m, contactsList) {
+    if (m && m.contactId) {
+      const list = contactsList || loadContacts();
+      const c = list.find(x => x.id === m.contactId);
+      if (c) return { name: c.name || '', avatar: c.avatar || '' };
+    }
+    return { name: (m && m.speaker) || '', avatar: (m && m.portrait) || '' };
+  }
+
   function saveState() {
     const { bgOriginal, ...slim } = state;
-    // Avatar recrop was removed — portraitOriginal is dead weight. Strip it
-    // from messages before persisting to keep the state JSON small.
+    // Avatar recrop was removed → portraitOriginal is dead weight.
+    // Also: messages linked to a contact don't need cached speaker/portrait
+    // (those resolve live). Strip both for compactness.
     if (Array.isArray(slim.messages)) {
+      const contactIds = new Set(loadContacts().map(c => c.id));
       slim.messages = slim.messages.map(m => {
-        if (!m || !m.portraitOriginal) return m;
-        const copy = { ...m };
-        copy.portraitOriginal = '';
-        return copy;
+        if (!m) return m;
+        let copy = null;
+        if (m.portraitOriginal) {
+          copy = copy || { ...m };
+          copy.portraitOriginal = '';
+        }
+        if (m.contactId && contactIds.has(m.contactId) && (m.speaker || m.portrait)) {
+          copy = copy || { ...m };
+          copy.speaker = '';
+          copy.portrait = '';
+        }
+        return copy || m;
       });
     }
     storageSet(STATE_KEY, JSON.stringify(slim));
@@ -966,14 +988,27 @@
       const bd = row.querySelector('.body-input');
       const portraitEl = row.querySelector('[data-portrait]');
       const portraitInput = row.querySelector('.portrait-file');
-      sp.value = m.speaker;
+      const resolved = resolveSpeaker(m);
+      sp.value = resolved.name;
       tm.value = m.time || '';
       bd.value = m.body;
-      if (m.portrait) {
-        portraitEl.style.backgroundImage = `url("${m.portrait}")`;
+      if (resolved.avatar) {
+        portraitEl.style.backgroundImage = `url("${resolved.avatar}")`;
         portraitEl.classList.add('has-image');
       }
-      sp.addEventListener('input', () => { state.messages[i].speaker = sp.value; renderPreview(); saveState(); });
+      sp.addEventListener('input', () => {
+        const cur = state.messages[i];
+        // Was linked: inline the contact's avatar so the message keeps its
+        // portrait when we clear the link.
+        if (cur.contactId) {
+          const c = loadContacts().find(x => x.id === cur.contactId);
+          if (c) cur.portrait = c.avatar || '';
+        }
+        cur.speaker = sp.value;
+        cur.contactId = '';
+        renderPreview();
+        saveState();
+      });
       tm.addEventListener('input', () => { state.messages[i].time = tm.value; renderPreview(); saveState(); });
       bd.addEventListener('input', () => {
         state.messages[i].body = bd.value;
@@ -983,7 +1018,15 @@
       });
       const portraitPopup = row.querySelector('.portrait-popup');
       const applyPortrait = (dataUrl) => {
-        state.messages[i].portrait = dataUrl;
+        const cur = state.messages[i];
+        // Was linked: inline the contact's name so the message keeps its
+        // speaker when we clear the link.
+        if (cur.contactId) {
+          const c = loadContacts().find(x => x.id === cur.contactId);
+          if (c) cur.speaker = c.name || '';
+        }
+        cur.portrait = dataUrl;
+        cur.contactId = '';
         portraitEl.style.backgroundImage = `url("${dataUrl}")`;
         portraitEl.classList.add('has-image');
         renderPreview();
@@ -1005,8 +1048,15 @@
         tryPasteImage(openPortraitCrop);
       });
       row.querySelector('[data-clear-portrait]').addEventListener('click', () => {
-        state.messages[i].portrait = '';
-        state.messages[i].portraitOriginal = '';
+        const cur = state.messages[i];
+        // Was linked: inline the contact's name so the speaker is preserved.
+        if (cur.contactId) {
+          const c = loadContacts().find(x => x.id === cur.contactId);
+          if (c) cur.speaker = c.name || '';
+        }
+        cur.portrait = '';
+        cur.portraitOriginal = '';
+        cur.contactId = '';
         portraitEl.style.backgroundImage = '';
         portraitEl.classList.remove('has-image');
         portraitInput.value = '';
@@ -1161,15 +1211,19 @@
           showToast(t('toast.alreadySaved', { name }));
           return;
         }
-        list.push({
-          id: Date.now().toString(36) + Math.random().toString(36).slice(2, 6),
-          name,
-          avatar: cur.portrait || ''
-        });
+        const newId = Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
+        list.push({ id: newId, name, avatar: cur.portrait || '' });
         if (!saveContacts(list)) {
           showToast(t('toast.storageFull'));
           return;
         }
+        // Link this message to the newly created contact so future updates
+        // to the contact will propagate. Drop the cached speaker/portrait now
+        // that they live solely on the contact — saves storage.
+        state.messages[i].contactId = newId;
+        state.messages[i].speaker = '';
+        state.messages[i].portrait = '';
+        saveState();
         renderContacts();
         showToast(t('toast.contactAdded', { name }));
       });
@@ -1225,6 +1279,7 @@
     pMetaRight.textContent = state.metaRight || '';
 
     pMessages.innerHTML = '';
+    const contactsCache = loadContacts(); // resolve once per render pass
     state.messages.forEach((m) => {
       if (m.type === 'system') {
         if (!m.body.trim()) return;
@@ -1235,16 +1290,17 @@
         pMessages.appendChild(sysEl);
         return;
       }
-      if (!m.speaker.trim() && !m.body.trim() && !m.portrait && !(m.time && m.time.trim()) && !m.bodyImage) return;
+      const resolved = resolveSpeaker(m, contactsCache);
+      if (!resolved.name.trim() && !m.body.trim() && !resolved.avatar && !(m.time && m.time.trim()) && !m.bodyImage) return;
       const el = document.createElement('div');
       const side = m.side === 'right' ? 'right' : 'left';
-      el.className = 'message ' + side + (m.portrait ? ' has-portrait' : '');
-      el.innerHTML = (m.portrait ? '<div class="portrait"></div>' : '') +
+      el.className = 'message ' + side + (resolved.avatar ? ' has-portrait' : '');
+      el.innerHTML = (resolved.avatar ? '<div class="portrait"></div>' : '') +
         '<div class="content"><div class="meta-line"><span class="name"></span><span class="time"></span></div><p class="body"></p></div>';
-      if (m.portrait) {
-        el.querySelector('.portrait').style.backgroundImage = `url("${m.portrait}")`;
+      if (resolved.avatar) {
+        el.querySelector('.portrait').style.backgroundImage = `url("${resolved.avatar}")`;
       }
-      el.querySelector('.name').textContent = m.speaker || '—';
+      el.querySelector('.name').textContent = resolved.name || '—';
       el.querySelector('.time').textContent = (m.time || '').trim();
       el.querySelector('.body').textContent = m.body || '';
       if (m.bodyImage) {
@@ -1413,7 +1469,7 @@
     };
     delete state.savedAt;
     delete state.contacts;
-    state.messages = (state.messages || []).map(m => ({ type: 'normal', speaker: '', body: '', portrait: '', portraitOriginal: '', side: 'left', time: '', bodyImage: '', bodyImageOriginal: '', ...m }));
+    state.messages = (state.messages || []).map(m => ({ type: 'normal', contactId: '', speaker: '', body: '', portrait: '', portraitOriginal: '', side: 'left', time: '', bodyImage: '', bodyImageOriginal: '', ...m }));
     if (!Array.isArray(state.choices)) state.choices = [];
     if (Array.isArray(snap.contacts)) {
       saveContacts(snap.contacts);
@@ -1438,10 +1494,14 @@
   }
   function addMessageFromContact(c) {
     if (state.messages.length >= 99) { showToast(t('toast.maxMessages')); return; }
+    // contactId resolves to live speaker/avatar at render time; leave the
+    // cached fields empty so we don't duplicate the contact's avatar bytes.
     state.messages.push({
-      speaker: c.name || '',
+      type: 'normal',
+      contactId: c.id || '',
+      speaker: '',
       body: '',
-      portrait: c.avatar || '',
+      portrait: '',
       portraitOriginal: '',
       side: 'left',
       time: '',
@@ -1473,8 +1533,20 @@
       item.querySelector('[data-del]').addEventListener('click', (e) => {
         e.stopPropagation();
         if (!confirm(`Delete contact "${c.name}"?`)) return;
+        // Inline the contact's data into any messages that referenced it so
+        // the display survives the contact removal.
+        let touched = false;
+        state.messages.forEach(m => {
+          if (m && m.contactId === c.id) {
+            m.speaker = c.name || '';
+            m.portrait = c.avatar || '';
+            m.contactId = '';
+            touched = true;
+          }
+        });
         const updated = loadContacts().filter(x => x.id !== c.id);
         saveContacts(updated);
+        if (touched) { saveState(); renderPreview(); renderMessagesEditor(); }
         renderContacts();
       });
       contactList.appendChild(item);
@@ -1545,7 +1617,22 @@
     const list = loadContacts();
     if (list.length === 0) return;
     if (!confirm(`Delete all ${list.length} contact(s)?`)) return;
+    // Inline cached data into linked messages so they keep their display.
+    const byId = new Map(list.map(c => [c.id, c]));
+    let touched = false;
+    state.messages.forEach(m => {
+      if (m && m.contactId) {
+        const c = byId.get(m.contactId);
+        if (c) {
+          m.speaker = c.name || '';
+          m.portrait = c.avatar || '';
+        }
+        m.contactId = '';
+        touched = true;
+      }
+    });
     saveContacts([]);
+    if (touched) { saveState(); renderPreview(); renderMessagesEditor(); }
     renderContacts();
     showToast(t('toast.contactsCleared'));
   });
@@ -1579,14 +1666,14 @@
 
   addMessageBtn.addEventListener('click', () => {
     if (state.messages.length >= 99) { showToast(t('toast.maxMessages')); return; }
-    state.messages.push({ type: 'normal', speaker: '', body: '', portrait: '', portraitOriginal: '', side: 'left', time: '', bodyImage: '', bodyImageOriginal: '' });
+    state.messages.push({ type: 'normal', contactId: '', speaker: '', body: '', portrait: '', portraitOriginal: '', side: 'left', time: '', bodyImage: '', bodyImageOriginal: '' });
     renderMessagesEditor();
     renderPreview();
     saveState();
   });
   addSystemMessageBtn.addEventListener('click', () => {
     if (state.messages.length >= 99) { showToast(t('toast.maxMessages')); return; }
-    state.messages.push({ type: 'system', speaker: '', body: '', portrait: '', portraitOriginal: '', side: 'left', time: '', bodyImage: '', bodyImageOriginal: '' });
+    state.messages.push({ type: 'system', contactId: '', speaker: '', body: '', portrait: '', portraitOriginal: '', side: 'left', time: '', bodyImage: '', bodyImageOriginal: '' });
     renderMessagesEditor();
     renderPreview();
     saveState();
@@ -1920,15 +2007,21 @@
     if (!tr || !tr.example) return [];
     return tr.example.messages.map(m => {
       if (m.type === 'system') {
-        return { type: 'system', speaker: '', body: m.body, portrait: '', portraitOriginal: '', side: 'left', time: '', bodyImage: '', bodyImageOriginal: '' };
+        return { type: 'system', contactId: '', speaker: '', body: m.body, portrait: '', portraitOriginal: '', side: 'left', time: '', bodyImage: '', bodyImageOriginal: '' };
       }
       const color = m.speaker === 'JOHNNY' ? '#fcee0a' : '#00f0ff';
       const letter = (m.speaker[0] || '?').toUpperCase();
+      // Link example messages to the seeded default contacts so the
+      // contactId chain works out of the box. Linked messages skip the
+      // cached speaker/portrait fields — they resolve live from the contact.
+      const CONTACT_IDS = { JOHNNY: 'def-johnny', V: 'def-v' };
+      const linkedId = CONTACT_IDS[m.speaker] || '';
       return {
         type: 'normal',
-        speaker: m.speaker,
+        contactId: linkedId,
+        speaker: linkedId ? '' : m.speaker,
         body: m.body,
-        portrait: makeInitialAvatar(letter, color),
+        portrait: linkedId ? '' : makeInitialAvatar(letter, color),
         portraitOriginal: '',
         side: m.side,
         time: m.time,
@@ -1939,7 +2032,7 @@
   }
 
   function seedDefaults() {
-    const SEED_VERSION = '15';
+    const SEED_VERSION = '17';
     if (storageGet(SEEDED_KEY) === SEED_VERSION) return;
     // One-time cleanup: strip portraitOriginal (dead since avatar-recrop was
     // removed) from any existing saved snapshots to reclaim localStorage.
