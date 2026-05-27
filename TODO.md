@@ -11,7 +11,6 @@ Pending issues, features, and ideas for COMMLINK. Items are removed from the lis
 
 1. Background image to be added by URL
 2. Toggle to more smartphone-like view (slimmer message box)
-3. Translate example dialog/choices on language change (UI labels done in 1.2.0)
-4. Add JP lang
-5. Add CN lang
+3. Add JP lang
+4. Add CN lang
 6. Resize avatars to store smaller pictures in storage

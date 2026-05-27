@@ -109,12 +109,62 @@
     outline: none;
   }
   .snapshot-save input[type="text"]:focus { border-color: var(--yellow); }
+  .example-toggle {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 0 0 10px 0;
+    cursor: pointer;
+    font-family: 'JetBrains Mono', monospace;
+    color: var(--dim);
+    font-size: 11px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    user-select: none;
+    transition: color 0.15s;
+  }
+  .example-toggle:hover { color: var(--cyan); }
+  .example-toggle input[type="checkbox"] {
+    appearance: none;
+    -webkit-appearance: none;
+    width: 14px;
+    height: 14px;
+    margin: 0;
+    background: var(--panel);
+    border: 1px solid rgba(0, 240, 255, 0.45);
+    cursor: pointer;
+    position: relative;
+    flex-shrink: 0;
+    transition: border-color 0.15s, box-shadow 0.15s;
+  }
+  .example-toggle input[type="checkbox"]:hover { border-color: var(--cyan); }
+  .example-toggle input[type="checkbox"]:checked {
+    background: var(--cyan);
+    border-color: var(--cyan);
+    box-shadow: 0 0 6px color-mix(in srgb, var(--cyan) 50%, transparent);
+  }
+  .example-toggle input[type="checkbox"]:checked::after {
+    content: '';
+    position: absolute;
+    left: 3px;
+    top: 0;
+    width: 4px;
+    height: 8px;
+    border: solid var(--bg);
+    border-width: 0 2px 2px 0;
+    transform: rotate(45deg);
+  }
+  #sideSnapshots .side-inner {
+    display: flex;
+    flex-direction: column;
+  }
   .snapshot-list {
     display: flex;
     flex-direction: column;
     gap: 4px;
-    max-height: 180px;
+    flex: 1;
     overflow-y: auto;
+    min-height: 0;
   }
   .snapshot-list:empty::before {
     content: 'NO SNAPSHOTS';

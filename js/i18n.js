@@ -58,6 +58,18 @@ window.I18N = {
     confirm: {
       import: 'Importing will replace your current state and contacts.\n\nIf you want to keep them, save a snapshot first.\n\nProceed?'
     },
+    snapshot: { showExamples: 'SHOW EXAMPLES' },
+    example: {
+      meta: '//ENCRYPTED',
+      messages: [
+        { speaker: 'JOHNNY', body: 'Wake the fuck up, samurai. We have a city to burn.', side: 'left', time: '04:20' },
+        { speaker: 'V', body: "Give me a sec. Head's still ringing.", side: 'right', time: '04:21' },
+        { speaker: 'JOHNNY', body: "Sending you the schematics — don't open them on public net.", side: 'left', time: '04:22' },
+        { type: 'system', body: 'FILE TRANSFERRED' },
+        { speaker: 'V', body: 'Got it. Heading to the drop now.', side: 'right', time: '04:23' }
+      ],
+      choices: ['Who am I meeting at the drop?', 'Stay in my head, Silverhand.']
+    },
     toast: {
       noImageClipboard: 'NO IMAGE IN CLIPBOARD',
       clipboardBlocked: 'CLIPBOARD BLOCKED',
@@ -142,6 +154,18 @@ window.I18N = {
     },
     confirm: {
       import: 'Импорт заменит текущее состояние и контакты.\n\nЕсли хочешь их сохранить, сначала сделай слепок.\n\nПродолжить?'
+    },
+    snapshot: { showExamples: 'ПОКАЗ. ПРИМЕРЫ' },
+    example: {
+      meta: '//ЗАШИФРОВАНО',
+      messages: [
+        { speaker: 'JOHNNY', body: 'Просыпайся, самурай. Нам город сжигать.', side: 'left', time: '04:20' },
+        { speaker: 'V', body: 'Дай секунду. Голова ещё гудит.', side: 'right', time: '04:21' },
+        { speaker: 'JOHNNY', body: 'Скидываю схемы — не открывай в публичной сети.', side: 'left', time: '04:22' },
+        { type: 'system', body: 'ФАЙЛ ПЕРЕДАН' },
+        { speaker: 'V', body: 'Принял. Иду на точку.', side: 'right', time: '04:23' }
+      ],
+      choices: ['Кто меня встретит на месте?', 'Не теряйся, Сильверхэнд.']
     },
     toast: {
       noImageClipboard: 'НЕТ ИЗОБРАЖЕНИЯ В БУФЕРЕ',
@@ -228,6 +252,18 @@ window.I18N = {
     confirm: {
       import: "L'importation va remplacer ton état actuel et tes contacts.\n\nSi tu veux les garder, sauvegarde d'abord un snapshot.\n\nContinuer ?"
     },
+    snapshot: { showExamples: 'AFF. EXEMPLES' },
+    example: {
+      meta: '//CRYPTÉ',
+      messages: [
+        { speaker: 'JOHNNY', body: 'Réveille-toi, samouraï. On a une ville à brûler.', side: 'left', time: '04:20' },
+        { speaker: 'V', body: "Donne-moi une seconde. J'ai la tête qui résonne encore.", side: 'right', time: '04:21' },
+        { speaker: 'JOHNNY', body: "Je t'envoie les schémas — ne les ouvre pas sur le réseau public.", side: 'left', time: '04:22' },
+        { type: 'system', body: 'FICHIER TRANSFÉRÉ' },
+        { speaker: 'V', body: 'Reçu. Je file au point de rendez-vous.', side: 'right', time: '04:23' }
+      ],
+      choices: ['Je rencontre qui sur place ?', 'Reste dans ma tête, Silverhand.']
+    },
     toast: {
       noImageClipboard: 'AUCUNE IMG DANS LE PRESSE-PAPIERS',
       clipboardBlocked: 'PRESSE-PAPIERS BLOQUÉ',
@@ -312,6 +348,18 @@ window.I18N = {
     },
     confirm: {
       import: 'Der Import ersetzt deinen aktuellen Zustand und deine Kontakte.\n\nWenn du sie behalten willst, speichere zuerst einen Snapshot.\n\nFortfahren?'
+    },
+    snapshot: { showExamples: 'BSP. ZEIGEN' },
+    example: {
+      meta: '//CHIFFRIERT',
+      messages: [
+        { speaker: 'JOHNNY', body: 'Wach auf, Samurai. Wir haben eine Stadt zu verbrennen.', side: 'left', time: '04:20' },
+        { speaker: 'V', body: "Gib mir 'ne Sekunde. Mein Kopf dröhnt noch.", side: 'right', time: '04:21' },
+        { speaker: 'JOHNNY', body: 'Schicke dir die Schemata — nicht im öffentlichen Netz öffnen.', side: 'left', time: '04:22' },
+        { type: 'system', body: 'DATEI ÜBERTRAGEN' },
+        { speaker: 'V', body: "Hab's. Bin unterwegs zum Treffpunkt.", side: 'right', time: '04:23' }
+      ],
+      choices: ['Wen treffe ich beim Drop?', 'Bleib in meinem Kopf, Silverhand.']
     },
     toast: {
       noImageClipboard: 'KEIN BILD IN ZWISCHENABLAGE',
@@ -398,6 +446,18 @@ window.I18N = {
     confirm: {
       import: 'La importación reemplazará tu estado actual y contactos.\n\nSi quieres conservarlos, guarda una instantánea primero.\n\n¿Continuar?'
     },
+    snapshot: { showExamples: 'VER EJEMPLOS' },
+    example: {
+      meta: '//CIFRADO',
+      messages: [
+        { speaker: 'JOHNNY', body: 'Despierta, samurái. Tenemos una ciudad que quemar.', side: 'left', time: '04:20' },
+        { speaker: 'V', body: 'Dame un segundo. La cabeza todavía me retumba.', side: 'right', time: '04:21' },
+        { speaker: 'JOHNNY', body: 'Te paso los esquemas — no los abras en red pública.', side: 'left', time: '04:22' },
+        { type: 'system', body: 'ARCHIVO TRANSFERIDO' },
+        { speaker: 'V', body: 'Recibido. Voy al punto de entrega.', side: 'right', time: '04:23' }
+      ],
+      choices: ['¿Con quién me veo en la entrega?', 'Quédate en mi cabeza, Silverhand.']
+    },
     toast: {
       noImageClipboard: 'SIN IMG EN PORTAPAPELES',
       clipboardBlocked: 'PORTAPAPELES BLOQUEADO',
@@ -482,6 +542,18 @@ window.I18N = {
     },
     confirm: {
       import: "L'importazione sostituirà lo stato e i contatti correnti.\n\nSe vuoi conservarli, salva prima un'istantanea.\n\nContinuare?"
+    },
+    snapshot: { showExamples: 'MOSTRA ESEMPI' },
+    example: {
+      meta: '//CRITTATO',
+      messages: [
+        { speaker: 'JOHNNY', body: 'Sveglia, samurai. Abbiamo una città da bruciare.', side: 'left', time: '04:20' },
+        { speaker: 'V', body: 'Dammi un secondo. La testa ancora rimbomba.', side: 'right', time: '04:21' },
+        { speaker: 'JOHNNY', body: 'Ti mando gli schemi — non aprirli su rete pubblica.', side: 'left', time: '04:22' },
+        { type: 'system', body: 'FILE TRASFERITO' },
+        { speaker: 'V', body: 'Ricevuto. Vado al punto di consegna.', side: 'right', time: '04:23' }
+      ],
+      choices: ['Chi devo incontrare al drop?', 'Resta nella mia testa, Silverhand.']
     },
     toast: {
       noImageClipboard: 'NESSUNA IMG NEGLI APPUNTI',
