@@ -382,7 +382,6 @@
     font-size: 13px;
     font-weight: 500;
     letter-spacing: 1.5px;
-    text-transform: uppercase;
     text-align: center;
     text-shadow: 0 0 4px rgba(0, 0, 0, 0.7);
     pointer-events: none;
@@ -466,7 +465,6 @@
     color: var(--accent);
     font-size: 13px;
     letter-spacing: 3px;
-    text-transform: uppercase;
   }
   .message .time {
     font-family: 'JetBrains Mono', monospace;
@@ -532,7 +530,6 @@
     font-size: 13px;
     line-height: 1.5;
     letter-spacing: 1.5px;
-    text-transform: uppercase;
     text-align: center;
     margin: 0;
     white-space: pre-wrap;
