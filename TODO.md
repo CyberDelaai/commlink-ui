@@ -14,4 +14,3 @@ Pending issues, features, and ideas for COMMLINK. Items are removed from the lis
 3. Move image data (avatars, body images, bg + their *_Original) to IndexedDB; keep state JSON in localStorage. Reduces localStorage usage drastically.
 4. License info
 5. Search engines visibility enhancements
-6. Contact editing 

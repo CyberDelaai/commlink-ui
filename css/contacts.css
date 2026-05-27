@@ -257,3 +257,27 @@
     text-overflow: ellipsis;
     white-space: nowrap;
   }
+  .contact .contact-name-input {
+    flex: 1;
+    background: var(--panel);
+    border: 1px solid rgba(0, 240, 255, 0.45);
+    color: var(--text);
+    padding: 4px 8px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    letter-spacing: 1px;
+    outline: none;
+    height: 28px;
+    box-sizing: border-box;
+    display: none;
+    min-width: 0;
+  }
+  .contact .contact-name-input:focus { border-color: var(--yellow); }
+  .contact.editing .contact-name { display: none; }
+  .contact.editing .contact-name-input { display: block; }
+  .contact.editing { cursor: default; }
+  .contact.editing .contact-avatar { cursor: pointer; border-color: var(--yellow); }
+  /* Swap the edit/save glyph based on .editing state */
+  .contact [data-edit] .icon-save { display: none; }
+  .contact.editing [data-edit] .icon-edit { display: none; }
+  .contact.editing [data-edit] .icon-save { display: inline; }
