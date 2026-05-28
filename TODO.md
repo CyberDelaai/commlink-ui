@@ -11,6 +11,6 @@ Pending issues, features, and ideas for COMMLINK. Items are removed from the lis
 
 1. Background image to be added by URL
 2. Toggle to more smartphone-like view (slimmer message box)
-3. Move image data (avatars, body images, bg + their *_Original) to IndexedDB; keep state JSON in localStorage. Reduces localStorage usage drastically.
-4. License info
-5. Search engines visibility enhancements
+3. License info
+4. Search engines visibility enhancements
+5. Update readme
