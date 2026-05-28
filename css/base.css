@@ -204,6 +204,13 @@
   }
 
   .field { margin-bottom: 16px; }
+  /* SLIM toggle row — label inline with the switch so it doesn't take a whole field height */
+  .field.slim-field {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .field.slim-field > label { margin-bottom: 0; flex: 1; }
   .field label {
     display: block;
     font-family: 'JetBrains Mono', monospace;

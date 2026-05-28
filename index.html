@@ -1,4 +1,4 @@
-<!-- COMMLINK v1.3.3 -->
+<!-- COMMLINK v1.3.4 -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -325,6 +325,15 @@
       <input type="text" id="metaRight" maxlength="40" data-i18n-placeholder="placeholder.meta" placeholder="e.g. //SECURE_CH 7" />
     </div>
 
+    <div class="field slim-field">
+      <label data-i18n="fx.slim">SLIM</label>
+      <button class="side-switch fx" id="toggleSlim" type="button" data-pos="left" aria-label="toggle slim view">
+        <span class="thumb"></span>
+        <span class="lab l">OFF</span>
+        <span class="lab r">ON</span>
+      </button>
+    </div>
+
     <div class="field">
       <label data-i18n="field.choices">Choices</label>
       <div id="choices"></div>
@@ -443,7 +452,7 @@
   //   Z (third)  — bumped for all small changes (tweaks, fixes, polish).
   // NOTE: when bumping, also update the `<!-- COMMLINK vX.Y.Z -->` comment
   // on line 1 of this file so plain-text readers see the same version.
-  const APP_VERSION = '1.3.3';
+  const APP_VERSION = '1.3.4';
 
   // ---------- External links ----------
   const DONATE_URL = 'https://boosty.to/cyberdelaai/donate';
@@ -723,6 +732,7 @@
     glitchAmount: 38,
     scanlines: true,
     scanlinesAmount: 0.18,
+    slim: false,
     bg: makeDefaultBg(),
     bgOriginal: '',
     bgBrightness: 0.55
@@ -1677,8 +1687,11 @@
     });
     stage.classList.toggle('glitch', state.glitch);
     stage.classList.toggle('scanlines', state.scanlines);
+    stage.classList.toggle('slim', !!state.slim);
     toggleGlitchBtn.setAttribute('data-pos', state.glitch ? 'right' : 'left');
     toggleScanlinesBtn.setAttribute('data-pos', state.scanlines ? 'right' : 'left');
+    const slimBtn = document.getElementById('toggleSlim');
+    if (slimBtn) slimBtn.setAttribute('data-pos', state.slim ? 'right' : 'left');
     if (state.bg) {
       const bgUrl = displayUrl(state.bg) || state.bg;
       stageBg.style.backgroundImage = `url("${bgUrl}")`;
@@ -2138,6 +2151,12 @@
   });
   toggleScanlinesBtn.addEventListener('click', () => {
     state.scanlines = !state.scanlines;
+    renderPreview();
+    saveState();
+  });
+  const toggleSlimBtn = $('toggleSlim');
+  toggleSlimBtn.addEventListener('click', () => {
+    state.slim = !state.slim;
     renderPreview();
     saveState();
   });

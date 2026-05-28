@@ -10,4 +10,4 @@ Pending issues, features, and ideas for COMMLINK. Items are removed from the lis
 ## SMALL
 
 1. Background image to be added by URL
-2. Toggle to more smartphone-like view (slimmer message box)
+2. Track number af changes (commits) and print them after version using "v.1.3.12 // changes: ###"

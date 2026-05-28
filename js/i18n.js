@@ -31,7 +31,7 @@ window.I18N = {
       bg: 'Background',
       bright: 'BRIGHT'
     },
-    fx: { glitch: 'GLITCH', scanlines: 'SCANLINES' },
+    fx: { glitch: 'GLITCH', scanlines: 'SCANLINES', slim: 'SLIM' },
     btn: {
       addMessage: '+ MESSAGE',
       addSysMessage: '+ SYSTEM MESSAGE',
@@ -129,7 +129,7 @@ window.I18N = {
       bg: 'Фон',
       bright: 'ЯРКОСТЬ'
     },
-    fx: { glitch: 'ГЛИТЧ', scanlines: 'ПОЛОСЫ' },
+    fx: { glitch: 'ГЛИТЧ', scanlines: 'ПОЛОСЫ', slim: 'УЗКИЙ' },
     btn: {
       addMessage: '+ СООБЩЕНИЕ',
       addSysMessage: '+ СИСТ. СООБЩ.',
@@ -227,7 +227,7 @@ window.I18N = {
       bg: 'Fond',
       bright: 'LUM.'
     },
-    fx: { glitch: 'GLITCH', scanlines: 'SCANLINES' },
+    fx: { glitch: 'GLITCH', scanlines: 'SCANLINES', slim: 'SLIM' },
     btn: {
       addMessage: '+ MESSAGE',
       addSysMessage: '+ MSG SYSTÈME',
@@ -325,7 +325,7 @@ window.I18N = {
       bg: 'Hintergrund',
       bright: 'HELL.'
     },
-    fx: { glitch: 'GLITCH', scanlines: 'SCANLINES' },
+    fx: { glitch: 'GLITCH', scanlines: 'SCANLINES', slim: 'SLIM' },
     btn: {
       addMessage: '+ NACHRICHT',
       addSysMessage: '+ SYS-NACHR.',
@@ -423,7 +423,7 @@ window.I18N = {
       bg: 'Fondo',
       bright: 'BRILLO'
     },
-    fx: { glitch: 'GLITCH', scanlines: 'LÍNEAS' },
+    fx: { glitch: 'GLITCH', scanlines: 'LÍNEAS', slim: 'SLIM' },
     btn: {
       addMessage: '+ MENSAJE',
       addSysMessage: '+ MSG SISTEMA',
@@ -521,7 +521,7 @@ window.I18N = {
       bg: 'Sfondo',
       bright: 'LUM.'
     },
-    fx: { glitch: 'GLITCH', scanlines: 'SCANLINES' },
+    fx: { glitch: 'GLITCH', scanlines: 'SCANLINES', slim: 'SLIM' },
     btn: {
       addMessage: '+ MESSAGGIO',
       addSysMessage: '+ MSG SISTEMA',
@@ -619,7 +619,7 @@ window.I18N = {
       bg: '背景',
       bright: '明るさ'
     },
-    fx: { glitch: 'グリッチ', scanlines: 'スキャンライン' },
+    fx: { glitch: 'グリッチ', scanlines: 'スキャンライン', slim: 'スリム' },
     btn: {
       addMessage: '+ メッセージ',
       addSysMessage: '+ システム',
@@ -717,7 +717,7 @@ window.I18N = {
       bg: '背景',
       bright: '亮度'
     },
-    fx: { glitch: '故障', scanlines: '扫描线' },
+    fx: { glitch: '故障', scanlines: '扫描线', slim: '窄屏' },
     btn: {
       addMessage: '+ 消息',
       addSysMessage: '+ 系统',
