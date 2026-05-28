@@ -82,3 +82,7 @@ The header tag shows the version after the locale-aware app name (e.g. `DIALOG C
 
 **IndexedDB**
 - DB `commlink-images`, store `images`: `{ key: sha256hex, value: Blob }`. Used for bg, bgOriginal, and message body images (current + recrop source).
+
+## License
+
+[MIT](LICENSE) © 2026 CyberDelaai

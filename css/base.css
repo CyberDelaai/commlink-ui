@@ -426,6 +426,24 @@
   }
   .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 
+  /* Faint copyright stamp — anchored at the very bottom of the viewport,
+     z-index 0 so any panel, modal, toast, or popup sits on top of it. */
+  .footer-stamp {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 6px;
+    z-index: 0;
+    text-align: center;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.15);
+    pointer-events: none;
+    user-select: none;
+  }
+
   input[type="file"],
   .portrait-file,
   .avatar-file { display: none !important; }
