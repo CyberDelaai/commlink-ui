@@ -63,6 +63,9 @@
     border-left: 1px solid var(--dim);
     padding-left: 18px;
   }
+  header .tag .tag-meta {
+    cursor: default;
+  }
   header .tag .glitchable {
     display: inline-block;
     min-width: 18ch;
