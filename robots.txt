@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://cyberdelaai.github.io/commlink-ui/sitemap.xml
