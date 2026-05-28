@@ -97,7 +97,8 @@ window.I18N = {
       exportFailed: 'EXPORT FAILED',
       stateExported: 'STATE EXPORTED',
       stateImported: 'STATE IMPORTED',
-      importFailed: 'IMPORT FAILED'
+      importFailed: 'IMPORT FAILED',
+      snapshotDeleted: 'SNAPSHOT "{name}" DELETED'
     }
   },
 
@@ -195,7 +196,8 @@ window.I18N = {
       exportFailed: 'ОШИБКА ЭКСПОРТА',
       stateExported: 'СОСТОЯНИЕ ЭКСПОРТИРОВАНО',
       stateImported: 'СОСТОЯНИЕ ИМПОРТИРОВАНО',
-      importFailed: 'ОШИБКА ИМПОРТА'
+      importFailed: 'ОШИБКА ИМПОРТА',
+      snapshotDeleted: 'СЛЕПОК "{name}" УДАЛЁН'
     }
   },
 
@@ -293,7 +295,8 @@ window.I18N = {
       exportFailed: 'ÉCHEC EXPORT',
       stateExported: 'ÉTAT EXPORTÉ',
       stateImported: 'ÉTAT IMPORTÉ',
-      importFailed: 'ÉCHEC IMPORT'
+      importFailed: 'ÉCHEC IMPORT',
+      snapshotDeleted: 'SAUVEGARDE "{name}" SUPPRIMÉE'
     }
   },
 
@@ -391,7 +394,8 @@ window.I18N = {
       exportFailed: 'EXPORT FEHLGESCHL.',
       stateExported: 'ZUSTAND EXPORTIERT',
       stateImported: 'ZUSTAND IMPORTIERT',
-      importFailed: 'IMPORT FEHLGESCHL.'
+      importFailed: 'IMPORT FEHLGESCHL.',
+      snapshotDeleted: 'SNAPSHOT "{name}" GELÖSCHT'
     }
   },
 
@@ -489,7 +493,8 @@ window.I18N = {
       exportFailed: 'EXPORT FALLÓ',
       stateExported: 'ESTADO EXPORTADO',
       stateImported: 'ESTADO IMPORTADO',
-      importFailed: 'IMPORT FALLÓ'
+      importFailed: 'IMPORT FALLÓ',
+      snapshotDeleted: 'INSTANTÁNEA "{name}" BORRADA'
     }
   },
 
@@ -587,7 +592,8 @@ window.I18N = {
       exportFailed: 'EXPORT FALLITO',
       stateExported: 'STATO ESPORTATO',
       stateImported: 'STATO IMPORTATO',
-      importFailed: 'IMPORT FALLITO'
+      importFailed: 'IMPORT FALLITO',
+      snapshotDeleted: 'ISTANTANEA "{name}" CANCELLATA'
     }
   },
 
@@ -685,7 +691,8 @@ window.I18N = {
       exportFailed: 'エクスポート失敗',
       stateExported: '状態エクスポート完了',
       stateImported: '状態インポート完了',
-      importFailed: 'インポート失敗'
+      importFailed: 'インポート失敗',
+      snapshotDeleted: '状態 "{name}" 削除'
     }
   },
 
@@ -783,7 +790,8 @@ window.I18N = {
       exportFailed: '导出失败',
       stateExported: '状态导出完成',
       stateImported: '状态导入完成',
-      importFailed: '导入失败'
+      importFailed: '导入失败',
+      snapshotDeleted: '状态 "{name}" 已删除'
     }
   }
 };
