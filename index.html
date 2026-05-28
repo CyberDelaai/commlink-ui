@@ -1,4 +1,4 @@
-<!-- COMMLINK v1.3.5 -->
+<!-- COMMLINK v1.3.6 -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -452,7 +452,7 @@
   //   Z (third)  — bumped for all small changes (tweaks, fixes, polish).
   // NOTE: when bumping, also update the `<!-- COMMLINK vX.Y.Z -->` comment
   // on line 1 of this file so plain-text readers see the same version.
-  const APP_VERSION = '1.3.5';
+  const APP_VERSION = '1.3.6';
 
   // ---------- External links ----------
   const DONATE_URL = 'https://boosty.to/cyberdelaai/donate';
@@ -2303,7 +2303,9 @@
         height: wrapRect.height,
         pixelRatio: PIXEL_RATIO,
         backgroundColor: '#000',
-        cacheBust: true,
+        // cacheBust appends ?t=… to image URLs, which corrupts blob: URLs
+        // used by IDB-stored body images. Disabled.
+        cacheBust: false,
         skipFonts: false
       });
 
