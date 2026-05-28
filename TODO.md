@@ -13,4 +13,3 @@ Pending issues, features, and ideas for COMMLINK. Items are removed from the lis
 2. Toggle to more smartphone-like view (slimmer message box)
 3. License info
 4. Search engines visibility enhancements
-5. Update readme
