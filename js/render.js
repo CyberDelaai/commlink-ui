@@ -3,6 +3,20 @@
 // script in the page so its function declarations are global at the time
 // inline init calls them; function bodies look up state/DOM refs lazily.
 
+// Curated kaomoji set surfaced via the (ω) toolbar button on each message row.
+// Inserted at the textarea cursor; popup stays open for multi-insert.
+const KAOMOJI = [
+  '(´ ▽ `)', '(◕‿◕)', '(✿◠‿◠)', '(◜‿◝)', '(｡◕‿◕｡)',
+  'ʕ•ᴥ•ʔ', '(≧◡≦)', '\\(^o^)/', '(⌒▽⌒)', '(*˘︶˘*)',
+  '(╥﹏╥)', 'ಥ_ಥ', '(T_T)', '(´;ω;`)', '(；д；)',
+  '(っ◞‸◟c)', 'ಠ_ಠ', '(╯°□°）╯︵ ┻━┻', '(¬_¬)', '(#`Д´)',
+  'щ(゜ロ゜щ)', '(⌐■_■)', '( ͡° ͜ʖ ͡°)', '¬‿¬', '( ͡~ ͜ʖ ͡°)',
+  '(⊙_⊙)', '(◎_◎;)', 'Σ(°△°|||)', '(°o°;)', '(⊙﹏⊙)',
+  '¯\\_(ツ)_/¯', '┐(´∀｀)┌', '(シ_ _)シ', '┐(￣ヘ￣;)┌', '(♥ω♥*)',
+  '(✿ ♡‿♡)', '(♡°▽°♡)', '(˃͈ દ ˂͈)', '(-_-) zzz', '(∪｡∪) zzz',
+  '(╬ಠ益ಠ)', '◔̯◔', '(ó﹏ò｡)', '(ノ°益°)ノ', '(づ｡◕‿‿◕｡)づ'
+];
+
 // ---------- Render ----------
 function renderMessagesEditor() {
   // Remove any image popups that were portaled to <body>
@@ -124,6 +138,12 @@ function renderMessagesEditor() {
         </div>
         <textarea class="body-input" maxlength="500" placeholder="Message text..."></textarea>
         <div class="msg-row-toolbar">
+          <div class="img-popup-wrap kao-popup-wrap">
+            <button class="btn cyan icon" type="button" data-kao-toggle title="Insert kaomoji">顔</button>
+            <div class="img-popup kao-popup" hidden>
+              <div class="kao-grid"></div>
+            </div>
+          </div>
           <div class="img-popup-wrap">
             <button class="btn cyan icon img-toggle${m.bodyImage ? ' has-image' : ''}" type="button" data-img-toggle title="Image options">+ IMG</button>
             <div class="img-popup" hidden>
@@ -184,6 +204,57 @@ function renderMessagesEditor() {
       renderPreview();
       saveState();
     });
+
+    // Kaomoji popup — populate grid once per row, insert at cursor on click.
+    const kaoToggle = row.querySelector('[data-kao-toggle]');
+    const kaoPopup = row.querySelector('.kao-popup');
+    const kaoGrid = row.querySelector('.kao-grid');
+    KAOMOJI.forEach(k => {
+      const b = document.createElement('button');
+      b.type = 'button';
+      b.className = 'btn cyan icon kao-cell';
+      b.textContent = k;
+      b.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const start = bd.selectionStart;
+        const end = bd.selectionEnd;
+        const insert = k;
+        bd.value = bd.value.substring(0, start) + insert + bd.value.substring(end);
+        bd.selectionStart = bd.selectionEnd = start + insert.length;
+        bd.focus();
+        state.messages[i].body = bd.value;
+        autoGrow(bd);
+        renderPreview();
+        saveState();
+        kaoPopup.hidden = true;
+      });
+      kaoGrid.appendChild(b);
+    });
+    const positionKaoPopup = () => {
+      const r = kaoToggle.getBoundingClientRect();
+      const popupH = kaoPopup.offsetHeight || 280;
+      const popupW = kaoPopup.offsetWidth || 280;
+      const vh = window.innerHeight;
+      const vw = window.innerWidth;
+      let top = r.bottom + 6;
+      if (top + popupH > vh - 8) top = Math.max(8, r.top - popupH - 6);
+      let left = r.left;
+      if (left + popupW > vw - 8) left = Math.max(8, vw - popupW - 8);
+      kaoPopup.style.left = left + 'px';
+      kaoPopup.style.top = top + 'px';
+    };
+    kaoToggle.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const opening = kaoPopup.hidden;
+      document.querySelectorAll('.img-popup').forEach(p => { p.hidden = true; });
+      if (opening) {
+        if (kaoPopup.parentNode !== document.body) document.body.appendChild(kaoPopup);
+        kaoPopup.hidden = false;
+        positionKaoPopup();
+      }
+    });
+    kaoPopup.addEventListener('click', (e) => e.stopPropagation());
+
     const portraitPopup = row.querySelector('.portrait-popup');
     const applyPortrait = (dataUrl) => {
       const cur = state.messages[i];
@@ -276,7 +347,7 @@ function renderMessagesEditor() {
     const bodyImgPreview = row.querySelector('[data-body-img]');
     const bodyImgInput = row.querySelector('.body-img-file');
     const imgToggle = row.querySelector('[data-img-toggle]');
-    const imgPopup = row.querySelector('.img-popup:not(.portrait-popup)');
+    const imgPopup = row.querySelector('.img-popup:not(.portrait-popup):not(.kao-popup)');
     if (m.bodyImage) {
       const u = displayUrl(m.bodyImage);
       bodyImgPreview.style.backgroundImage = `url("${u}")`;
