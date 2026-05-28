@@ -378,7 +378,7 @@
   //   X (first)  — almost certainly never bumped.
   //   Y (second) — bumped for major features.
   //   Z (third)  — bumped for all small changes (tweaks, fixes, polish).
-  const APP_VERSION = '1.2.10';
+  const APP_VERSION = '1.2.11';
 
   // ---------- External links ----------
   const DONATE_URL = 'https://boosty.to/cyberdelaai/donate';
@@ -1108,8 +1108,17 @@
       // Portrait popup toggle
       const positionPortraitPopup = () => {
         const r = portraitEl.getBoundingClientRect();
-        portraitPopup.style.left = (r.right + 8) + 'px';
-        portraitPopup.style.top = r.top + 'px';
+        const popupW = portraitPopup.offsetWidth || 160;
+        const popupH = portraitPopup.offsetHeight || 140;
+        const vw = window.innerWidth;
+        const vh = window.innerHeight;
+        const margin = 8;
+        let left = r.right + 8;
+        if (left + popupW > vw - margin) left = Math.max(margin, r.left - popupW - 8);
+        let top = r.top;
+        if (top + popupH > vh - margin) top = Math.max(margin, vh - popupH - margin);
+        portraitPopup.style.left = left + 'px';
+        portraitPopup.style.top = top + 'px';
       };
       portraitEl.style.cursor = 'pointer';
       portraitEl.addEventListener('click', (e) => {
@@ -1158,11 +1167,20 @@
         saveState();
         showToast(t('toast.imgAttached'));
       };
-      // Toggle popup open/close — portal to <body> so it escapes the panel's clip-path
+      // Toggle popup open/close — portal to <body> so it escapes the panel's clip-path.
+      // If the popup would spill past the bottom of the viewport (which happens on
+      // the last message of a long list), flip it above the button instead.
       const positionPopup = () => {
         const r = imgToggle.getBoundingClientRect();
+        const popupH = imgPopup.offsetHeight || 240;
+        const vh = window.innerHeight;
+        const margin = 8;
+        let top = r.bottom + 6;
+        if (top + popupH > vh - margin) {
+          top = Math.max(margin, r.top - popupH - 6);
+        }
         imgPopup.style.left = r.left + 'px';
-        imgPopup.style.top = (r.bottom + 6) + 'px';
+        imgPopup.style.top = top + 'px';
       };
       imgToggle.addEventListener('click', (e) => {
         e.stopPropagation();
