@@ -44,9 +44,17 @@ python3 -m http.server
 │   ├── messages.css        ← message editor rows + dialog frame + preview rendering + signal bars
 │   ├── config.css          ← snapshots panel + slot list
 │   └── contacts.css        ← collapsible sidebars (contacts / snapshots / donate) + contact editor
-├── js/
-│   └── i18n.js             ← translation dictionary for all supported locales
-└── fonts/                  ← original woff2 files (also embedded as base64 inside index.html)
+└── js/
+    ├── i18n.js             ← translation dictionary for all 8 supported locales
+    ├── storage.js          ← localStorage + IndexedDB image store
+    ├── state.js            ← defaultState, loadState/saveState, helpers, migrations
+    ├── render.js           ← renderPreview, renderMessagesEditor, syncForm
+    ├── snapshots.js        ← snapshot CRUD + bundled EXAMPLE_* seeding
+    ├── contacts.js         ← contact CRUD + inline edit
+    ├── crop.js             ← image crop modal (openCrop/doCrop + drag handlers)
+    ├── png-export.js       ← html-to-image PNG export
+    ├── json-io.js          ← state + contacts JSON export/import
+    └── effects.js          ← tag-glitch animation + version-hover morph
 ```
 
 ## Tech notes
