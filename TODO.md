@@ -11,3 +11,4 @@ Pending issues, features, and ideas for COMMLINK. Items are removed from the lis
 
 1. Background image to be added by URL
 2. Add new effects
+3. Choose colors of chosen answers

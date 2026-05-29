@@ -674,6 +674,8 @@ function renderPreview() {
   const cAmt = (typeof state.chromaticAmount === 'number') ? state.chromaticAmount : 2;
   chromaOffsetR.setAttribute('dx', -cAmt);
   chromaOffsetB.setAttribute('dx', cAmt);
+  const vAmt = (typeof state.vignetteAmount === 'number') ? state.vignetteAmount : 0.6;
+  stage.style.setProperty('--vignette-alpha', vAmt);
   // Compose SVG filter chain. Chromatic first so the per-channel split
   // is then displaced by the glitch slices (keeps fringe coherent).
   const fxFilters = [];
@@ -698,10 +700,12 @@ function renderPreview() {
   stage.classList.toggle('glitch', state.glitch);
   stage.classList.toggle('scanlines', state.scanlines);
   stage.classList.toggle('chromatic', state.chromatic);
+  stage.classList.toggle('vignette', state.vignette);
   stage.classList.toggle('slim', !!state.slim);
   toggleGlitchBtn.setAttribute('data-pos', state.glitch ? 'right' : 'left');
   toggleScanlinesBtn.setAttribute('data-pos', state.scanlines ? 'right' : 'left');
   toggleChromaticBtn.setAttribute('data-pos', state.chromatic ? 'right' : 'left');
+  toggleVignetteBtn.setAttribute('data-pos', state.vignette ? 'right' : 'left');
   const slimBtn = document.getElementById('toggleSlim');
   if (slimBtn) slimBtn.setAttribute('data-pos', state.slim ? 'right' : 'left');
   if (state.bg) {
@@ -757,6 +761,9 @@ function syncForm() {
   const cAmt = (typeof state.chromaticAmount === 'number') ? state.chromaticAmount : 2;
   chromaticAmountInput.value = cAmt;
   chromaticAmountVal.textContent = cAmt + 'px';
+  const vAmt = (typeof state.vignetteAmount === 'number') ? state.vignetteAmount : 0.6;
+  vignetteAmountInput.value = vAmt;
+  vignetteAmountVal.textContent = Math.round(vAmt * 100) + '%';
   renderMessagesEditor();
   renderChoicesEditor();
 }

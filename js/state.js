@@ -74,6 +74,8 @@ const defaultState = {
   scanlinesAmount: 0.18,
   chromatic: false,
   chromaticAmount: 2,
+  vignette: false,
+  vignetteAmount: 0.6,
   slim: false,
   bg: makeDefaultBg(),
   bgOriginal: '',

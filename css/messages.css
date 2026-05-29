@@ -780,3 +780,21 @@
     );
     z-index: 2;
   }
+  /* Vignette — radial dark fade from clear center to dark corners. Real DOM
+     overlay (not ::after) because augmented-ui owns that pseudo on .stage.
+     Drawn at z=3 so it sits above scanlines (z=2) and tints them too. */
+  .stage-vignette {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 3;
+    display: none;
+  }
+  .stage.vignette .stage-vignette {
+    display: block;
+    background: radial-gradient(
+      ellipse at center,
+      transparent 40%,
+      rgba(0, 0, 0, var(--vignette-alpha, 0.6)) 100%
+    );
+  }
