@@ -79,6 +79,11 @@ async function loadSnapshotInto(name) {
   delete state.lang;
   state.messages = (state.messages || []).map(m => ({ type: 'normal', contactId: '', chainId: '', speaker: '', body: '', portrait: '', portraitOriginal: '', side: 'left', time: '', bodyImage: '', bodyImageOriginal: '', ...m }));
   if (!Array.isArray(state.choices)) state.choices = [];
+  state.choices = state.choices.map(c =>
+    typeof c === 'string'
+      ? { text: c, chosen: false }
+      : { text: c && c.text || '', chosen: !!(c && c.chosen) }
+  );
   if (Array.isArray(snap.contacts)) {
     saveContacts(snap.contacts);
     renderContacts();
@@ -180,7 +185,7 @@ function seedDefaults() {
       ...clone(defaultState),
       meta: tr.example.meta || defaultState.meta,
       messages: buildExampleMessagesFor(lang),
-      choices: tr.example.choices.slice(),
+      choices: tr.example.choices.map(c => ({ text: c, chosen: false })),
       contacts: defaultContacts,
       lang: lang,
       savedAt: Date.now()

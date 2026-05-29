@@ -69,6 +69,11 @@ importStateFile.addEventListener('change', (e) => {
         side: 'left', time: '', bodyImage: '', bodyImageOriginal: '', ...m
       }));
       if (!Array.isArray(merged.choices)) merged.choices = [];
+      merged.choices = merged.choices.map(c =>
+        typeof c === 'string'
+          ? { text: c, chosen: false }
+          : { text: c && c.text || '', chosen: !!(c && c.chosen) }
+      );
       state = merged;
       // Imported JSON has inlined data: URLs. Re-extract them to IDB so the
       // session uses idb: refs (same model as local storage).

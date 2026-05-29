@@ -31,7 +31,7 @@ window.I18N = {
       bg: 'Background',
       bright: 'BRIGHT'
     },
-    fx: { glitch: 'GLITCH', scanlines: 'SCANLINES', chromatic: 'RGB', vignette: 'VIGNETTE', slim: 'SLIM' },
+    fx: { glitch: 'GLITCH', scanlines: 'SCANLINES', chromatic: 'RGB', vignette: 'VIGNETTE', slim: 'SLIM', hide: 'HIDE' },
     btn: {
       addMessage: '+ MESSAGE',
       addSysMessage: '+ SYSTEM MESSAGE',
@@ -130,7 +130,7 @@ window.I18N = {
       bg: 'Фон',
       bright: 'ЯРКОСТЬ'
     },
-    fx: { glitch: 'ГЛИТЧ', scanlines: 'ПОЛОСЫ', chromatic: 'RGB', vignette: 'ВИНЬЕТКА', slim: 'УЗКИЙ' },
+    fx: { glitch: 'ГЛИТЧ', scanlines: 'ПОЛОСЫ', chromatic: 'RGB', vignette: 'ВИНЬЕТКА', slim: 'УЗКИЙ', hide: 'СКРЫТЬ' },
     btn: {
       addMessage: '+ СООБЩЕНИЕ',
       addSysMessage: '+ СИСТ. СООБЩ.',
@@ -229,7 +229,7 @@ window.I18N = {
       bg: 'Fond',
       bright: 'LUM.'
     },
-    fx: { glitch: 'GLITCH', scanlines: 'SCANLINES', chromatic: 'RGB', vignette: 'VIGNETTE', slim: 'SLIM' },
+    fx: { glitch: 'GLITCH', scanlines: 'SCANLINES', chromatic: 'RGB', vignette: 'VIGNETTE', slim: 'SLIM', hide: 'HIDE' },
     btn: {
       addMessage: '+ MESSAGE',
       addSysMessage: '+ MSG SYSTÈME',
@@ -328,7 +328,7 @@ window.I18N = {
       bg: 'Hintergrund',
       bright: 'HELL.'
     },
-    fx: { glitch: 'GLITCH', scanlines: 'SCANLINES', chromatic: 'RGB', vignette: 'VIGNETTE', slim: 'SLIM' },
+    fx: { glitch: 'GLITCH', scanlines: 'SCANLINES', chromatic: 'RGB', vignette: 'VIGNETTE', slim: 'SLIM', hide: 'HIDE' },
     btn: {
       addMessage: '+ NACHRICHT',
       addSysMessage: '+ SYS-NACHR.',
@@ -427,7 +427,7 @@ window.I18N = {
       bg: 'Fondo',
       bright: 'BRILLO'
     },
-    fx: { glitch: 'GLITCH', scanlines: 'LÍNEAS', chromatic: 'RGB', vignette: 'VIÑETA', slim: 'SLIM' },
+    fx: { glitch: 'GLITCH', scanlines: 'LÍNEAS', chromatic: 'RGB', vignette: 'VIÑETA', slim: 'SLIM', hide: 'OCULTAR' },
     btn: {
       addMessage: '+ MENSAJE',
       addSysMessage: '+ MSG SISTEMA',
@@ -526,7 +526,7 @@ window.I18N = {
       bg: 'Sfondo',
       bright: 'LUM.'
     },
-    fx: { glitch: 'GLITCH', scanlines: 'SCANLINES', chromatic: 'RGB', vignette: 'VIGNETTE', slim: 'SLIM' },
+    fx: { glitch: 'GLITCH', scanlines: 'SCANLINES', chromatic: 'RGB', vignette: 'VIGNETTE', slim: 'SLIM', hide: 'HIDE' },
     btn: {
       addMessage: '+ MESSAGGIO',
       addSysMessage: '+ MSG SISTEMA',
@@ -625,7 +625,7 @@ window.I18N = {
       bg: '背景',
       bright: '明るさ'
     },
-    fx: { glitch: 'グリッチ', scanlines: 'スキャンライン', chromatic: 'RGB', vignette: 'ビネット', slim: 'スリム' },
+    fx: { glitch: 'グリッチ', scanlines: 'スキャンライン', chromatic: 'RGB', vignette: 'ビネット', slim: 'スリム', hide: '非表示' },
     btn: {
       addMessage: '+ メッセージ',
       addSysMessage: '+ システム',
@@ -724,7 +724,7 @@ window.I18N = {
       bg: '背景',
       bright: '亮度'
     },
-    fx: { glitch: '故障', scanlines: '扫描线', chromatic: 'RGB', vignette: '晕影', slim: '窄屏' },
+    fx: { glitch: '故障', scanlines: '扫描线', chromatic: 'RGB', vignette: '晕影', slim: '窄屏', hide: '隐藏' },
     btn: {
       addMessage: '+ 消息',
       addSysMessage: '+ 系统',

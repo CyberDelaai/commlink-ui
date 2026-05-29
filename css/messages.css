@@ -408,6 +408,20 @@
     border-top: 1px solid rgba(0, 240, 255, 0.12);
   }
   .choices-body #choices { padding: 18px 0 6px; }
+  .choices-palette {
+    flex: 1;
+    justify-content: center;
+    margin: 0;
+    padding: 0;
+    border: 0;
+  }
+  .hide-choices-group {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-shrink: 0;
+    margin: 0 16px;
+  }
   .choices-body .reorder-stack {
     display: flex;
     flex-direction: column;
@@ -707,22 +721,54 @@
   }
   .choice {
     display: flex;
-    align-items: baseline;
+    align-items: center;
     gap: 10px;
     font-size: 15px;
-    color: var(--cyan);
+    color: var(--accent);
     font-weight: 500;
     letter-spacing: 0.3px;
   }
   .choice .num {
     font-family: 'JetBrains Mono', monospace;
-    color: var(--yellow);
+    color: var(--accent);
     font-size: 13px;
     min-width: 22px;
   }
   .choice .arrow {
     color: var(--accent);
     margin-right: 2px;
+  }
+  /* Pip lives in the choices EDITOR row. Cyan-edged black square; when the
+     choice is marked chosen, fills with the BASE accent color. Chosen
+     choices then render in the preview using `var(--accent)` instead of
+     the palette-driven `--choices-color`. */
+  .choice-pip {
+    appearance: none;
+    -webkit-appearance: none;
+    margin: 0;
+    padding: 0;
+    width: 14px;
+    height: 14px;
+    border: 1px solid var(--cyan);
+    background: #000;
+    cursor: pointer;
+    flex-shrink: 0;
+    transition: background 0.12s, box-shadow 0.12s;
+  }
+  .choice-pip:hover {
+    box-shadow: 0 0 6px color-mix(in srgb, var(--cyan) 70%, transparent);
+  }
+  .choice-edit-row.chosen .choice-pip {
+    background: var(--cyan);
+    border-color: var(--cyan);
+    box-shadow: 0 0 6px color-mix(in srgb, var(--cyan) 60%, transparent);
+  }
+  /* Chosen choice in the preview uses the PALETTE-picked color, overriding
+     the default --accent. Unchosen choices keep the base accent. */
+  .choice.chosen,
+  .choice.chosen .num,
+  .choice.chosen .arrow {
+    color: var(--choices-color);
   }
 
   /* ---------- Signal-strength bars ---------- */

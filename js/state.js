@@ -63,10 +63,13 @@ const defaultState = {
     { type: 'normal', speaker: 'V', body: 'Got it. Heading to the drop now.', portrait: makeInitialAvatar('V', '#00f0ff'), side: 'right', time: '04:23', bodyImage: '' }
   ],
   choices: [
-    "Who am I meeting at the drop?",
-    "Stay in my head, Silverhand."
+    { text: "Who am I meeting at the drop?", chosen: false },
+    { text: "Stay in my head, Silverhand.", chosen: false }
   ],
   accent: '#fcee0a',
+  choicesColor: '#fcee0a',
+  customChoicesColor: '#00aaff',
+  hideChoices: false,
   customAccent: '#00aaff',
   glitch: false,
   glitchAmount: 38,
@@ -93,7 +96,7 @@ function loadState() {
     const tr = window.I18N && window.I18N[currentLang];
     if (tr && tr.example && typeof buildExampleMessagesFor === 'function') {
       fresh.messages = buildExampleMessagesFor(currentLang);
-      fresh.choices = tr.example.choices.slice();
+      fresh.choices = tr.example.choices.map(c => ({ text: c, chosen: false }));
       if (tr.example.meta) fresh.meta = tr.example.meta;
     }
     fresh.bgOriginal = storageGet(BG_ORIGINAL_KEY) || '';
@@ -105,12 +108,21 @@ function loadState() {
     // Backfill empty customAccent with the default so the saved-swatch
     // shows up for users created before this field had a default.
     if (!merged.customAccent) merged.customAccent = defaultState.customAccent;
+    if (!merged.customChoicesColor) merged.customChoicesColor = defaultState.customChoicesColor;
     // Migrate old shape (speaker + body) → messages[]
     if ((!Array.isArray(merged.messages) || merged.messages.length === 0) && (parsed.speaker || parsed.body)) {
       merged.messages = [{ speaker: parsed.speaker || '', body: parsed.body || '' }];
     }
     if (!Array.isArray(merged.messages)) merged.messages = [];
     merged.messages = merged.messages.map(m => ({ type: 'normal', contactId: '', chainId: '', speaker: '', body: '', portrait: '', portraitOriginal: '', side: 'left', time: '', bodyImage: '', bodyImageOriginal: '', ...m }));
+    // Choices migrated from `string[]` → `{text, chosen}[]`. Old states are
+    // backfilled with chosen=false.
+    if (!Array.isArray(merged.choices)) merged.choices = [];
+    merged.choices = merged.choices.map(c =>
+      typeof c === 'string'
+        ? { text: c, chosen: false }
+        : { text: c && c.text || '', chosen: !!(c && c.chosen) }
+    );
     // bgOriginal lives in its own key (too large for the main state JSON).
     // Migrate from old shape (when bgOriginal was inside state JSON).
     const separateBg = storageGet(BG_ORIGINAL_KEY);

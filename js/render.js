@@ -566,8 +566,9 @@ function renderChoicesEditor() {
   choicesWrap.innerHTML = '';
   state.choices.forEach((c, i) => {
     const row = document.createElement('div');
-    row.className = 'row';
+    row.className = 'row choice-edit-row' + (c.chosen ? ' chosen' : '');
     row.innerHTML = `
+      <button class="choice-pip" type="button" data-pip aria-label="mark as chosen"></button>
       <span class="idx">${i + 1}.</span>
       <input type="text" maxlength="120" value="" />
       <div class="reorder-stack">
@@ -577,9 +578,15 @@ function renderChoicesEditor() {
       <button class="btn danger icon" type="button" aria-label="remove" data-remove>✕</button>
     `;
     const input = row.querySelector('input');
-    input.value = c;
+    input.value = c.text;
     input.addEventListener('input', () => {
-      state.choices[i] = input.value;
+      state.choices[i].text = input.value;
+      renderPreview();
+      saveState();
+    });
+    row.querySelector('[data-pip]').addEventListener('click', () => {
+      state.choices[i].chosen = !state.choices[i].chosen;
+      renderChoicesEditor();
       renderPreview();
       saveState();
     });
@@ -650,19 +657,25 @@ function renderPreview() {
   });
 
   pChoices.innerHTML = '';
-  state.choices.forEach((c, i) => {
-    if (!c.trim()) return;
-    const row = document.createElement('div');
-    row.className = 'choice';
-    row.innerHTML = `
-      <span class="num">[${i + 1}]</span>
-      <span class="arrow">&gt;</span>
-      <span>${escapeHtml(c)}</span>
-    `;
-    pChoices.appendChild(row);
-  });
-  const choicesActive = state.choices.filter(c => c.trim()).length;
+  pChoices.hidden = !!state.hideChoices;
+  if (!state.hideChoices) {
+    state.choices.forEach((c, i) => {
+      if (!c.text.trim()) return;
+      const row = document.createElement('div');
+      row.className = 'choice' + (c.chosen ? ' chosen' : '');
+      row.innerHTML = `
+        <span class="num">[${i + 1}]</span>
+        <span class="arrow">&gt;</span>
+        <span class="choice-text">${escapeHtml(c.text)}</span>
+      `;
+      pChoices.appendChild(row);
+    });
+  }
+  toggleHideChoicesBtn.setAttribute('data-pos', state.hideChoices ? 'left' : 'right');
+  const choicesActive = state.choices.filter(c => c.text.trim()).length;
   choicesCount.textContent = choicesActive ? `(${choicesActive})` : '';
+  const choicesColor = state.choicesColor || state.accent || '#fcee0a';
+  stage.style.setProperty('--choices-color', choicesColor);
   dialog.style.setProperty('--accent', state.accent);
   stage.style.setProperty('--accent', state.accent);
   const sb = document.getElementById('signalBars');
@@ -737,6 +750,20 @@ function renderPreview() {
   // Highlight active swatch
   accentsWrap.querySelectorAll('.swatch').forEach(sw => {
     sw.classList.toggle('active', sw.dataset.color === state.accent);
+  });
+  const savedChoicesSwatch = choicesPaletteWrap.querySelector('[data-saved-choices-color]');
+  if (savedChoicesSwatch) {
+    if (state.customChoicesColor) {
+      savedChoicesSwatch.hidden = false;
+      savedChoicesSwatch.dataset.color = state.customChoicesColor;
+      savedChoicesSwatch.style.background = state.customChoicesColor;
+      savedChoicesSwatch.style.color = state.customChoicesColor;
+    } else {
+      savedChoicesSwatch.hidden = true;
+    }
+  }
+  choicesPaletteWrap.querySelectorAll('.swatch').forEach(sw => {
+    sw.classList.toggle('active', sw.dataset.color === state.choicesColor);
   });
 }
 
