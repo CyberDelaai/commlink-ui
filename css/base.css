@@ -12,6 +12,64 @@
 
   * { box-sizing: border-box; }
 
+  /* ---------- Cyberpunk scrollbars ---------- */
+  /* NOTE: do NOT set standard `scrollbar-color` / `scrollbar-width` on `*`.
+     In Chromium they take precedence and silently disable every
+     `::-webkit-scrollbar*` pseudo, killing the custom theme.
+     Firefox-only fallback is scoped via @supports below. */
+  /* WebKit / Blink (Chrome, Edge, Safari) — full custom theme:
+     cyan pip thumb in a thin track with cyan-bordered triangle buttons
+     on each end. Triangles painted via inline SVG background. */
+  ::-webkit-scrollbar { width: 8px; height: 8px; }
+  ::-webkit-scrollbar-track {
+    background: rgba(0, 240, 255, 0.05);
+    border: 1px solid rgba(0, 240, 255, 0.35);
+  }
+  ::-webkit-scrollbar-thumb {
+    background: var(--cyan);
+    border-radius: 0;
+    box-shadow: none;
+  }
+  ::-webkit-scrollbar-thumb:hover { background: var(--yellow); }
+  ::-webkit-scrollbar-corner { background: var(--panel); }
+  /* Force the arrow buttons visible on all platforms — Chromium hides them
+     by default. */
+  ::-webkit-scrollbar-button {
+    background-color: rgba(0, 240, 255, 0.08);
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: 100% 100%;
+    display: block;
+    height: 8px;
+    width: 8px;
+  }
+  ::-webkit-scrollbar-button:hover { background-color: rgba(0, 240, 255, 0.2); }
+  ::-webkit-scrollbar-button:vertical:decrement {
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 10'><polygon points='5,0 10,10 0,10' fill='%2300f0ff'/></svg>");
+  }
+  ::-webkit-scrollbar-button:vertical:increment {
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 10'><polygon points='0,0 10,0 5,10' fill='%2300f0ff'/></svg>");
+  }
+  ::-webkit-scrollbar-button:horizontal:decrement {
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 10'><polygon points='0,5 10,0 10,10' fill='%2300f0ff'/></svg>");
+  }
+  ::-webkit-scrollbar-button:horizontal:increment {
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 10'><polygon points='0,0 10,5 0,10' fill='%2300f0ff'/></svg>");
+  }
+  /* Hide doubled-up "single-button" variants Chromium sometimes paints */
+  ::-webkit-scrollbar-button:start:increment,
+  ::-webkit-scrollbar-button:end:decrement { display: none; }
+
+  /* Firefox fallback — it doesn't honor ::-webkit-scrollbar*, so give it
+     at least the right colors via the standard properties. Scoped to
+     Firefox so Chromium keeps the WebKit pseudo-element path. */
+  @supports (-moz-appearance: none) {
+    * {
+      scrollbar-color: var(--cyan) rgba(0, 240, 255, 0.06);
+      scrollbar-width: thin;
+    }
+  }
+
   body {
     margin: 0;
     min-height: 100vh;
