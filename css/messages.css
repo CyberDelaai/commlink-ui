@@ -359,6 +359,70 @@
     flex-direction: column;
     gap: 14px;
   }
+  /* stage-capture wraps the stage + floating signal-bars. The PNG exporter
+     targets `stage.parentNode`, so this is now the capture rectangle —
+     anything outside it (e.g. the choices dropdown) is excluded. */
+  .stage-capture {
+    position: relative;
+  }
+  /* ---------- Choices dropdown (lives below the preview, not captured) ---------- */
+  .choices-dropdown {
+    background: var(--panel);
+    --aug-border-all: 1px;
+    --aug-border-bg: rgba(0, 240, 255, 0.35);
+    --aug-tl: 8px;
+    --aug-br: 8px;
+    padding: 0;
+  }
+  .choices-summary {
+    list-style: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 12px;
+    font-family: 'Tektur', sans-serif;
+    font-size: 12px;
+    letter-spacing: 2px;
+    color: var(--cyan);
+    user-select: none;
+  }
+  .choices-summary::-webkit-details-marker { display: none; }
+  .choices-summary::marker { content: ''; }
+  .choices-arrow {
+    display: inline-block;
+    transition: transform 0.15s ease;
+    font-family: 'JetBrains Mono', monospace;
+    color: var(--cyan);
+  }
+  details[open] .choices-arrow { transform: rotate(90deg); }
+  .choices-count {
+    margin-left: auto;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--dim);
+    letter-spacing: 1px;
+  }
+  .choices-body {
+    padding: 0 12px 18px;
+    border-top: 1px solid rgba(0, 240, 255, 0.12);
+  }
+  .choices-body #choices { padding: 18px 0 6px; }
+  .choices-body .reorder-stack {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+  .choices-body .reorder-stack .reorder-btn {
+    margin: 0;
+    width: 16px;
+    height: 16px;
+    padding: 0;
+    font-size: 10px;
+    line-height: 1;
+    --aug-tl: 3px;
+    --aug-br: 3px;
+  }
   .stage-meta {
     font-family: 'JetBrains Mono', monospace;
     color: var(--dim);

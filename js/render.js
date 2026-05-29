@@ -570,7 +570,11 @@ function renderChoicesEditor() {
     row.innerHTML = `
       <span class="idx">${i + 1}.</span>
       <input type="text" maxlength="120" value="" />
-      <button class="btn danger icon" type="button" aria-label="remove">✕</button>
+      <div class="reorder-stack">
+        <button class="btn ghost reorder-btn" type="button" data-up aria-label="move up" ${i === 0 ? 'disabled' : ''}>↑</button>
+        <button class="btn ghost reorder-btn" type="button" data-down aria-label="move down" ${i === state.choices.length - 1 ? 'disabled' : ''}>↓</button>
+      </div>
+      <button class="btn danger icon" type="button" aria-label="remove" data-remove>✕</button>
     `;
     const input = row.querySelector('input');
     input.value = c;
@@ -579,7 +583,23 @@ function renderChoicesEditor() {
       renderPreview();
       saveState();
     });
-    row.querySelector('button').addEventListener('click', () => {
+    row.querySelector('[data-up]').addEventListener('click', () => {
+      if (i === 0) return;
+      const [cc] = state.choices.splice(i, 1);
+      state.choices.splice(i - 1, 0, cc);
+      renderChoicesEditor();
+      renderPreview();
+      saveState();
+    });
+    row.querySelector('[data-down]').addEventListener('click', () => {
+      if (i === state.choices.length - 1) return;
+      const [cc] = state.choices.splice(i, 1);
+      state.choices.splice(i + 1, 0, cc);
+      renderChoicesEditor();
+      renderPreview();
+      saveState();
+    });
+    row.querySelector('[data-remove]').addEventListener('click', () => {
       state.choices.splice(i, 1);
       renderChoicesEditor();
       renderPreview();
@@ -641,6 +661,8 @@ function renderPreview() {
     `;
     pChoices.appendChild(row);
   });
+  const choicesActive = state.choices.filter(c => c.trim()).length;
+  choicesCount.textContent = choicesActive ? `(${choicesActive})` : '';
   dialog.style.setProperty('--accent', state.accent);
   stage.style.setProperty('--accent', state.accent);
   const sb = document.getElementById('signalBars');

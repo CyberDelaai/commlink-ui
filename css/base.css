@@ -282,7 +282,8 @@
     text-transform: uppercase;
   }
   .field input[type="text"],
-  .field textarea {
+  .field textarea,
+  .row input[type="text"] {
     width: 100%;
     background: var(--panel-2);
     border: 1px solid rgba(0, 240, 255, 0.25);
@@ -297,7 +298,8 @@
     transition: border-color 0.15s, box-shadow 0.15s;
   }
   .field input[type="text"]:focus,
-  .field textarea:focus {
+  .field textarea:focus,
+  .row input[type="text"]:focus {
     border-color: var(--yellow);
     box-shadow: 0 0 0 1px var(--yellow);
   }
