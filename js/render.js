@@ -649,6 +649,15 @@ function renderPreview() {
   glitchDisplacement.setAttribute('scale', gAmt);
   const sAmt = (typeof state.scanlinesAmount === 'number') ? state.scanlinesAmount : 0.18;
   stage.style.setProperty('--scanline-alpha', sAmt);
+  const cAmt = (typeof state.chromaticAmount === 'number') ? state.chromaticAmount : 2;
+  chromaOffsetR.setAttribute('dx', -cAmt);
+  chromaOffsetB.setAttribute('dx', cAmt);
+  // Compose SVG filter chain. Chromatic first so the per-channel split
+  // is then displaced by the glitch slices (keeps fringe coherent).
+  const fxFilters = [];
+  if (state.chromatic) fxFilters.push('url(#chromatic-aberration)');
+  if (state.glitch) fxFilters.push('url(#glitch-slices)');
+  stage.style.setProperty('--stage-filter', fxFilters.length ? fxFilters.join(' ') : 'none');
   // Signal bars: when glitch is off, full signal; otherwise scale by slider
   const maxG = parseFloat(glitchAmountInput.max) || 80;
   const effectiveGlitch = state.glitch ? gAmt : 0;
@@ -666,9 +675,11 @@ function renderPreview() {
   });
   stage.classList.toggle('glitch', state.glitch);
   stage.classList.toggle('scanlines', state.scanlines);
+  stage.classList.toggle('chromatic', state.chromatic);
   stage.classList.toggle('slim', !!state.slim);
   toggleGlitchBtn.setAttribute('data-pos', state.glitch ? 'right' : 'left');
   toggleScanlinesBtn.setAttribute('data-pos', state.scanlines ? 'right' : 'left');
+  toggleChromaticBtn.setAttribute('data-pos', state.chromatic ? 'right' : 'left');
   const slimBtn = document.getElementById('toggleSlim');
   if (slimBtn) slimBtn.setAttribute('data-pos', state.slim ? 'right' : 'left');
   if (state.bg) {
@@ -721,6 +732,9 @@ function syncForm() {
   const sAmt = (typeof state.scanlinesAmount === 'number') ? state.scanlinesAmount : 0.18;
   scanlinesAmountInput.value = sAmt;
   scanlinesAmountVal.textContent = Math.round(sAmt * 100) + '%';
+  const cAmt = (typeof state.chromaticAmount === 'number') ? state.chromaticAmount : 2;
+  chromaticAmountInput.value = cAmt;
+  chromaticAmountVal.textContent = cAmt + 'px';
   renderMessagesEditor();
   renderChoicesEditor();
 }

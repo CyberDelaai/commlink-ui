@@ -72,6 +72,8 @@ const defaultState = {
   glitchAmount: 38,
   scanlines: true,
   scanlinesAmount: 0.18,
+  chromatic: false,
+  chromaticAmount: 2,
   slim: false,
   bg: makeDefaultBg(),
   bgOriginal: '',

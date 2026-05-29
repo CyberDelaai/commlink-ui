@@ -690,10 +690,16 @@
     box-shadow: 0 0 5px var(--accent, var(--yellow));
   }
 
-  /* ---------- Glitch (static hard-slice tearing) ---------- */
+  /* ---------- SVG stage filters (glitch + chromatic) ----------
+     The actual filter chain (`url(#chromatic-aberration) url(#glitch-slices)`,
+     or a subset, or `none`) is computed in render.js and pushed via the
+     `--stage-filter` custom property. Listing both classes here makes
+     either one a sufficient trigger. */
   .stage.glitch .dialog,
-  .stage.glitch .stage-channel {
-    filter: url(#glitch-slices);
+  .stage.glitch .stage-channel,
+  .stage.chromatic .dialog,
+  .stage.chromatic .stage-channel {
+    filter: var(--stage-filter, none);
   }
 
   .stage.scanlines::before {

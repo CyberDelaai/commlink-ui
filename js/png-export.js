@@ -9,12 +9,12 @@ exportBtn.addEventListener('click', async () => {
   exportBtn.textContent = 'RENDERING...';
   let clonedFilterSvg = null;
   try {
-    // The glitch effect uses `filter: url(#glitch-slices)` which references
-    // an SVG filter defined at the body level. html-to-image captures only
-    // the stage subtree, so we clone the filter SVG into the stage so the
-    // url(#...) ref resolves inside the snapshot.
+    // Glitch and chromatic effects use `filter: url(#...)` referencing SVG
+    // filters defined at the body level. html-to-image captures only the
+    // stage subtree, so we clone the filter SVG into the stage so the
+    // url(#...) refs resolve inside the snapshot.
     const filterSvg = document.getElementById('glitch-slices')?.closest('svg');
-    if (filterSvg && stage.classList.contains('glitch')) {
+    if (filterSvg && (stage.classList.contains('glitch') || stage.classList.contains('chromatic'))) {
       clonedFilterSvg = filterSvg.cloneNode(true);
       clonedFilterSvg.style.position = 'absolute';
       clonedFilterSvg.style.width = '0';
