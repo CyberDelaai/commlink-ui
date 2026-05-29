@@ -3,8 +3,13 @@
 // script in the page so its function declarations are global at the time
 // inline init calls them; function bodies look up state/DOM refs lazily.
 
-// Curated kaomoji set surfaced via the (ω) toolbar button on each message row.
-// Inserted at the textarea cursor; popup stays open for multi-insert.
+// Curated kaomoji set surfaced via the 顔 toolbar button on each message row.
+// Inserted at the textarea cursor; popup closes on insert.
+//
+// Rendering: kaomoji substrings in message bodies are matched via
+// KAOMOJI_REGEX and wrapped in <span class="kao"> so the CSS rule on .kao
+// pins their font-family directly on the span — defeating the JetBrains
+// Mono inheritance applied to .message.system .body.
 const KAOMOJI = [
   '(´ ▽ `)', '(◕‿◕)', '(✿◠‿◠)', '(◜‿◝)', '(｡◕‿◕｡)',
   'ʕ•ᴥ•ʔ', '(≧◡≦)', '\\(^o^)/', '(⌒▽⌒)', '(*˘︶˘*)',
@@ -16,6 +21,30 @@ const KAOMOJI = [
   '(✿ ♡‿♡)', '(♡°▽°♡)', '(˃͈ દ ˂͈)', '(-_-) zzz', '(∪｡∪) zzz',
   '(╬ಠ益ಠ)', '◔̯◔', '(ó﹏ò｡)', '(ノ°益°)ノ', '(づ｡◕‿‿◕｡)づ'
 ];
+// Longest-first so overlapping prefixes match the longest kaomoji.
+const KAOMOJI_REGEX = new RegExp(
+  [...KAOMOJI]
+    .sort((a, b) => b.length - a.length)
+    .map(k => k.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'))
+    .join('|'),
+  'g'
+);
+// Render a message body as HTML, wrapping any KAOMOJI substring in
+// <span class="kao"> so the font-family override applies to it.
+function renderBodyHtml(body) {
+  body = String(body || '');
+  let out = '';
+  let last = 0;
+  KAOMOJI_REGEX.lastIndex = 0;
+  let m;
+  while ((m = KAOMOJI_REGEX.exec(body)) !== null) {
+    if (m.index > last) out += escapeHtml(body.slice(last, m.index));
+    out += '<span class="kao">' + escapeHtml(m[0]) + '</span>';
+    last = KAOMOJI_REGEX.lastIndex;
+  }
+  if (last < body.length) out += escapeHtml(body.slice(last));
+  return out;
+}
 
 // ---------- Render ----------
 function renderMessagesEditor() {
@@ -573,7 +602,7 @@ function renderPreview() {
       const sysEl = document.createElement('div');
       sysEl.className = 'message system';
       sysEl.innerHTML = '<hr class="sys-rule"/><p class="body"></p><hr class="sys-rule"/>';
-      sysEl.querySelector('.body').textContent = m.body;
+      sysEl.querySelector('.body').innerHTML = renderBodyHtml(m.body);
       pMessages.appendChild(sysEl);
       return;
     }
@@ -589,7 +618,7 @@ function renderPreview() {
     }
     el.querySelector('.name').textContent = resolved.name || '—';
     el.querySelector('.time').textContent = (m.time || '').trim();
-    el.querySelector('.body').textContent = m.body || '';
+    el.querySelector('.body').innerHTML = renderBodyHtml(m.body || '');
     if (m.bodyImage) {
       const img = document.createElement('img');
       img.className = 'body-image';

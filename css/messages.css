@@ -294,11 +294,17 @@
     grid-template-columns: repeat(2, 1fr);
     gap: 4px;
   }
+  /* Kaomoji wrap — direct rule on the span so .message.system .body's
+     JetBrains Mono inheritance can't override it. Arial has wide Unicode
+     coverage and renders kaomoji glyphs consistently across systems. */
+  .kao,
+  .kao-popup .kao-cell {
+    font-family: Arial, sans-serif;
+  }
   .kao-popup .kao-cell {
     height: auto;
     padding: 6px 8px;
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 11px;
+    font-size: 12px;
     letter-spacing: 0;
     white-space: nowrap;
     overflow: hidden;
