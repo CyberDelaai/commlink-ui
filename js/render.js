@@ -665,11 +665,14 @@ function renderPreview() {
   // ----- Theme-owned stage rendering. Each theme paints the dialog/channels
   // /messages/choices/signal-bars/accent into the stage. While the user is
   // hovering a theme item, `previewingThemeId` wins so the hover preview
-  // shows the previewed theme's structure. -----
+  // shows the previewed theme's structure. Themes that only diverge in CSS
+  // can omit `renderStage` and inherit the default theme's renderer. -----
   const activeThemeId = (typeof previewingThemeId !== 'undefined' && previewingThemeId)
     || (typeof appliedThemeId !== 'undefined' ? appliedThemeId : 'default');
   const theme = (typeof THEMES !== 'undefined' && THEMES[activeThemeId]) || (typeof THEMES !== 'undefined' && THEMES.default);
-  if (theme && typeof theme.renderStage === 'function') theme.renderStage(state);
+  const renderFn = (theme && theme.renderStage)
+    || (typeof THEMES !== 'undefined' && THEMES.default && THEMES.default.renderStage);
+  if (renderFn) renderFn(state);
 
   // Saved custom swatch — shown only when the user has picked one, behaves like presets
   const savedSwatch = accentsWrap.querySelector('[data-saved-accent]');

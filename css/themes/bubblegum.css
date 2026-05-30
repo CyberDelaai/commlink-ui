@@ -1,0 +1,182 @@
+/* Y2K BUBBLEGUM theme — chrome + accent + baby blue glossy variant.
+   Active only when `<html data-theme="bubblegum">`. The shape attribute
+   (`data-augmented-ui`) is swapped to `tl-scoop-x ... bl-round border` for
+   the stage and dialog by themes.js; this stylesheet sets the matching
+   `--aug-*` sizes and the colors/gradients that ride on top.
+   The user's accent color drives the dominant tint via `var(--accent)` and
+   `color-mix(in srgb, var(--accent), ...)` for lighter/darker shades. */
+
+  /* ---------- Stage frame: 3 small scoops + 1 rounded corner, accent border ---------- */
+  :root[data-theme="bubblegum"] .stage {
+    --aug-tl: 18px;
+    --aug-tr: 18px;
+    --aug-br: 18px;
+    --aug-bl: 30px;
+    --aug-border-all: 2px;
+    --aug-border-bg: var(--accent);
+    background:
+      linear-gradient(135deg,
+        color-mix(in srgb, var(--accent) 14%, transparent) 0%,
+        rgba(252, 230, 255, 0.14) 45%,
+        rgba(212, 232, 255, 0.14) 100%);
+  }
+  /* Keep the user-supplied stageBg image fully visible behind the pastel
+     wash above. */
+  :root[data-theme="bubblegum"] #stageBg {
+    opacity: 1;
+  }
+
+  /* ---------- Dialog: chrome-glass card with scooped niches for channels ---------- */
+  :root[data-theme="bubblegum"] .stage .dialog {
+    --aug-tl: 14px;
+    /* --aug-tl-inset1 and --aug-br-inset1 are set dynamically in
+       js/themes/bubblegum.js so each scoop's horizontal width hugs the
+       corresponding channel label. Defaults match the untouched top-right
+       corner (2 * --aug-* = 28px). */
+    --aug-tl-inset1: 28px;
+    --aug-tr: 14px;
+    --aug-br: 14px;
+    --aug-br-inset1: 28px;
+    --aug-bl: 24px;
+    --aug-border-all: 2px;
+    --aug-border-bg: var(--accent);
+    --aug-inlay-bg: transparent;
+    background:
+      linear-gradient(180deg,
+        rgba(255, 255, 255, 0.22) 0%,
+        color-mix(in srgb, var(--accent) 14%, transparent) 50%,
+        color-mix(in srgb, var(--accent) 18%, transparent) 100%);
+    box-shadow:
+      0 6px 18px color-mix(in srgb, var(--accent) 30%, transparent),
+      inset 0 2px 0 rgba(255, 255, 255, 0.95),
+      inset 0 -2px 0 color-mix(in srgb, var(--accent) 20%, transparent);
+    padding: 36px 26px 22px;
+    margin: 36px 6%;
+  }
+
+  /* ---------- Channel labels (top-left + bottom-right scoop niches) ---------- */
+  :root[data-theme="bubblegum"] .stage .stage-channel {
+    color: color-mix(in srgb, var(--accent), black 18%);
+    text-shadow:
+      0 0 6px color-mix(in srgb, var(--accent) 60%, transparent),
+      0 0 12px color-mix(in srgb, var(--accent) 30%, transparent);
+    font-weight: 600;
+  }
+  :root[data-theme="bubblegum"] .stage .stage-channel.top {
+    top: 32px;
+    left: calc(6% + 18px);
+    right: auto;
+    width: auto;
+    text-align: left;
+    font-size: 12px;
+    letter-spacing: 1.5px;
+    text-shadow:
+      0 0 4px color-mix(in srgb, var(--accent) 55%, transparent),
+      0 1px 0 rgba(255, 255, 255, 0.5);
+  }
+  :root[data-theme="bubblegum"] .stage .stage-channel.top:not(:empty)::before {
+    background: var(--accent);
+    box-shadow: 0 0 6px var(--accent);
+  }
+  :root[data-theme="bubblegum"] .stage .stage-channel.top:empty::before {
+    color: color-mix(in srgb, var(--accent) 50%, transparent);
+  }
+  :root[data-theme="bubblegum"] .stage .stage-channel.bottom {
+    bottom: 32px;
+    right: calc(6% + 18px);
+    left: auto;
+    width: auto;
+    text-align: right;
+    font-size: 12px;
+    letter-spacing: 1.5px;
+    text-shadow:
+      0 0 4px color-mix(in srgb, var(--accent) 55%, transparent),
+      0 1px 0 rgba(255, 255, 255, 0.5);
+  }
+
+  /* ---------- Messages: no bubble background — text flows directly on the
+     semi-transparent dialog, white like the default theme. Dark
+     text-shadow halo keeps it readable on any user background. ---------- */
+  :root[data-theme="bubblegum"] .stage .message .body {
+    padding: 0;
+    border: none;
+    background: none;
+    box-shadow: none;
+    border-radius: 0;
+    color: #eaeaf0;
+    text-shadow:
+      0 0 3px rgba(0, 0, 0, 0.9),
+      0 0 3px rgba(0, 0, 0, 0.9),
+      0 0 6px rgba(0, 0, 0, 0.7);
+  }
+  /* Names + time: white with dark text-shadow halo, matching the body. */
+  :root[data-theme="bubblegum"] .stage .message .name {
+    color: #fff;
+    font-weight: 700;
+    text-shadow:
+      0 0 3px rgba(0, 0, 0, 0.9),
+      0 0 3px rgba(0, 0, 0, 0.9),
+      0 0 6px rgba(0, 0, 0, 0.7);
+  }
+  :root[data-theme="bubblegum"] .stage .message .time {
+    color: #d0d0d8;
+    text-shadow:
+      0 0 3px rgba(0, 0, 0, 0.9),
+      0 0 3px rgba(0, 0, 0, 0.9);
+  }
+  /* System message: minimalist to match the bubble-less body style. Centered
+     text with accent color + halo, flanked by accent-tinted dashed rules. */
+  :root[data-theme="bubblegum"] .stage .message.system .body {
+    background: none;
+    border: none;
+    box-shadow: none;
+    padding: 0;
+    color: var(--accent);
+    font-style: italic;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    font-size: 12px;
+    text-align: center;
+    text-shadow:
+      0 0 3px rgba(0, 0, 0, 0.9),
+      0 0 3px rgba(0, 0, 0, 0.9),
+      0 0 6px rgba(0, 0, 0, 0.6);
+  }
+  :root[data-theme="bubblegum"] .stage .message.system .sys-rule {
+    border: none;
+    border-top: 1px dashed color-mix(in srgb, var(--accent) 65%, transparent);
+    margin: 4px 0;
+  }
+  /* Round avatars with accent ring */
+  :root[data-theme="bubblegum"] .stage .message .portrait {
+    border: 2px solid var(--accent);
+    box-shadow: 0 0 8px color-mix(in srgb, var(--accent) 40%, transparent);
+  }
+
+  /* ---------- Choices: accent-tinted with chosen baby-blue ---------- */
+  :root[data-theme="bubblegum"] .stage .choices {
+    border-top: 1px dashed color-mix(in srgb, var(--accent) 40%, transparent);
+  }
+  :root[data-theme="bubblegum"] .stage .choice,
+  :root[data-theme="bubblegum"] .stage .choice .num,
+  :root[data-theme="bubblegum"] .stage .choice .arrow {
+    color: color-mix(in srgb, var(--accent), black 18%);
+  }
+  :root[data-theme="bubblegum"] .stage .choice.chosen,
+  :root[data-theme="bubblegum"] .stage .choice.chosen .num,
+  :root[data-theme="bubblegum"] .stage .choice.chosen .arrow {
+    color: #5a8aff;
+    text-shadow: 0 0 6px rgba(90, 138, 255, 0.5);
+  }
+
+  /* ---------- Signal bars: accent lit, chrome unlit, nudged up 4px ---------- */
+  :root[data-theme="bubblegum"] .signal-bars {
+    transform: translateY(-4px);
+  }
+  :root[data-theme="bubblegum"] .signal-bars .bar {
+    background: rgba(255, 255, 255, 0.5);
+  }
+  :root[data-theme="bubblegum"] .signal-bars .bar.on {
+    background: var(--accent);
+    box-shadow: 0 0 5px var(--accent);
+  }

@@ -12,6 +12,14 @@
 (function registerDefaultTheme() {
   if (typeof THEMES === 'undefined' || !THEMES.default) return;
 
+  // Augmented-ui shapes per element — mirrors the values authored directly
+  // in index.html so switching FROM another theme BACK to default restores
+  // the original cyberpunk clipped silhouette.
+  THEMES.default.shapes = {
+    stage: 'tl-clip tr-clip-x br-clip bl-clip-x border',
+    dialog: 'tl-clip tr-clip-x br-clip bl-clip-x t-clip-x b-clip-x border'
+  };
+
   THEMES.default.renderStage = function renderDefaultStage(state) {
     pMeta.textContent = state.meta || '';
     pMetaRight.textContent = state.metaRight || '';

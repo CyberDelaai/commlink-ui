@@ -23,12 +23,26 @@ document.documentElement.dataset.theme = appliedThemeId;
 
 let previewingThemeId = null;
 
+// Apply a theme's `shapes` map by rewriting `data-augmented-ui` on the
+// listed element IDs. Augmented-ui v2 re-derives its clip-path from the
+// attribute via CSS attribute selectors, so no extra re-render needed.
+// Safe to call before elements exist (getElementById returns null).
+function applyThemeShapes(themeId) {
+  const theme = THEMES[themeId];
+  if (!theme || !theme.shapes) return;
+  Object.entries(theme.shapes).forEach(([id, shape]) => {
+    const el = document.getElementById(id);
+    if (el) el.setAttribute('data-augmented-ui', shape);
+  });
+}
+
 function applyTheme(themeId) {
   if (!THEMES[themeId]) return;
   appliedThemeId = themeId;
   previewingThemeId = null;
   document.documentElement.dataset.theme = themeId;
   storageSet(THEME_KEY, themeId);
+  applyThemeShapes(themeId);
   if (typeof renderThemes === 'function') renderThemes();
   // Re-paint the stage so the new theme's renderStage takes over.
   if (typeof renderPreview === 'function') renderPreview();
@@ -38,6 +52,7 @@ function previewTheme(themeId) {
   if (!THEMES[themeId]) return;
   previewingThemeId = themeId;
   document.documentElement.dataset.theme = themeId;
+  applyThemeShapes(themeId);
   if (typeof glitchDisplacement !== 'undefined' && glitchDisplacement) {
     glitchDisplacement.setAttribute('scale', 80);
   }
@@ -53,6 +68,7 @@ function endThemePreview() {
   if (previewingThemeId === null) return;
   previewingThemeId = null;
   document.documentElement.dataset.theme = appliedThemeId;
+  applyThemeShapes(appliedThemeId);
   if (typeof glitchDisplacement !== 'undefined' && glitchDisplacement) {
     const gAmt = (typeof state !== 'undefined' && typeof state.glitchAmount === 'number') ? state.glitchAmount : 38;
     glitchDisplacement.setAttribute('scale', gAmt);

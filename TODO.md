@@ -2,13 +2,12 @@
 
 Pending issues, features, and ideas for COMMLINK. Items are removed from the list once they are implemented / resolved (no archive section).
 
-## BIG 
+## BIG (Y version bump)
 
-1. Add different themes (one more theme at first)
-
-
-## SMALL
+## SMALL (Z version bump)
 
 1. Background image to be added by URL
 2. Add new effects
-3. Update palette chosing color thing to be more aligned with cyberpunk theme
+3. Make custom color picker
+4. Add gothic theme
+5. Add toggle for message bubbles
