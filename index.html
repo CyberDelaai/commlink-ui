@@ -1,4 +1,4 @@
-<!-- COMMLINK v1.4.1 -->
+<!-- COMMLINK v1.4.2 -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -546,7 +546,7 @@
   //   Z (third)  — bumped for all small changes (tweaks, fixes, polish).
   // NOTE: when bumping, also update the `<!-- COMMLINK vX.Y.Z -->` comment
   // on line 1 of this file so plain-text readers see the same version.
-  const APP_VERSION = '1.4.1';
+  const APP_VERSION = '1.4.2';
 
   // ---------- External links ----------
   const DONATE_URL = 'https://boosty.to/cyberdelaai/donate';
@@ -731,6 +731,14 @@
     setOpenPanel(sideThemes.classList.contains('open') ? '' : 'themes');
   });
   setOpenPanel(storageGet(OPEN_PANEL_KEY) || '');
+  // Deferred theme-validity check: themes.js loads BEFORE the per-theme
+  // registration files, so its load-time read of localStorage couldn't
+  // confirm membership in THEMES. Do it here once all themes are registered.
+  if (!THEMES[appliedThemeId]) {
+    appliedThemeId = 'default';
+    document.documentElement.dataset.theme = 'default';
+    storageSet(THEME_KEY, 'default');
+  }
   renderThemes();
   // Sync augmented-ui shapes to the saved theme — HTML carries the default
   // theme's clip attributes, so a saved non-default theme needs this once

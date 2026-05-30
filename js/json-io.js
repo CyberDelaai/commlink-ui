@@ -30,7 +30,8 @@ exportStateBtn.addEventListener('click', async () => {
       version: APP_VERSION,
       exportedAt: Date.now(),
       state: await inlineIdbRefs(clone(state)),
-      contacts: loadContacts()
+      contacts: loadContacts(),
+      theme: typeof appliedThemeId !== 'undefined' ? appliedThemeId : 'default'
     };
     const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
     const url = URL.createObjectURL(blob);
@@ -88,6 +89,10 @@ importStateFile.addEventListener('change', (e) => {
       if (Array.isArray(data.contacts)) {
         saveContacts(data.contacts);
         renderContacts();
+      }
+      // Apply imported theme (defaults to `default` if missing or unknown).
+      if (typeof applyTheme === 'function') {
+        applyTheme(data.theme && THEMES[data.theme] ? data.theme : 'default');
       }
       saveState();
       gcImages().catch(() => {});

@@ -19,6 +19,7 @@ function snapshotFromState() {
   const { lang, ...slim } = clone(state);
   return {
     ...slim,
+    theme: typeof appliedThemeId !== 'undefined' ? appliedThemeId : 'default',
     contacts: loadContacts(),
     savedAt: Date.now()
   };
@@ -95,6 +96,14 @@ async function loadSnapshotInto(name) {
     if (m && isImgRef(m.bodyImageOriginal)) refs.push(m.bodyImageOriginal);
   });
   await preloadImageRefs(refs);
+  // Apply the snapshot's saved theme (or fall back to default if missing/
+  // unknown). applyTheme also re-renders, so call it before syncForm.
+  if (typeof applyTheme === 'function') {
+    applyTheme(snap.theme && THEMES[snap.theme] ? snap.theme : 'default');
+  }
+  // Strip the snapshot's `theme` marker from the working state object so
+  // the next snapshotFromState pulls a fresh value from appliedThemeId.
+  delete state.theme;
   syncForm();
   renderPreview();
   saveState();
@@ -141,7 +150,7 @@ function buildExampleMessagesFor(lang) {
 }
 
 function seedDefaults() {
-  const SEED_VERSION = '19';
+  const SEED_VERSION = '20';
   if (storageGet(SEEDED_KEY) === SEED_VERSION) return;
   // One-time cleanup: strip portraitOriginal (dead since avatar-recrop was
   // removed) from any existing saved snapshots to reclaim localStorage.
@@ -187,6 +196,7 @@ function seedDefaults() {
       messages: buildExampleMessagesFor(lang),
       choices: tr.example.choices.map((c, i) => ({ text: c, chosen: i === 0 })),
       choicesColor: '#00f0ff',
+      theme: 'default',
       contacts: defaultContacts,
       lang: lang,
       savedAt: Date.now()

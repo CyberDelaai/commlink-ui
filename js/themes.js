@@ -17,8 +17,10 @@ const THEMES = {
 };
 
 let appliedThemeId = storageGet(THEME_KEY) || 'default';
-if (!THEMES[appliedThemeId]) appliedThemeId = 'default';
 // Apply at script load so the CSS vars take effect before first paint.
+// Validity check is deferred to init (in the inline script) because
+// non-default themes register from separate files that load AFTER this one;
+// validating here would discard them.
 document.documentElement.dataset.theme = appliedThemeId;
 
 let previewingThemeId = null;
