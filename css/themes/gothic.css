@@ -1,0 +1,350 @@
+/* GOTHIC theme — dark cathedral aesthetic with ornate avatar frames.
+   Active only when `<html data-theme="gothic">`. Scoped to the stage so the
+   surrounding cyberpunk UI stays intact. */
+
+  /* Oswald — condensed sans-serif covering Latin + Latin-Ext + Cyrillic
+     (+ Vietnamese), embedded as base64 woff2 in index.html's
+     `<style id="font-face-inline">` so it rides into the SVG-based PNG
+     export. CJK glyphs fall through to Tektur per-character. */
+  :root[data-theme="gothic"] .stage,
+  :root[data-theme="gothic"] .stage .stage-channel,
+  :root[data-theme="gothic"] .stage .message,
+  :root[data-theme="gothic"] .stage .choice {
+    font-family: 'Oswald', 'Tektur', sans-serif;
+    letter-spacing: 0.5px;
+  }
+
+  /* ---------- Stage frame: deep void wash, augmented-ui's stock 2-clip-x
+     compound corners with no per-clip overrides — uniform sizing derived
+     from `.stage`'s base --aug-tl/tr/br/bl (18px from messages.css). ---------- */
+  :root[data-theme="gothic"] .stage {
+    --aug-border-bg: var(--accent);
+    background:
+      radial-gradient(ellipse at top,
+        rgba(0, 0, 0, 0.18) 0%,
+        rgba(10, 4, 10, 0.22) 60%,
+        rgba(0, 0, 0, 0.28) 100%);
+  }
+  /* Keep the user-supplied stageBg fully visible behind the gothic wash. */
+  :root[data-theme="gothic"] #stageBg {
+    opacity: 1;
+  }
+
+  /* ---------- Dialog: dark slab with cathedral-window top (tl-/tr-2-clip-y
+     gives a tall narrow notch at each top corner) + sharp bottom clips. ---------- */
+  :root[data-theme="gothic"] .stage .dialog {
+    --aug-border-all: 2px;
+    --aug-border-bg: var(--accent);
+    /* tl-/tr-2-clip-y: y-axis double clip — tall narrow cut at top corners.
+       Note the SWAP: augmented-ui numbers the two clips going clockwise, so
+       on the LEFT tl1 = corner clip + tl2 = edge clip; on the RIGHT it's the
+       opposite — tr2 = corner + tr1 = edge. Mirror visually by giving
+       tl1==tr2 and tl2==tr1, plus matching extends. */
+    --aug-tl: 12px;
+    --aug-tr: 12px;
+    --aug-tl1: 12px;   /* TL corner clip */
+    --aug-tl2: 24px;   /* TL edge clip (going down) */
+    --aug-tl-extend1: 24px;
+    --aug-tr1: 24px;   /* TR edge clip (going down) */
+    --aug-tr2: 12px;   /* TR corner clip */
+    --aug-tr-extend2: 24px;
+    /* Simple sharp clips at the bottom corners */
+    --aug-br: 10px;
+    --aug-bl: 10px;
+    background:
+      linear-gradient(180deg,
+        rgba(10, 4, 8, 0.32) 0%,
+        rgba(18, 6, 14, 0.32) 50%,
+        rgba(8, 4, 6, 0.36) 100%);
+    box-shadow:
+      0 0 0 1px color-mix(in srgb, var(--accent) 40%, transparent),
+      0 0 32px color-mix(in srgb, var(--accent) 20%, transparent) inset,
+      0 8px 24px rgba(0, 0, 0, 0.7);
+  }
+
+  /* ---------- Channel labels: warm parchment color with subtle glow ---------- */
+  :root[data-theme="gothic"] .stage .stage-channel {
+    color: color-mix(in srgb, var(--accent), white 40%);
+    font-weight: 600;
+    letter-spacing: 3px;
+    text-shadow:
+      0 0 6px color-mix(in srgb, var(--accent) 60%, transparent),
+      0 0 14px color-mix(in srgb, var(--accent) 30%, transparent);
+  }
+  /* Top channel: rotated 90° counter-clockwise (reads bottom-to-top) and
+     anchored along the dialog's inner LEFT edge, near its top. Uses the
+     same writing-mode + 180° rotate trick the side-panel toggles use. */
+  :root[data-theme="gothic"] .stage .stage-channel.top {
+    top: 105px;
+    left: calc(6% - 29px);
+    right: auto;
+    bottom: auto;
+    width: auto;
+    text-align: left;
+    writing-mode: vertical-rl;
+    transform: rotate(180deg);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 14px;
+    letter-spacing: 2.5px;
+  }
+  /* Bottom channel: 90° clockwise reading top-to-bottom along the dialog's
+     inner RIGHT edge near the bottom. Mirrors the top channel via opposite
+     rotation. */
+  :root[data-theme="gothic"] .stage .stage-channel.bottom {
+    bottom: 55px;
+    right: calc(6% - 24px);
+    left: auto;
+    top: auto;
+    width: auto;
+    text-align: left;
+    writing-mode: vertical-rl;
+    transform: rotate(0deg);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 14px;
+    letter-spacing: 2.5px;
+  }
+  :root[data-theme="gothic"] .stage .stage-channel.top:not(:empty)::before {
+    background: var(--accent);
+    box-shadow: 0 0 8px var(--accent);
+  }
+
+  /* ---------- Avatars: square portrait + SVG gothic frame overlay ----------
+     The portrait itself is a plain square (cover-positioned background image
+     set inline by JS). A `::before` pseudo overlays a hand-drawn SVG frame
+     with corner curls and top/bottom crosses, extending above and below the
+     portrait's bounds so the crosses sit outside the image area. */
+  :root[data-theme="gothic"] .stage .message .portrait {
+    width: 56px;
+    height: 56px;
+    clip-path: none;
+    border: none;
+    box-shadow:
+      0 0 0 2px var(--accent),
+      0 0 10px color-mix(in srgb, var(--accent) 50%, transparent);
+    background-color: transparent;
+    position: relative;
+  }
+  :root[data-theme="gothic"] .stage .message .portrait::before {
+    content: '';
+    position: absolute;
+    top: -14px;
+    bottom: -14px;
+    left: -6px;
+    right: -6px;
+    /* The SVG is used as a MASK so the actual color comes from
+       `background-color: var(--accent)`. Strokes inside the SVG only need
+       alpha=1 (any opaque color works); they define the visible silhouette. */
+    -webkit-mask-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 68 84' fill='none' stroke='black' stroke-width='2.6' stroke-linecap='round' stroke-linejoin='round'><line x1='34' y1='0' x2='34' y2='11' stroke-width='3'/><line x1='30' y1='4' x2='38' y2='4' stroke-width='3'/><line x1='25' y1='4' x2='25' y2='10' stroke-width='2.2'/><line x1='23' y1='6' x2='27' y2='6' stroke-width='2.2'/><line x1='43' y1='4' x2='43' y2='10' stroke-width='2.2'/><line x1='41' y1='6' x2='45' y2='6' stroke-width='2.2'/><path d='M10 16 Q10 12 14 12 L26 12 M26 12 Q30 12 30 16'/><path d='M58 16 Q58 12 54 12 L42 12 M42 12 Q38 12 38 16'/><path d='M6 18 Q6 14 10 14 Q14 14 14 18 Q14 22 10 22 Q8 22 8 20'/><path d='M62 18 Q62 14 58 14 Q54 14 54 18 Q54 22 58 22 Q60 22 60 20'/><line x1='6' y1='22' x2='6' y2='62'/><line x1='62' y1='22' x2='62' y2='62'/><path d='M6 66 Q6 70 10 70 Q14 70 14 66 Q14 62 10 62 Q8 62 8 64'/><path d='M62 66 Q62 70 58 70 Q54 70 54 66 Q54 62 58 62 Q60 62 60 64'/><path d='M10 68 Q10 72 14 72 L26 72 M26 72 Q30 72 30 68'/><path d='M58 68 Q58 72 54 72 L42 72 M42 72 Q38 72 38 68'/><line x1='34' y1='73' x2='34' y2='84' stroke-width='3'/><line x1='30' y1='80' x2='38' y2='80' stroke-width='3'/><line x1='25' y1='74' x2='25' y2='80' stroke-width='2.2'/><line x1='23' y1='78' x2='27' y2='78' stroke-width='2.2'/><line x1='43' y1='74' x2='43' y2='80' stroke-width='2.2'/><line x1='41' y1='78' x2='45' y2='78' stroke-width='2.2'/></svg>");
+    mask-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 68 84' fill='none' stroke='black' stroke-width='2.6' stroke-linecap='round' stroke-linejoin='round'><line x1='34' y1='0' x2='34' y2='11' stroke-width='3'/><line x1='30' y1='4' x2='38' y2='4' stroke-width='3'/><line x1='25' y1='4' x2='25' y2='10' stroke-width='2.2'/><line x1='23' y1='6' x2='27' y2='6' stroke-width='2.2'/><line x1='43' y1='4' x2='43' y2='10' stroke-width='2.2'/><line x1='41' y1='6' x2='45' y2='6' stroke-width='2.2'/><path d='M10 16 Q10 12 14 12 L26 12 M26 12 Q30 12 30 16'/><path d='M58 16 Q58 12 54 12 L42 12 M42 12 Q38 12 38 16'/><path d='M6 18 Q6 14 10 14 Q14 14 14 18 Q14 22 10 22 Q8 22 8 20'/><path d='M62 18 Q62 14 58 14 Q54 14 54 18 Q54 22 58 22 Q60 22 60 20'/><line x1='6' y1='22' x2='6' y2='62'/><line x1='62' y1='22' x2='62' y2='62'/><path d='M6 66 Q6 70 10 70 Q14 70 14 66 Q14 62 10 62 Q8 62 8 64'/><path d='M62 66 Q62 70 58 70 Q54 70 54 66 Q54 62 58 62 Q60 62 60 64'/><path d='M10 68 Q10 72 14 72 L26 72 M26 72 Q30 72 30 68'/><path d='M58 68 Q58 72 54 72 L42 72 M42 72 Q38 72 38 68'/><line x1='34' y1='73' x2='34' y2='84' stroke-width='3'/><line x1='30' y1='80' x2='38' y2='80' stroke-width='3'/><line x1='25' y1='74' x2='25' y2='80' stroke-width='2.2'/><line x1='23' y1='78' x2='27' y2='78' stroke-width='2.2'/><line x1='43' y1='74' x2='43' y2='80' stroke-width='2.2'/><line x1='41' y1='78' x2='45' y2='78' stroke-width='2.2'/></svg>");
+    -webkit-mask-repeat: no-repeat;
+    mask-repeat: no-repeat;
+    -webkit-mask-size: 100% 100%;
+    mask-size: 100% 100%;
+    -webkit-mask-mode: alpha;
+    mask-mode: alpha;
+    background-color: var(--accent);
+    pointer-events: none;
+    z-index: 2;
+  }
+  /* Grid cells stay 56px wide; the frame's vertical overhang sits in the
+     existing dialog padding. */
+  :root[data-theme="gothic"] .stage .message.has-portrait {
+    grid-template-columns: 56px 1fr;
+  }
+  :root[data-theme="gothic"] .stage .message.right.has-portrait {
+    grid-template-columns: 1fr 56px;
+  }
+
+  /* ---------- Messages: parchment text inside a gothic banner frame ----------
+     Scoped to `.message:not(.system)` so system messages keep their plain
+     centered-italic-with-crosses presentation untouched. Each .body becomes
+     a small ecclesiastical panel: subtle dark wash with an accent-tinted
+     top, thin accent border, a thick accent rail on the speaker's side, and
+     small diamond ornaments at the two corners opposite the rail. */
+  :root[data-theme="gothic"] .stage .message:not(.system) .body {
+    position: relative;
+    color: #e6dccc;
+    padding: 8px 14px;
+    background:
+      linear-gradient(180deg,
+        color-mix(in srgb, var(--accent) 8%, transparent),
+        rgba(0, 0, 0, 0.28));
+    border: 1px solid color-mix(in srgb, var(--accent) 55%, transparent);
+    text-shadow:
+      0 0 3px rgba(0, 0, 0, 0.95),
+      0 0 6px rgba(0, 0, 0, 0.7);
+  }
+  :root[data-theme="gothic"] .stage .message.left:not(.system) .body {
+    border-left-width: 3px;
+    box-shadow:
+      -1px 0 6px color-mix(in srgb, var(--accent) 30%, transparent),
+      inset 1px 0 0 color-mix(in srgb, var(--accent) 35%, transparent);
+  }
+  :root[data-theme="gothic"] .stage .message.right:not(.system) .body {
+    border-right-width: 3px;
+    box-shadow:
+      1px 0 6px color-mix(in srgb, var(--accent) 30%, transparent),
+      inset -1px 0 0 color-mix(in srgb, var(--accent) 35%, transparent);
+  }
+  :root[data-theme="gothic"] .stage .message:not(.system) .body::before,
+  :root[data-theme="gothic"] .stage .message:not(.system) .body::after {
+    content: '';
+    position: absolute;
+    width: 6px;
+    height: 6px;
+    background: var(--accent);
+    transform: rotate(45deg);
+    box-shadow: 0 0 5px color-mix(in srgb, var(--accent) 70%, transparent);
+  }
+  :root[data-theme="gothic"] .stage .message.left:not(.system) .body::before {
+    top: -4px; right: -4px;
+  }
+  :root[data-theme="gothic"] .stage .message.left:not(.system) .body::after {
+    bottom: -4px; right: -4px;
+  }
+  :root[data-theme="gothic"] .stage .message.right:not(.system) .body::before {
+    top: -4px; left: -4px;
+  }
+  :root[data-theme="gothic"] .stage .message.right:not(.system) .body::after {
+    bottom: -4px; left: -4px;
+  }
+  :root[data-theme="gothic"] .stage .message .name {
+    color: color-mix(in srgb, var(--accent), white 35%);
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-shadow:
+      0 0 4px color-mix(in srgb, var(--accent) 60%, transparent),
+      0 0 8px rgba(0, 0, 0, 0.8);
+  }
+  :root[data-theme="gothic"] .stage .message .time {
+    color: #9a8a7a;
+    font-style: italic;
+  }
+  /* System message: parchment scroll style — centered, upright, ornamental.
+     Explicit `font-family` overrides the JetBrains Mono default that
+     messages.css sets on `.message.system .body`. */
+  :root[data-theme="gothic"] .stage .message.system .body {
+    background: none;
+    border: none;
+    box-shadow: none;
+    padding: 0;
+    color: color-mix(in srgb, var(--accent), white 30%);
+    font-family: 'Oswald', 'Tektur', sans-serif;
+    font-style: normal;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    font-size: 13px;
+    text-align: center;
+    text-shadow:
+      0 0 6px color-mix(in srgb, var(--accent) 50%, transparent),
+      0 0 12px rgba(0, 0, 0, 0.8);
+  }
+  /* Reset the italic that we set on the ::before/::after crosses earlier;
+     they were `font-style: normal` to defeat italic-by-default. Keep
+     symmetric upright now that the body is non-italic too. */
+  :root[data-theme="gothic"] .stage .message.system .body:not(:empty)::before,
+  :root[data-theme="gothic"] .stage .message.system .body:not(:empty)::after {
+    font-style: normal;
+  }
+  /* Cathedral crosses flanking the system text. Pseudo-elements so they
+     don't change the HTML. Hide on empty body so an unfilled SYS row
+     doesn't show a pair of orphan crosses. */
+  :root[data-theme="gothic"] .stage .message.system .body:not(:empty)::before,
+  :root[data-theme="gothic"] .stage .message.system .body:not(:empty)::after {
+    content: '✚';
+    color: var(--accent);
+    font-style: normal;
+    margin: 0 14px;
+    font-size: 14px;
+    text-shadow: 0 0 6px color-mix(in srgb, var(--accent) 70%, transparent);
+  }
+  :root[data-theme="gothic"] .stage .message.system .sys-rule {
+    border: none;
+    border-top: 1px solid color-mix(in srgb, var(--accent) 50%, transparent);
+    margin: 8px 0;
+    position: relative;
+  }
+  /* Diamond ornament on each sys-rule for a touch of cathedral fretwork.
+     No backplate so the cross floats over the line + bg image. */
+  :root[data-theme="gothic"] .stage .message.system .sys-rule::after {
+    content: '✚';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: var(--accent);
+    padding: 0 8px;
+    font-size: 10px;
+    text-shadow: 0 0 4px rgba(0, 0, 0, 0.9);
+  }
+
+  /* ---------- Choices: blood-red list with chosen brighter ---------- */
+  :root[data-theme="gothic"] .stage .choices {
+    border-top: 1px solid color-mix(in srgb, var(--accent) 40%, transparent);
+  }
+  :root[data-theme="gothic"] .stage .choice,
+  :root[data-theme="gothic"] .stage .choice .num,
+  :root[data-theme="gothic"] .stage .choice .arrow {
+    color: color-mix(in srgb, var(--accent), white 25%);
+    text-shadow: 0 0 6px color-mix(in srgb, var(--accent) 40%, transparent);
+  }
+  :root[data-theme="gothic"] .stage .choice.chosen,
+  :root[data-theme="gothic"] .stage .choice.chosen .num,
+  :root[data-theme="gothic"] .stage .choice.chosen .arrow {
+    color: color-mix(in srgb, var(--accent), white 55%);
+    text-shadow: 0 0 8px var(--accent);
+  }
+
+  /* ---------- Signal bars: graveyard scene on a pedestal ----------
+     The default .bar children are hidden; the whole signal-bars element
+     becomes a mask-painted accent rectangle whose silhouette is a graveyard
+     SVG. Five SVGs (one per signal level) live below — gothic.js sets
+     `data-signal-level` on .signal-bars after each render. Each SVG
+     contains the pedestal + N crosses with longer Latin-cross legs and
+     slight tilts so the scene reads as headstones. */
+  :root[data-theme="gothic"] .signal-bars {
+    top: 10px !important;
+    right: auto !important;
+    left: 50% !important;
+    transform: translateX(-50%);
+    width: 120px;
+    height: 32px;
+    display: block;
+    background-color: var(--accent);
+    -webkit-mask-position: center bottom;
+    mask-position: center bottom;
+    -webkit-mask-size: 100% 100%;
+    mask-size: 100% 100%;
+    -webkit-mask-repeat: no-repeat;
+    mask-repeat: no-repeat;
+    -webkit-mask-mode: alpha;
+    mask-mode: alpha;
+    filter: drop-shadow(0 0 6px color-mix(in srgb, var(--accent) 60%, transparent));
+  }
+  :root[data-theme="gothic"] .signal-bars .bar { display: none; }
+  /* Worst signal: a single small cross, heavily tilted (nearly toppled). */
+  :root[data-theme="gothic"] .signal-bars[data-signal-level="1"] {
+    -webkit-mask-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 32' fill='none' stroke='black' stroke-width='2.6' stroke-linecap='round'><line x1='8' y1='29' x2='92' y2='29' stroke-width='3.2'/><g transform='rotate(25 50 28)'><line x1='50' y1='17' x2='50' y2='28'/><line x1='46' y1='20' x2='54' y2='20'/></g></svg>");
+    mask-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 32' fill='none' stroke='black' stroke-width='2.6' stroke-linecap='round'><line x1='8' y1='29' x2='92' y2='29' stroke-width='3.2'/><g transform='rotate(25 50 28)'><line x1='50' y1='17' x2='50' y2='28'/><line x1='46' y1='20' x2='54' y2='20'/></g></svg>");
+  }
+  /* 2 crosses, slight tilts */
+  :root[data-theme="gothic"] .signal-bars[data-signal-level="2"] {
+    -webkit-mask-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 32' fill='none' stroke='black' stroke-width='2.6' stroke-linecap='round'><line x1='8' y1='29' x2='92' y2='29' stroke-width='3.2'/><g transform='rotate(-4 42 28)'><line x1='42' y1='16' x2='42' y2='28'/><line x1='38' y1='19' x2='46' y2='19'/></g><g transform='rotate(3 58 28)'><line x1='58' y1='14' x2='58' y2='28'/><line x1='54' y1='17' x2='62' y2='17'/></g></svg>");
+    mask-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 32' fill='none' stroke='black' stroke-width='2.6' stroke-linecap='round'><line x1='8' y1='29' x2='92' y2='29' stroke-width='3.2'/><g transform='rotate(-4 42 28)'><line x1='42' y1='16' x2='42' y2='28'/><line x1='38' y1='19' x2='46' y2='19'/></g><g transform='rotate(3 58 28)'><line x1='58' y1='14' x2='58' y2='28'/><line x1='54' y1='17' x2='62' y2='17'/></g></svg>");
+  }
+  /* 3 crosses, middle tallest */
+  :root[data-theme="gothic"] .signal-bars[data-signal-level="3"] {
+    -webkit-mask-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 32' fill='none' stroke='black' stroke-width='2.6' stroke-linecap='round'><line x1='8' y1='29' x2='92' y2='29' stroke-width='3.2'/><g transform='rotate(-3 32 28)'><line x1='32' y1='17' x2='32' y2='28'/><line x1='28' y1='20' x2='36' y2='20'/></g><g transform='rotate(1 50 28)'><line x1='50' y1='10' x2='50' y2='28'/><line x1='45' y1='14' x2='55' y2='14'/></g><g transform='rotate(5 68 28)'><line x1='68' y1='15' x2='68' y2='28'/><line x1='64' y1='18' x2='72' y2='18'/></g></svg>");
+    mask-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 32' fill='none' stroke='black' stroke-width='2.6' stroke-linecap='round'><line x1='8' y1='29' x2='92' y2='29' stroke-width='3.2'/><g transform='rotate(-3 32 28)'><line x1='32' y1='17' x2='32' y2='28'/><line x1='28' y1='20' x2='36' y2='20'/></g><g transform='rotate(1 50 28)'><line x1='50' y1='10' x2='50' y2='28'/><line x1='45' y1='14' x2='55' y2='14'/></g><g transform='rotate(5 68 28)'><line x1='68' y1='15' x2='68' y2='28'/><line x1='64' y1='18' x2='72' y2='18'/></g></svg>");
+  }
+  /* 4 crosses */
+  :root[data-theme="gothic"] .signal-bars[data-signal-level="4"] {
+    -webkit-mask-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 32' fill='none' stroke='black' stroke-width='2.6' stroke-linecap='round'><line x1='8' y1='29' x2='92' y2='29' stroke-width='3.2'/><g transform='rotate(-5 27 28)'><line x1='27' y1='16' x2='27' y2='28'/><line x1='23' y1='19' x2='31' y2='19'/></g><g transform='rotate(2 41 28)'><line x1='41' y1='12' x2='41' y2='28'/><line x1='37' y1='15' x2='45' y2='15'/></g><g transform='rotate(-2 59 28)'><line x1='59' y1='15' x2='59' y2='28'/><line x1='55' y1='18' x2='63' y2='18'/></g><g transform='rotate(4 73 28)'><line x1='73' y1='13' x2='73' y2='28'/><line x1='69' y1='16' x2='77' y2='16'/></g></svg>");
+    mask-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 32' fill='none' stroke='black' stroke-width='2.6' stroke-linecap='round'><line x1='8' y1='29' x2='92' y2='29' stroke-width='3.2'/><g transform='rotate(-5 27 28)'><line x1='27' y1='16' x2='27' y2='28'/><line x1='23' y1='19' x2='31' y2='19'/></g><g transform='rotate(2 41 28)'><line x1='41' y1='12' x2='41' y2='28'/><line x1='37' y1='15' x2='45' y2='15'/></g><g transform='rotate(-2 59 28)'><line x1='59' y1='15' x2='59' y2='28'/><line x1='55' y1='18' x2='63' y2='18'/></g><g transform='rotate(4 73 28)'><line x1='73' y1='13' x2='73' y2='28'/><line x1='69' y1='16' x2='77' y2='16'/></g></svg>");
+  }
+  /* 5 crosses — full signal, all standing straight, heights mirrored left↔right
+     (outermost shortest, middle tallest). */
+  :root[data-theme="gothic"] .signal-bars[data-signal-level="5"] {
+    -webkit-mask-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 32' fill='none' stroke='black' stroke-width='2.6' stroke-linecap='round'><line x1='8' y1='29' x2='92' y2='29' stroke-width='3.2'/><line x1='24' y1='16' x2='24' y2='28'/><line x1='20' y1='19' x2='28' y2='19'/><line x1='37' y1='12' x2='37' y2='28'/><line x1='33' y1='15' x2='41' y2='15'/><line x1='50' y1='8' x2='50' y2='28'/><line x1='45' y1='12' x2='55' y2='12'/><line x1='63' y1='12' x2='63' y2='28'/><line x1='59' y1='15' x2='67' y2='15'/><line x1='76' y1='16' x2='76' y2='28'/><line x1='72' y1='19' x2='80' y2='19'/></svg>");
+    mask-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 32' fill='none' stroke='black' stroke-width='2.6' stroke-linecap='round'><line x1='8' y1='29' x2='92' y2='29' stroke-width='3.2'/><line x1='24' y1='16' x2='24' y2='28'/><line x1='20' y1='19' x2='28' y2='19'/><line x1='37' y1='12' x2='37' y2='28'/><line x1='33' y1='15' x2='41' y2='15'/><line x1='50' y1='8' x2='50' y2='28'/><line x1='45' y1='12' x2='55' y2='12'/><line x1='63' y1='12' x2='63' y2='28'/><line x1='59' y1='15' x2='67' y2='15'/><line x1='76' y1='16' x2='76' y2='28'/><line x1='72' y1='19' x2='80' y2='19'/></svg>");
+  }

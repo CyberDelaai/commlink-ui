@@ -11,3 +11,5 @@ Pending issues, features, and ideas for COMMLINK. Items are removed from the lis
 3. Make custom color picker
 4. Add gothic theme
 5. Add toggle for message bubbles
+6. Fix choices' colors picked
+7. Fix frames' mixins bug on theme change

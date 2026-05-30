@@ -15,7 +15,7 @@ window.I18N = {
       preview: '// PREVIEW',
       config: '// CONFIG'
     },
-    theme: { default: 'DEFAULT', bubblegum: 'BUBBLEGUM', moreToCome: '// MORE TO COME' },
+    theme: { default: 'DEFAULT', bubblegum: 'BUBBLEGUM', gothic: 'GOTHIC', moreToCome: '// MORE TO COME' },
     donate: {
       title: '// INCOMING TRANSMISSION',
       line1: 'You jacked in. You forged dialogs worth flashing across the Net.',
@@ -116,7 +116,7 @@ window.I18N = {
       preview: '// ПРОСМОТР',
       config: '// НАСТРОЙКИ'
     },
-    theme: { default: 'СТАНДАРТ', bubblegum: 'БАБЛГАМ', moreToCome: '// СКОРО ЕЩЁ' },
+    theme: { default: 'СТАНДАРТ', bubblegum: 'БАБЛГАМ', gothic: 'ГОТИКА', moreToCome: '// СКОРО ЕЩЁ' },
     donate: {
       title: '// ВХОДЯЩАЯ ПЕРЕДАЧА',
       line1: 'Ты подключился. Ты подделал диалоги, достойные мелькать в Сети.',
@@ -217,7 +217,7 @@ window.I18N = {
       preview: '// APERÇU',
       config: '// CONFIG'
     },
-    theme: { default: 'DÉFAUT', bubblegum: 'BUBBLEGUM', moreToCome: '// BIENTÔT PLUS' },
+    theme: { default: 'DÉFAUT', bubblegum: 'BUBBLEGUM', gothic: 'GOTHIQUE', moreToCome: '// BIENTÔT PLUS' },
     donate: {
       title: '// TRANSMISSION ENTRANTE',
       line1: "Tu t'es connecté. Tu as falsifié des dialogues dignes de circuler sur le Net.",
@@ -318,7 +318,7 @@ window.I18N = {
       preview: '// VORSCHAU',
       config: '// KONFIG'
     },
-    theme: { default: 'STANDARD', bubblegum: 'BUBBLEGUM', moreToCome: '// MEHR FOLGT' },
+    theme: { default: 'STANDARD', bubblegum: 'BUBBLEGUM', gothic: 'GOTISCH', moreToCome: '// MEHR FOLGT' },
     donate: {
       title: '// EINGEHENDE ÜBERTRAGUNG',
       line1: 'Du hast dich eingeloggt. Du hast Dialoge gefälscht, die im Netz Aufsehen erregen.',
@@ -419,7 +419,7 @@ window.I18N = {
       preview: '// VISTA PREVIA',
       config: '// CONFIG'
     },
-    theme: { default: 'POR DEFECTO', bubblegum: 'BUBBLEGUM', moreToCome: '// PRÓXIMAMENTE MÁS' },
+    theme: { default: 'POR DEFECTO', bubblegum: 'BUBBLEGUM', gothic: 'GÓTICO', moreToCome: '// PRÓXIMAMENTE MÁS' },
     donate: {
       title: '// TRANSMISIÓN ENTRANTE',
       line1: 'Te conectaste. Falsificaste diálogos dignos de circular por la Red.',
@@ -520,7 +520,7 @@ window.I18N = {
       preview: '// ANTEPRIMA',
       config: '// CONFIG'
     },
-    theme: { default: 'PREDEFINITO', bubblegum: 'BUBBLEGUM', moreToCome: '// ALTRI IN ARRIVO' },
+    theme: { default: 'PREDEFINITO', bubblegum: 'BUBBLEGUM', gothic: 'GOTICO', moreToCome: '// ALTRI IN ARRIVO' },
     donate: {
       title: '// TRASMISSIONE IN ARRIVO',
       line1: 'Ti sei collegato. Hai falsificato dialoghi degni di girare sulla Net.',
@@ -621,7 +621,7 @@ window.I18N = {
       preview: '// プレビュー',
       config: '// 設定'
     },
-    theme: { default: 'デフォルト', bubblegum: 'バブルガム', moreToCome: '// 続々登場予定' },
+    theme: { default: 'デフォルト', bubblegum: 'バブルガム', gothic: 'ゴシック', moreToCome: '// 続々登場予定' },
     donate: {
       title: '// 着信通信',
       line1: 'ジャックインした。ネットで光る価値あるダイアログを鍛えた。',
@@ -722,7 +722,7 @@ window.I18N = {
       preview: '// 预览',
       config: '// 配置'
     },
-    theme: { default: '默认', bubblegum: '泡泡糖', moreToCome: '// 更多即将推出' },
+    theme: { default: '默认', bubblegum: '泡泡糖', gothic: '哥特', moreToCome: '// 更多即将推出' },
     donate: {
       title: '// 信号传入',
       line1: '你已接入。你打造了值得在网络上闪耀的对话。',

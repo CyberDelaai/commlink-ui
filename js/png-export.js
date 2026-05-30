@@ -32,6 +32,10 @@ exportBtn.addEventListener('click', async () => {
         document.fonts.load('15px "Tektur"'),
         document.fonts.load('500 17px "Tektur"'),
         document.fonts.load('700 17px "Tektur"'),
+        // Theme fonts — embedded base64 so they're available offline. Force
+        // load so PNG export picks them up even if the user has never
+        // activated the gothic theme this session.
+        document.fonts.load('17px "Oswald"'),
         document.fonts.ready
       ]);
     }
