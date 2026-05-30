@@ -288,11 +288,14 @@
     color: color-mix(in srgb, var(--accent), white 25%);
     text-shadow: 0 0 6px color-mix(in srgb, var(--accent) 40%, transparent);
   }
+  /* Chosen choice follows the palette-picked color (state.choicesColor →
+     CSS var --choices-color, set on .stage by the renderer), matching the
+     default theme's behavior. */
   :root[data-theme="gothic"] .stage .choice.chosen,
   :root[data-theme="gothic"] .stage .choice.chosen .num,
   :root[data-theme="gothic"] .stage .choice.chosen .arrow {
-    color: color-mix(in srgb, var(--accent), white 55%);
-    text-shadow: 0 0 8px var(--accent);
+    color: var(--choices-color);
+    text-shadow: 0 0 8px color-mix(in srgb, var(--choices-color) 60%, transparent);
   }
 
   /* ---------- Signal bars: graveyard scene on a pedestal ----------

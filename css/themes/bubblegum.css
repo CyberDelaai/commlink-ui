@@ -162,11 +162,15 @@
   :root[data-theme="bubblegum"] .stage .choice .arrow {
     color: color-mix(in srgb, var(--accent), black 18%);
   }
+  /* Chosen choice follows the palette-picked color (state.choicesColor →
+     CSS var --choices-color, set on .stage by the renderer), matching the
+     default theme's behavior. Bubblegum's earlier hardcoded baby-blue
+     ignored the picker; now it tracks. */
   :root[data-theme="bubblegum"] .stage .choice.chosen,
   :root[data-theme="bubblegum"] .stage .choice.chosen .num,
   :root[data-theme="bubblegum"] .stage .choice.chosen .arrow {
-    color: #5a8aff;
-    text-shadow: 0 0 6px rgba(90, 138, 255, 0.5);
+    color: var(--choices-color);
+    text-shadow: 0 0 6px color-mix(in srgb, var(--choices-color) 50%, transparent);
   }
 
   /* ---------- Signal bars: accent lit, chrome unlit, nudged up 4px ---------- */
