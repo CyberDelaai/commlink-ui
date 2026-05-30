@@ -29,12 +29,29 @@ let previewingThemeId = null;
 // listed element IDs. Augmented-ui v2 re-derives its clip-path from the
 // attribute via CSS attribute selectors, so no extra re-render needed.
 // Safe to call before elements exist (getElementById returns null).
+//
+// Also clears any inline `--aug-*` CSS vars on the targeted elements before
+// setting the new attr — bubblegum's renderStage writes dynamic inset vars
+// inline, and those would otherwise persist into the next theme and warp
+// its shape computation.
+//
+// Falls back to the default theme's shapes when the target theme provides
+// none, so prior themes' attributes never stick around silently.
 function applyThemeShapes(themeId) {
   const theme = THEMES[themeId];
-  if (!theme || !theme.shapes) return;
-  Object.entries(theme.shapes).forEach(([id, shape]) => {
+  const shapes = (theme && theme.shapes)
+    || (THEMES.default && THEMES.default.shapes);
+  if (!shapes) return;
+  Object.entries(shapes).forEach(([id, shape]) => {
     const el = document.getElementById(id);
-    if (el) el.setAttribute('data-augmented-ui', shape);
+    if (!el) return;
+    for (let i = el.style.length - 1; i >= 0; i--) {
+      const prop = el.style[i];
+      if (prop && prop.indexOf('--aug-') === 0) {
+        el.style.removeProperty(prop);
+      }
+    }
+    el.setAttribute('data-augmented-ui', shape);
   });
 }
 
