@@ -48,7 +48,21 @@
       }
       el.querySelector('.name').textContent = resolved.name || '—';
       el.querySelector('.time').textContent = (m.time || '').trim();
-      el.querySelector('.body').innerHTML = renderBodyHtml(m.body || '');
+      const bodyEl = el.querySelector('.body');
+      bodyEl.innerHTML = renderBodyHtml(m.body || '');
+      // When FRAMES is on AND the default theme is active, paint each body
+      // with an augmented-ui clip silhouette (one chip per side, mirrored).
+      // Other themes opt out so their own frame look wins.
+      const activeTheme = (typeof previewingThemeId !== 'undefined' && previewingThemeId)
+        || (typeof appliedThemeId !== 'undefined' ? appliedThemeId : 'default');
+      if (state.frames && activeTheme === 'default') {
+        bodyEl.setAttribute('data-augmented-ui',
+          side === 'right'
+            ? 'tl-clip br-clip border'
+            : 'tr-clip bl-clip border');
+      } else {
+        bodyEl.removeAttribute('data-augmented-ui');
+      }
       if (m.bodyImage) {
         const img = document.createElement('img');
         img.className = 'body-image';
@@ -82,7 +96,7 @@
     const sb = document.getElementById('signalBars');
     if (sb) sb.style.setProperty('--accent', state.accent);
 
-    stage.classList.toggle('slim', !!state.slim);
+    stage.classList.toggle('frames', !!state.frames);
 
     // Signal bars: when glitch is off, full signal; otherwise scale by slider.
     // Reads the same glitch-amount control that the universal layer uses.

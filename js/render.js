@@ -646,8 +646,8 @@ function renderPreview() {
   toggleScanlinesBtn.setAttribute('data-pos', state.scanlines ? 'right' : 'left');
   toggleChromaticBtn.setAttribute('data-pos', state.chromatic ? 'right' : 'left');
   toggleVignetteBtn.setAttribute('data-pos', state.vignette ? 'right' : 'left');
-  const slimBtn = document.getElementById('toggleSlim');
-  if (slimBtn) slimBtn.setAttribute('data-pos', state.slim ? 'right' : 'left');
+  const framesBtn = document.getElementById('toggleFrames');
+  if (framesBtn) framesBtn.setAttribute('data-pos', state.frames ? 'right' : 'left');
   if (state.bg) {
     const bgUrl = displayUrl(state.bg) || state.bg;
     stageBg.style.backgroundImage = `url("${bgUrl}")`;

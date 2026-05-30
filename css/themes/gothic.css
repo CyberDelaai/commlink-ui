@@ -155,39 +155,40 @@
     grid-template-columns: 1fr 56px;
   }
 
-  /* ---------- Messages: parchment text inside a gothic banner frame ----------
-     Scoped to `.message:not(.system)` so system messages keep their plain
-     centered-italic-with-crosses presentation untouched. Each .body becomes
-     a small ecclesiastical panel: subtle dark wash with an accent-tinted
-     top, thin accent border, a thick accent rail on the speaker's side, and
-     small diamond ornaments at the two corners opposite the rail. */
+  /* ---------- Messages: parchment text colour (always) + gothic banner
+     frame (only when the FRAMES toggle is on). The text style runs
+     regardless of the toggle; the panel background, accent border, rail,
+     and corner diamond ornaments only appear under `.stage.frames`. */
   :root[data-theme="gothic"] .stage .message:not(.system) .body {
     position: relative;
     color: #e6dccc;
+    text-shadow:
+      0 0 3px rgba(0, 0, 0, 0.95),
+      0 0 6px rgba(0, 0, 0, 0.7);
+  }
+  /* Banner-frame styling gated on FRAMES toggle */
+  :root[data-theme="gothic"] .stage.frames .message:not(.system) .body {
     padding: 8px 14px;
     background:
       linear-gradient(180deg,
         color-mix(in srgb, var(--accent) 8%, transparent),
         rgba(0, 0, 0, 0.28));
     border: 1px solid color-mix(in srgb, var(--accent) 55%, transparent);
-    text-shadow:
-      0 0 3px rgba(0, 0, 0, 0.95),
-      0 0 6px rgba(0, 0, 0, 0.7);
   }
-  :root[data-theme="gothic"] .stage .message.left:not(.system) .body {
+  :root[data-theme="gothic"] .stage.frames .message.left:not(.system) .body {
     border-left-width: 3px;
     box-shadow:
       -1px 0 6px color-mix(in srgb, var(--accent) 30%, transparent),
       inset 1px 0 0 color-mix(in srgb, var(--accent) 35%, transparent);
   }
-  :root[data-theme="gothic"] .stage .message.right:not(.system) .body {
+  :root[data-theme="gothic"] .stage.frames .message.right:not(.system) .body {
     border-right-width: 3px;
     box-shadow:
       1px 0 6px color-mix(in srgb, var(--accent) 30%, transparent),
       inset -1px 0 0 color-mix(in srgb, var(--accent) 35%, transparent);
   }
-  :root[data-theme="gothic"] .stage .message:not(.system) .body::before,
-  :root[data-theme="gothic"] .stage .message:not(.system) .body::after {
+  :root[data-theme="gothic"] .stage.frames .message:not(.system) .body::before,
+  :root[data-theme="gothic"] .stage.frames .message:not(.system) .body::after {
     content: '';
     position: absolute;
     width: 6px;
@@ -196,16 +197,16 @@
     transform: rotate(45deg);
     box-shadow: 0 0 5px color-mix(in srgb, var(--accent) 70%, transparent);
   }
-  :root[data-theme="gothic"] .stage .message.left:not(.system) .body::before {
+  :root[data-theme="gothic"] .stage.frames .message.left:not(.system) .body::before {
     top: -4px; right: -4px;
   }
-  :root[data-theme="gothic"] .stage .message.left:not(.system) .body::after {
+  :root[data-theme="gothic"] .stage.frames .message.left:not(.system) .body::after {
     bottom: -4px; right: -4px;
   }
-  :root[data-theme="gothic"] .stage .message.right:not(.system) .body::before {
+  :root[data-theme="gothic"] .stage.frames .message.right:not(.system) .body::before {
     top: -4px; left: -4px;
   }
-  :root[data-theme="gothic"] .stage .message.right:not(.system) .body::after {
+  :root[data-theme="gothic"] .stage.frames .message.right:not(.system) .body::after {
     bottom: -4px; left: -4px;
   }
   :root[data-theme="gothic"] .stage .message .name {

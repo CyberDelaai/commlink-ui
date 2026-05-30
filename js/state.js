@@ -79,7 +79,7 @@ const defaultState = {
   chromaticAmount: 2,
   vignette: false,
   vignetteAmount: 0.6,
-  slim: false,
+  frames: false,
   bg: makeDefaultBg(),
   bgOriginal: '',
   bgBrightness: 0.55

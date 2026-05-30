@@ -522,34 +522,31 @@
     --aug-b-height: 2px;
   }
 
-  /* Smartphone-like slim view (FX → SLIM toggle) — narrows the frame,
-     tightens padding, shrinks portraits + fonts so the dialog reads like
-     a phone screen. The stage itself also constraints to phone width so
-     the exported PNG matches. */
-  .stage.slim {
-    max-width: 460px;
+  /* Message frames toggle (FX → FRAMES) — wraps each message body in an
+     augmented-ui chip with mirrored corner clips (TL+BR on left messages,
+     TR+BL on right). The `data-augmented-ui` attribute is set per-body by
+     `themes/default.js` so other themes can swap in their own bubble look. */
+  .stage.frames .message:not(.system) .body {
+    padding: 8px 14px;
+    background:
+      linear-gradient(180deg,
+        color-mix(in srgb, var(--accent) 10%, rgba(0, 0, 0, 0.35)),
+        rgba(0, 0, 0, 0.45));
+    width: fit-content;
+    max-width: 100%;
+    /* augmented-ui shape sizing — clips at the two diagonally-opposite
+       corners, plus accent border drawn by aug-ui (no plain CSS border so
+       it follows the clip silhouette correctly). */
+    --aug-tl: 10px;
+    --aug-tr: 10px;
+    --aug-br: 10px;
+    --aug-bl: 10px;
+    --aug-border-all: 1px;
+    --aug-border-bg: var(--accent);
+  }
+  .stage.frames .message.right:not(.system) .body {
     margin-left: auto;
-    margin-right: auto;
   }
-  .stage.slim .dialog {
-    margin: 28px auto;
-    padding: 30px 14px 18px;
-    max-width: 380px;
-  }
-  .stage.slim .message .portrait {
-    width: 38px;
-    height: 38px;
-  }
-  .stage.slim .message.has-portrait { grid-template-columns: 38px 1fr; }
-  .stage.slim .message.right.has-portrait { grid-template-columns: 1fr 38px; }
-  .stage.slim .message .body { font-size: 15px; }
-  .stage.slim .message .name { font-size: 12px; letter-spacing: 2px; }
-  .stage.slim .message .time { font-size: 11px; }
-  .stage.slim .messages { gap: 8px; }
-  .stage.slim .message + .message { padding-top: 7px; }
-  .stage.slim .message.system { padding: 6px 8px; }
-  .stage.slim .message.system .body { font-size: 11px; letter-spacing: 1px; }
-  .stage.slim .stage-channel.top { transform: translateX(-20px); }
 
   .stage-channel {
     position: absolute;

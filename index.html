@@ -1,4 +1,4 @@
-<!-- COMMLINK v1.4.4 -->
+<!-- COMMLINK v1.4.5 -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -437,8 +437,8 @@
     </div>
 
     <div class="field slim-field">
-      <label data-i18n="fx.slim">SLIM</label>
-      <button class="side-switch fx" id="toggleSlim" type="button" data-pos="left" aria-label="toggle slim view">
+      <label data-i18n="fx.frames">FRAMES</label>
+      <button class="side-switch fx" id="toggleFrames" type="button" data-pos="left" aria-label="toggle message frames">
         <span class="thumb"></span>
         <span class="lab l">OFF</span>
         <span class="lab r">ON</span>
@@ -575,7 +575,7 @@
   //   Z (third)  — bumped for all small changes (tweaks, fixes, polish).
   // NOTE: when bumping, also update the `<!-- COMMLINK vX.Y.Z -->` comment
   // on line 1 of this file so plain-text readers see the same version.
-  const APP_VERSION = '1.4.4';
+  const APP_VERSION = '1.4.5';
 
   // ---------- External links ----------
   const DONATE_URL = 'https://boosty.to/cyberdelaai/donate';
@@ -966,9 +966,9 @@
     renderPreview();
     saveState();
   });
-  const toggleSlimBtn = $('toggleSlim');
-  toggleSlimBtn.addEventListener('click', () => {
-    state.slim = !state.slim;
+  const toggleFramesBtn = $('toggleFrames');
+  toggleFramesBtn.addEventListener('click', () => {
+    state.frames = !state.frames;
     renderPreview();
     saveState();
   });
