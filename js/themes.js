@@ -24,6 +24,7 @@ let appliedThemeId = storageGet(THEME_KEY) || 'default';
 document.documentElement.dataset.theme = appliedThemeId;
 
 let previewingThemeId = null;
+let previewGlitchTimer = null;
 
 // Apply a theme's `shapes` map by rewriting `data-augmented-ui` on the
 // listed element IDs. Augmented-ui v2 re-derives its clip-path from the
@@ -67,27 +68,15 @@ function applyTheme(themeId) {
   if (typeof renderPreview === 'function') renderPreview();
 }
 
-function previewTheme(themeId) {
-  if (!THEMES[themeId]) return;
-  previewingThemeId = themeId;
-  document.documentElement.dataset.theme = themeId;
-  applyThemeShapes(themeId);
-  if (typeof glitchDisplacement !== 'undefined' && glitchDisplacement) {
-    glitchDisplacement.setAttribute('scale', 80);
+// Stop the brief "downloading" glitch flash without ending the preview
+// itself — restores glitchDisplacement to the user's slider value and
+// removes the `theme-previewing` class. Used both by the timer and by
+// endThemePreview (so unhovering mid-flash kills the glitch immediately).
+function stopPreviewGlitch() {
+  if (previewGlitchTimer) {
+    clearTimeout(previewGlitchTimer);
+    previewGlitchTimer = null;
   }
-  if (typeof stage !== 'undefined' && stage) {
-    stage.classList.add('theme-previewing');
-  }
-  // Re-render so the previewed theme's renderStage runs (structural changes,
-  // not just CSS-variable swaps, take effect during hover).
-  if (typeof renderPreview === 'function') renderPreview();
-}
-
-function endThemePreview() {
-  if (previewingThemeId === null) return;
-  previewingThemeId = null;
-  document.documentElement.dataset.theme = appliedThemeId;
-  applyThemeShapes(appliedThemeId);
   if (typeof glitchDisplacement !== 'undefined' && glitchDisplacement) {
     const gAmt = (typeof state !== 'undefined' && typeof state.glitchAmount === 'number') ? state.glitchAmount : 38;
     glitchDisplacement.setAttribute('scale', gAmt);
@@ -95,6 +84,38 @@ function endThemePreview() {
   if (typeof stage !== 'undefined' && stage) {
     stage.classList.remove('theme-previewing');
   }
+}
+
+function previewTheme(themeId) {
+  if (!THEMES[themeId]) return;
+  previewingThemeId = themeId;
+  document.documentElement.dataset.theme = themeId;
+  applyThemeShapes(themeId);
+  if (previewGlitchTimer) clearTimeout(previewGlitchTimer);
+  if (typeof stage !== 'undefined' && stage) {
+    stage.classList.add('theme-previewing');
+  }
+  // Re-render so the previewed theme's renderStage runs (structural changes,
+  // not just CSS-variable swaps, take effect during hover).
+  if (typeof renderPreview === 'function') renderPreview();
+  // Boost the glitch displacement scale AFTER renderPreview — its universal
+  // FX layer unconditionally writes state.glitchAmount onto the displacement
+  // node, which would otherwise clobber our 80-burst.
+  if (typeof glitchDisplacement !== 'undefined' && glitchDisplacement) {
+    glitchDisplacement.setAttribute('scale', 80);
+  }
+  // 0.3s flash — reads as the theme "downloading" rather than a continuous
+  // distortion that obscures the preview.
+  previewGlitchTimer = setTimeout(stopPreviewGlitch, 300);
+}
+
+function endThemePreview() {
+  if (previewingThemeId === null) return;
+  previewingThemeId = null;
+  document.documentElement.dataset.theme = appliedThemeId;
+  applyThemeShapes(appliedThemeId);
+  // Always kill the flash on unhover, even if mid-burst.
+  stopPreviewGlitch();
   if (typeof renderPreview === 'function') renderPreview();
 }
 

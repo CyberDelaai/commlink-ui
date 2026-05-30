@@ -627,6 +627,10 @@ function renderPreview() {
   choicesCount.textContent = choicesActive ? `(${choicesActive})` : '';
   const gAmt = (typeof state.glitchAmount === 'number') ? state.glitchAmount : 38;
   glitchDisplacement.setAttribute('scale', gAmt);
+  // Soft glitch (used by gothic graveyard signal-bars) tracks the same slider
+  // at ~60% magnitude so its strokes stay readable even at max.
+  const softGlitch = document.getElementById('glitchDisplacementSoft');
+  if (softGlitch) softGlitch.setAttribute('scale', Math.round(gAmt * 0.6));
   const sAmt = (typeof state.scanlinesAmount === 'number') ? state.scanlinesAmount : 0.18;
   stage.style.setProperty('--scanline-alpha', sAmt);
   const cAmt = (typeof state.chromaticAmount === 'number') ? state.chromaticAmount : 2;

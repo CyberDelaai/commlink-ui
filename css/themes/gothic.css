@@ -300,12 +300,11 @@
   }
 
   /* ---------- Signal bars: graveyard scene on a pedestal ----------
-     The default .bar children are hidden; the whole signal-bars element
-     becomes a mask-painted accent rectangle whose silhouette is a graveyard
-     SVG. Five SVGs (one per signal level) live below — gothic.js sets
-     `data-signal-level` on .signal-bars after each render. Each SVG
-     contains the pedestal + N crosses with longer Latin-cross legs and
-     slight tilts so the scene reads as headstones. */
+     The default .bar children are hidden; the actual graveyard is painted
+     as a `background-image` SVG with the accent stroke color injected by
+     gothic.js renderStage at render time. background-image (instead of
+     mask-image) gives the FX filters real strokes to displace, so glitch
+     and chromatic actually visibly distort the crosses. */
   :root[data-theme="gothic"] .signal-bars {
     top: 10px !important;
     right: auto !important;
@@ -314,41 +313,23 @@
     width: 120px;
     height: 32px;
     display: block;
-    background-color: var(--accent);
-    -webkit-mask-position: center bottom;
-    mask-position: center bottom;
-    -webkit-mask-size: 100% 100%;
-    mask-size: 100% 100%;
-    -webkit-mask-repeat: no-repeat;
-    mask-repeat: no-repeat;
-    -webkit-mask-mode: alpha;
-    mask-mode: alpha;
+    background-color: transparent;
+    background-position: center bottom;
+    background-size: 100% 100%;
+    background-repeat: no-repeat;
     filter: drop-shadow(0 0 6px color-mix(in srgb, var(--accent) 60%, transparent));
   }
   :root[data-theme="gothic"] .signal-bars .bar { display: none; }
-  /* Worst signal: a single small cross, heavily tilted (nearly toppled). */
-  :root[data-theme="gothic"] .signal-bars[data-signal-level="1"] {
-    -webkit-mask-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 32' fill='none' stroke='black' stroke-width='2.6' stroke-linecap='round'><line x1='8' y1='29' x2='92' y2='29' stroke-width='3.2'/><g transform='rotate(25 50 28)'><line x1='50' y1='17' x2='50' y2='28'/><line x1='46' y1='20' x2='54' y2='20'/></g></svg>");
-    mask-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 32' fill='none' stroke='black' stroke-width='2.6' stroke-linecap='round'><line x1='8' y1='29' x2='92' y2='29' stroke-width='3.2'/><g transform='rotate(25 50 28)'><line x1='50' y1='17' x2='50' y2='28'/><line x1='46' y1='20' x2='54' y2='20'/></g></svg>");
+  /* Soft FX on the gothic graveyard signal-bars: the regular `--stage-filter`
+     displaces them so heavily the crosses become unreadable. Substitute the
+     low-magnitude `*-soft` variants so the graveyard still distorts when
+     glitch/chromatic are active, but stays distinguishable. */
+  :root[data-theme="gothic"] .stage.glitch .signal-bars {
+    filter: url(#glitch-slices-soft) !important;
   }
-  /* 2 crosses, slight tilts */
-  :root[data-theme="gothic"] .signal-bars[data-signal-level="2"] {
-    -webkit-mask-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 32' fill='none' stroke='black' stroke-width='2.6' stroke-linecap='round'><line x1='8' y1='29' x2='92' y2='29' stroke-width='3.2'/><g transform='rotate(-4 42 28)'><line x1='42' y1='16' x2='42' y2='28'/><line x1='38' y1='19' x2='46' y2='19'/></g><g transform='rotate(3 58 28)'><line x1='58' y1='14' x2='58' y2='28'/><line x1='54' y1='17' x2='62' y2='17'/></g></svg>");
-    mask-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 32' fill='none' stroke='black' stroke-width='2.6' stroke-linecap='round'><line x1='8' y1='29' x2='92' y2='29' stroke-width='3.2'/><g transform='rotate(-4 42 28)'><line x1='42' y1='16' x2='42' y2='28'/><line x1='38' y1='19' x2='46' y2='19'/></g><g transform='rotate(3 58 28)'><line x1='58' y1='14' x2='58' y2='28'/><line x1='54' y1='17' x2='62' y2='17'/></g></svg>");
+  :root[data-theme="gothic"] .stage.chromatic .signal-bars {
+    filter: url(#chromatic-aberration-soft) !important;
   }
-  /* 3 crosses, middle tallest */
-  :root[data-theme="gothic"] .signal-bars[data-signal-level="3"] {
-    -webkit-mask-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 32' fill='none' stroke='black' stroke-width='2.6' stroke-linecap='round'><line x1='8' y1='29' x2='92' y2='29' stroke-width='3.2'/><g transform='rotate(-3 32 28)'><line x1='32' y1='17' x2='32' y2='28'/><line x1='28' y1='20' x2='36' y2='20'/></g><g transform='rotate(1 50 28)'><line x1='50' y1='10' x2='50' y2='28'/><line x1='45' y1='14' x2='55' y2='14'/></g><g transform='rotate(5 68 28)'><line x1='68' y1='15' x2='68' y2='28'/><line x1='64' y1='18' x2='72' y2='18'/></g></svg>");
-    mask-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 32' fill='none' stroke='black' stroke-width='2.6' stroke-linecap='round'><line x1='8' y1='29' x2='92' y2='29' stroke-width='3.2'/><g transform='rotate(-3 32 28)'><line x1='32' y1='17' x2='32' y2='28'/><line x1='28' y1='20' x2='36' y2='20'/></g><g transform='rotate(1 50 28)'><line x1='50' y1='10' x2='50' y2='28'/><line x1='45' y1='14' x2='55' y2='14'/></g><g transform='rotate(5 68 28)'><line x1='68' y1='15' x2='68' y2='28'/><line x1='64' y1='18' x2='72' y2='18'/></g></svg>");
-  }
-  /* 4 crosses */
-  :root[data-theme="gothic"] .signal-bars[data-signal-level="4"] {
-    -webkit-mask-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 32' fill='none' stroke='black' stroke-width='2.6' stroke-linecap='round'><line x1='8' y1='29' x2='92' y2='29' stroke-width='3.2'/><g transform='rotate(-5 27 28)'><line x1='27' y1='16' x2='27' y2='28'/><line x1='23' y1='19' x2='31' y2='19'/></g><g transform='rotate(2 41 28)'><line x1='41' y1='12' x2='41' y2='28'/><line x1='37' y1='15' x2='45' y2='15'/></g><g transform='rotate(-2 59 28)'><line x1='59' y1='15' x2='59' y2='28'/><line x1='55' y1='18' x2='63' y2='18'/></g><g transform='rotate(4 73 28)'><line x1='73' y1='13' x2='73' y2='28'/><line x1='69' y1='16' x2='77' y2='16'/></g></svg>");
-    mask-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 32' fill='none' stroke='black' stroke-width='2.6' stroke-linecap='round'><line x1='8' y1='29' x2='92' y2='29' stroke-width='3.2'/><g transform='rotate(-5 27 28)'><line x1='27' y1='16' x2='27' y2='28'/><line x1='23' y1='19' x2='31' y2='19'/></g><g transform='rotate(2 41 28)'><line x1='41' y1='12' x2='41' y2='28'/><line x1='37' y1='15' x2='45' y2='15'/></g><g transform='rotate(-2 59 28)'><line x1='59' y1='15' x2='59' y2='28'/><line x1='55' y1='18' x2='63' y2='18'/></g><g transform='rotate(4 73 28)'><line x1='73' y1='13' x2='73' y2='28'/><line x1='69' y1='16' x2='77' y2='16'/></g></svg>");
-  }
-  /* 5 crosses — full signal, all standing straight, heights mirrored left↔right
-     (outermost shortest, middle tallest). */
-  :root[data-theme="gothic"] .signal-bars[data-signal-level="5"] {
-    -webkit-mask-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 32' fill='none' stroke='black' stroke-width='2.6' stroke-linecap='round'><line x1='8' y1='29' x2='92' y2='29' stroke-width='3.2'/><line x1='24' y1='16' x2='24' y2='28'/><line x1='20' y1='19' x2='28' y2='19'/><line x1='37' y1='12' x2='37' y2='28'/><line x1='33' y1='15' x2='41' y2='15'/><line x1='50' y1='8' x2='50' y2='28'/><line x1='45' y1='12' x2='55' y2='12'/><line x1='63' y1='12' x2='63' y2='28'/><line x1='59' y1='15' x2='67' y2='15'/><line x1='76' y1='16' x2='76' y2='28'/><line x1='72' y1='19' x2='80' y2='19'/></svg>");
-    mask-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 32' fill='none' stroke='black' stroke-width='2.6' stroke-linecap='round'><line x1='8' y1='29' x2='92' y2='29' stroke-width='3.2'/><line x1='24' y1='16' x2='24' y2='28'/><line x1='20' y1='19' x2='28' y2='19'/><line x1='37' y1='12' x2='37' y2='28'/><line x1='33' y1='15' x2='41' y2='15'/><line x1='50' y1='8' x2='50' y2='28'/><line x1='45' y1='12' x2='55' y2='12'/><line x1='63' y1='12' x2='63' y2='28'/><line x1='59' y1='15' x2='67' y2='15'/><line x1='76' y1='16' x2='76' y2='28'/><line x1='72' y1='19' x2='80' y2='19'/></svg>");
+  :root[data-theme="gothic"] .stage.glitch.chromatic .signal-bars {
+    filter: url(#chromatic-aberration-soft) url(#glitch-slices-soft) !important;
   }

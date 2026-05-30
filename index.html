@@ -1,4 +1,4 @@
-<!-- COMMLINK v1.4.5 -->
+<!-- COMMLINK v1.4.6 -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -238,6 +238,26 @@
       <feBlend in="redCh" in2="greenCh" mode="screen" result="rg" />
       <feBlend in="rg" in2="blueCh" mode="screen" result="rgb" />
     </filter>
+    <!-- Soft variants — fixed-low displacement / offset. Used by themes that
+         want effects to layer over small elements (like gothic's graveyard
+         signal bars) without making them unreadable. -->
+    <filter id="glitch-slices-soft" x="-10%" y="0%" width="120%" height="100%" color-interpolation-filters="sRGB">
+      <feTurbulence type="fractalNoise" baseFrequency="0.0008 0.09" numOctaves="1" seed="7" result="sn" />
+      <feColorMatrix in="sn" type="matrix" result="scm" values="1 0 0 0 0   0 0 0 0 0.5   0 0 0 0 0   0 0 0 0 1" />
+      <feComponentTransfer in="scm" result="sdm">
+        <feFuncR type="discrete" tableValues="0.46 0.52 0.5 0.48 0.55 0.5 0.45 0.53 0.5 0.49" />
+      </feComponentTransfer>
+      <feDisplacementMap id="glitchDisplacementSoft" in="SourceGraphic" in2="sdm" scale="22" xChannelSelector="R" yChannelSelector="G" />
+    </filter>
+    <filter id="chromatic-aberration-soft" x="-5%" y="-5%" width="110%" height="110%" color-interpolation-filters="sRGB">
+      <feOffset in="SourceGraphic" dx="-1" dy="0" result="sR" />
+      <feColorMatrix in="sR" type="matrix" values="1 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 1 0" result="sRedCh" />
+      <feOffset in="SourceGraphic" dx="1" dy="0" result="sB" />
+      <feColorMatrix in="sB" type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 1 0 0  0 0 0 1 0" result="sBlueCh" />
+      <feColorMatrix in="SourceGraphic" type="matrix" values="0 0 0 0 0  0 1 0 0 0  0 0 0 0 0  0 0 0 1 0" result="sGreenCh" />
+      <feBlend in="sRedCh" in2="sGreenCh" mode="screen" result="sRG" />
+      <feBlend in="sRG" in2="sBlueCh" mode="screen" />
+    </filter>
   </defs>
 </svg>
 
@@ -369,13 +389,13 @@
           <div class="choices" id="pChoices"></div>
         </div>
         <span class="stage-channel bottom" id="pMetaRight"></span>
-      </div>
-      <div class="signal-bars" id="signalBars" aria-hidden="true">
-        <span class="bar"></span>
-        <span class="bar"></span>
-        <span class="bar"></span>
-        <span class="bar"></span>
-        <span class="bar"></span>
+        <div class="signal-bars" id="signalBars" aria-hidden="true">
+          <span class="bar"></span>
+          <span class="bar"></span>
+          <span class="bar"></span>
+          <span class="bar"></span>
+          <span class="bar"></span>
+        </div>
       </div>
     </div>
     <!-- Choices live OUTSIDE stage-capture so they never appear in PNG export. -->
@@ -575,7 +595,7 @@
   //   Z (third)  — bumped for all small changes (tweaks, fixes, polish).
   // NOTE: when bumping, also update the `<!-- COMMLINK vX.Y.Z -->` comment
   // on line 1 of this file so plain-text readers see the same version.
-  const APP_VERSION = '1.4.5';
+  const APP_VERSION = '1.4.6';
 
   // ---------- External links ----------
   const DONATE_URL = 'https://boosty.to/cyberdelaai/donate';

@@ -784,13 +784,17 @@
     color: var(--choices-color);
   }
 
-  /* ---------- Signal-strength bars ---------- */
+  /* ---------- Signal-strength bars ----------
+     Live INSIDE .stage so the FX overlays (scanlines, vignette, noise) and
+     the glitch/chromatic SVG filters layer on top of the bars too. z-index
+     stays below the overlay layers (scanlines z=2, vignette z=3) so they
+     tint the bars; the bars themselves render above the dialog content. */
   .stage-wrap { position: relative; }
   .signal-bars {
     position: absolute;
     top: 30px;
     right: 30px;
-    z-index: 5;
+    z-index: 1;
     display: flex;
     align-items: flex-end;
     gap: 3px;
@@ -820,8 +824,10 @@
      either one a sufficient trigger. */
   .stage.glitch .dialog,
   .stage.glitch .stage-channel,
+  .stage.glitch .signal-bars,
   .stage.chromatic .dialog,
-  .stage.chromatic .stage-channel {
+  .stage.chromatic .stage-channel,
+  .stage.chromatic .signal-bars {
     filter: var(--stage-filter, none);
   }
 
