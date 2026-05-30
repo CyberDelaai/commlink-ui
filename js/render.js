@@ -618,68 +618,13 @@ function renderChoicesEditor() {
 }
 
 function renderPreview() {
-  pMeta.textContent = state.meta || '';
-  pMetaRight.textContent = state.metaRight || '';
-
-  pMessages.innerHTML = '';
-  const contactsCache = loadContacts(); // resolve once per render pass
-  state.messages.forEach((m) => {
-    if (m.type === 'system') {
-      if (!m.body.trim()) return;
-      const sysEl = document.createElement('div');
-      sysEl.className = 'message system';
-      sysEl.innerHTML = '<hr class="sys-rule"/><p class="body"></p><hr class="sys-rule"/>';
-      sysEl.querySelector('.body').innerHTML = renderBodyHtml(m.body);
-      pMessages.appendChild(sysEl);
-      return;
-    }
-    const resolved = resolveSpeaker(m, contactsCache);
-    if (!resolved.name.trim() && !m.body.trim() && !resolved.avatar && !(m.time && m.time.trim()) && !m.bodyImage) return;
-    const el = document.createElement('div');
-    const side = m.side === 'right' ? 'right' : 'left';
-    el.className = 'message ' + side + (resolved.avatar ? ' has-portrait' : '');
-    el.innerHTML = (resolved.avatar ? '<div class="portrait"></div>' : '') +
-      '<div class="content"><div class="meta-line"><span class="name"></span><span class="time"></span></div><p class="body"></p></div>';
-    if (resolved.avatar) {
-      el.querySelector('.portrait').style.backgroundImage = `url("${resolved.avatar}")`;
-    }
-    el.querySelector('.name').textContent = resolved.name || '—';
-    el.querySelector('.time').textContent = (m.time || '').trim();
-    el.querySelector('.body').innerHTML = renderBodyHtml(m.body || '');
-    if (m.bodyImage) {
-      const img = document.createElement('img');
-      img.className = 'body-image';
-      img.src = displayUrl(m.bodyImage) || m.bodyImage;
-      img.alt = '';
-      el.querySelector('.content').appendChild(img);
-    }
-    pMessages.appendChild(el);
-  });
-
-  pChoices.innerHTML = '';
-  pChoices.hidden = !!state.hideChoices;
-  if (!state.hideChoices) {
-    state.choices.forEach((c, i) => {
-      if (!c.text.trim()) return;
-      const row = document.createElement('div');
-      row.className = 'choice' + (c.chosen ? ' chosen' : '');
-      row.innerHTML = `
-        <span class="num">[${i + 1}]</span>
-        <span class="arrow">&gt;</span>
-        <span class="choice-text">${escapeHtml(c.text)}</span>
-      `;
-      pChoices.appendChild(row);
-    });
-  }
+  // ----- Universal FX layer: overlays + filter params that sit OVER any
+  // theme's stage output. The theme is responsible for the dialog/channels
+  // /messages/choices; this code handles the things the user toggles in the
+  // FX panel and the background image — they apply regardless of theme. -----
   toggleHideChoicesBtn.setAttribute('data-pos', state.hideChoices ? 'right' : 'left');
   const choicesActive = state.choices.filter(c => c.text.trim()).length;
   choicesCount.textContent = choicesActive ? `(${choicesActive})` : '';
-  const choicesColor = state.choicesColor || state.accent || '#fcee0a';
-  stage.style.setProperty('--choices-color', choicesColor);
-  dialog.style.setProperty('--accent', state.accent);
-  stage.style.setProperty('--accent', state.accent);
-  const sb = document.getElementById('signalBars');
-  if (sb) sb.style.setProperty('--accent', state.accent);
   const gAmt = (typeof state.glitchAmount === 'number') ? state.glitchAmount : 38;
   glitchDisplacement.setAttribute('scale', gAmt);
   const sAmt = (typeof state.scanlinesAmount === 'number') ? state.scanlinesAmount : 0.18;
@@ -689,32 +634,14 @@ function renderPreview() {
   chromaOffsetB.setAttribute('dx', cAmt);
   const vAmt = (typeof state.vignetteAmount === 'number') ? state.vignetteAmount : 0.6;
   stage.style.setProperty('--vignette-alpha', vAmt);
-  // Compose SVG filter chain. Chromatic first so the per-channel split
-  // is then displaced by the glitch slices (keeps fringe coherent).
   const fxFilters = [];
   if (state.chromatic) fxFilters.push('url(#chromatic-aberration)');
   if (state.glitch) fxFilters.push('url(#glitch-slices)');
   stage.style.setProperty('--stage-filter', fxFilters.length ? fxFilters.join(' ') : 'none');
-  // Signal bars: when glitch is off, full signal; otherwise scale by slider
-  const maxG = parseFloat(glitchAmountInput.max) || 80;
-  const effectiveGlitch = state.glitch ? gAmt : 0;
-  const litCount = Math.max(1, Math.round(5 * (1 - effectiveGlitch / maxG)));
-  const signalBars = document.getElementById('signalBars');
-  signalBars.querySelectorAll('.bar').forEach((bar, i) => {
-    bar.classList.toggle('on', i < litCount);
-  });
-  // Align signal bars to the dialog's top-right corner (inside the notch)
-  requestAnimationFrame(() => {
-    const dRect = dialog.getBoundingClientRect();
-    const wRect = signalBars.parentNode.getBoundingClientRect();
-    signalBars.style.top = (dRect.top - wRect.top - 4) + 'px';
-    signalBars.style.right = Math.max(0, wRect.right - dRect.right + 5) + 'px';
-  });
   stage.classList.toggle('glitch', state.glitch);
   stage.classList.toggle('scanlines', state.scanlines);
   stage.classList.toggle('chromatic', state.chromatic);
   stage.classList.toggle('vignette', state.vignette);
-  stage.classList.toggle('slim', !!state.slim);
   toggleGlitchBtn.setAttribute('data-pos', state.glitch ? 'right' : 'left');
   toggleScanlinesBtn.setAttribute('data-pos', state.scanlines ? 'right' : 'left');
   toggleChromaticBtn.setAttribute('data-pos', state.chromatic ? 'right' : 'left');
@@ -734,6 +661,15 @@ function renderPreview() {
   const totalChars = visibleMessages.reduce((s, m) => s + (m.body || '').length, 0);
   charCount.textContent = `${totalChars} chars / ${visibleMessages.length} msgs`;
   updateStageDims();
+
+  // ----- Theme-owned stage rendering. Each theme paints the dialog/channels
+  // /messages/choices/signal-bars/accent into the stage. While the user is
+  // hovering a theme item, `previewingThemeId` wins so the hover preview
+  // shows the previewed theme's structure. -----
+  const activeThemeId = (typeof previewingThemeId !== 'undefined' && previewingThemeId)
+    || (typeof appliedThemeId !== 'undefined' ? appliedThemeId : 'default');
+  const theme = (typeof THEMES !== 'undefined' && THEMES[activeThemeId]) || (typeof THEMES !== 'undefined' && THEMES.default);
+  if (theme && typeof theme.renderStage === 'function') theme.renderStage(state);
 
   // Saved custom swatch — shown only when the user has picked one, behaves like presets
   const savedSwatch = accentsWrap.querySelector('[data-saved-accent]');

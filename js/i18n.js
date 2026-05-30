@@ -9,11 +9,13 @@ window.I18N = {
     panel: {
       contacts: 'CONTACTS',
       snapshots: 'SNAPSHOTS',
+      themes: 'THEMES',
       donate: 'DONATE',
       messages: '// MESSAGES',
       preview: '// PREVIEW',
       config: '// CONFIG'
     },
+    theme: { default: 'DEFAULT', moreToCome: '// MORE TO COME' },
     donate: {
       title: '// INCOMING TRANSMISSION',
       line1: 'You jacked in. You forged dialogs worth flashing across the Net.',
@@ -108,11 +110,13 @@ window.I18N = {
     panel: {
       contacts: 'КОНТАКТЫ',
       snapshots: 'СЛЕПКИ',
+      themes: 'ТЕМЫ',
       donate: 'ДОНАТ',
       messages: '// СООБЩЕНИЯ',
       preview: '// ПРОСМОТР',
       config: '// НАСТРОЙКИ'
     },
+    theme: { default: 'СТАНДАРТ', moreToCome: '// СКОРО ЕЩЁ' },
     donate: {
       title: '// ВХОДЯЩАЯ ПЕРЕДАЧА',
       line1: 'Ты подключился. Ты подделал диалоги, достойные мелькать в Сети.',
@@ -207,11 +211,13 @@ window.I18N = {
     panel: {
       contacts: 'CONTACTS',
       snapshots: 'SAUVEGARDES',
+      themes: 'THÈMES',
       donate: 'DON',
       messages: '// MESSAGES',
       preview: '// APERÇU',
       config: '// CONFIG'
     },
+    theme: { default: 'DÉFAUT', moreToCome: '// BIENTÔT PLUS' },
     donate: {
       title: '// TRANSMISSION ENTRANTE',
       line1: "Tu t'es connecté. Tu as falsifié des dialogues dignes de circuler sur le Net.",
@@ -306,11 +312,13 @@ window.I18N = {
     panel: {
       contacts: 'KONTAKTE',
       snapshots: 'SNAPSHOTS',
+      themes: 'THEMEN',
       donate: 'SPENDEN',
       messages: '// NACHRICHTEN',
       preview: '// VORSCHAU',
       config: '// KONFIG'
     },
+    theme: { default: 'STANDARD', moreToCome: '// MEHR FOLGT' },
     donate: {
       title: '// EINGEHENDE ÜBERTRAGUNG',
       line1: 'Du hast dich eingeloggt. Du hast Dialoge gefälscht, die im Netz Aufsehen erregen.',
@@ -405,11 +413,13 @@ window.I18N = {
     panel: {
       contacts: 'CONTACTOS',
       snapshots: 'INSTANTÁNEAS',
+      themes: 'TEMAS',
       donate: 'DONAR',
       messages: '// MENSAJES',
       preview: '// VISTA PREVIA',
       config: '// CONFIG'
     },
+    theme: { default: 'POR DEFECTO', moreToCome: '// PRÓXIMAMENTE MÁS' },
     donate: {
       title: '// TRANSMISIÓN ENTRANTE',
       line1: 'Te conectaste. Falsificaste diálogos dignos de circular por la Red.',
@@ -504,11 +514,13 @@ window.I18N = {
     panel: {
       contacts: 'CONTATTI',
       snapshots: 'ISTANTANEE',
+      themes: 'TEMI',
       donate: 'DONA',
       messages: '// MESSAGGI',
       preview: '// ANTEPRIMA',
       config: '// CONFIG'
     },
+    theme: { default: 'PREDEFINITO', moreToCome: '// ALTRI IN ARRIVO' },
     donate: {
       title: '// TRASMISSIONE IN ARRIVO',
       line1: 'Ti sei collegato. Hai falsificato dialoghi degni di girare sulla Net.',
@@ -603,11 +615,13 @@ window.I18N = {
     panel: {
       contacts: 'コンタクト',
       snapshots: '状態',
+      themes: 'テーマ',
       donate: '支援',
       messages: '// メッセージ',
       preview: '// プレビュー',
       config: '// 設定'
     },
+    theme: { default: 'デフォルト', moreToCome: '// 続々登場予定' },
     donate: {
       title: '// 着信通信',
       line1: 'ジャックインした。ネットで光る価値あるダイアログを鍛えた。',
@@ -702,11 +716,13 @@ window.I18N = {
     panel: {
       contacts: '联系人',
       snapshots: '状态',
+      themes: '主题',
       donate: '赞助',
       messages: '// 消息',
       preview: '// 预览',
       config: '// 配置'
     },
+    theme: { default: '默认', moreToCome: '// 更多即将推出' },
     donate: {
       title: '// 信号传入',
       line1: '你已接入。你打造了值得在网络上闪耀的对话。',

@@ -76,10 +76,88 @@
   .side-toggle-2 {
     top: 280px !important;
   }
+  /* THEMES toggle — 3rd in the column, below snapshots (top:280, h:170,
+     bottom@450). 130px tall since "THEMES" fits comfortably in less room. */
+  .side-toggle-themes {
+    top: 470px !important;
+    height: 130px;
+  }
   .side-toggle-donate {
     top: auto !important;
     bottom: 24px;
     height: 130px;
+  }
+  /* ---------- Themes list (inside #sideThemes) ---------- */
+  #sideThemes .side-inner {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+  }
+  .themes-coming {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    letter-spacing: 2px;
+    color: var(--dim);
+    text-transform: uppercase;
+    margin-top: 16px;
+  }
+  .theme-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .theme-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 12px;
+    background: var(--panel-2);
+    border-left: 2px solid var(--dim);
+    cursor: pointer;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--text);
+    transition: border-color 0.15s, color 0.15s, background 0.15s;
+  }
+  .theme-item:hover {
+    border-left-color: var(--cyan);
+    color: var(--cyan);
+    background: color-mix(in srgb, var(--cyan) 8%, var(--panel-2));
+  }
+  .theme-item.active {
+    border-left-color: var(--yellow);
+    color: var(--yellow);
+  }
+  .theme-item .theme-pip {
+    width: 10px;
+    height: 10px;
+    background: var(--accent, var(--yellow));
+    border: 1px solid var(--cyan);
+    flex-shrink: 0;
+  }
+  /* Heavy-glitch overlay applied to the stage while a theme item is hovered.
+     Combines the existing #glitch-slices SVG filter (boosted in JS via
+     scale=80 on feDisplacementMap) with a fast steps() shake so the preview
+     reads as "channel switching" rather than just "filter on". */
+  .stage.theme-previewing .dialog,
+  .stage.theme-previewing .stage-channel {
+    filter: url(#glitch-slices) !important;
+  }
+  .stage.theme-previewing {
+    animation: themePreviewShake 0.07s steps(2) infinite;
+  }
+  @keyframes themePreviewShake {
+    0%, 100% { transform: translate(0, 0); }
+    25% { transform: translate(-2px, 1px); }
+    50% { transform: translate(2px, -2px); }
+    75% { transform: translate(-1px, -1px); }
   }
   .donate-message {
     font-family: 'JetBrains Mono', monospace;
