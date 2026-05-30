@@ -63,7 +63,7 @@ const defaultState = {
     { type: 'normal', speaker: 'V', body: 'Got it. Heading to the drop now.', portrait: makeInitialAvatar('V', '#00f0ff'), side: 'right', time: '04:23', bodyImage: '' }
   ],
   choices: [
-    { text: "Who am I meeting at the drop?", chosen: false },
+    { text: "Who am I meeting at the drop?", chosen: true },
     { text: "Stay in my head, Silverhand.", chosen: false }
   ],
   accent: '#fcee0a',
@@ -96,7 +96,8 @@ function loadState() {
     const tr = window.I18N && window.I18N[currentLang];
     if (tr && tr.example && typeof buildExampleMessagesFor === 'function') {
       fresh.messages = buildExampleMessagesFor(currentLang);
-      fresh.choices = tr.example.choices.map(c => ({ text: c, chosen: false }));
+      fresh.choices = tr.example.choices.map((c, i) => ({ text: c, chosen: i === 0 }));
+      fresh.choicesColor = '#00f0ff';
       if (tr.example.meta) fresh.meta = tr.example.meta;
     }
     fresh.bgOriginal = storageGet(BG_ORIGINAL_KEY) || '';

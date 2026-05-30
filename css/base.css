@@ -429,9 +429,7 @@
     padding: 0;
     color: var(--cyan);
     cursor: pointer;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
+    display: inline-block;
     background: transparent;
     transition: background 0.15s;
     border: none;
@@ -444,15 +442,16 @@
   .swatch-pick-btn:hover {
     background: color-mix(in srgb, var(--cyan) 18%, transparent);
   }
+  /* Center the icon via absolute positioning + auto margins. This is
+     context-independent: works the same whether the parent is in a flex,
+     grid, or stretched btn-row. */
   .swatch-pick-btn .pick-icon {
+    position: absolute;
+    inset: 0;
+    margin: auto;
     width: 18px;
     height: 18px;
-    display: block;
     pointer-events: none;
-    position: relative;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, calc(-50% + 1px));
   }
   .swatch-pick-btn input[type="color"] {
     position: absolute;

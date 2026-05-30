@@ -11,6 +11,7 @@ const BG_ORIGINAL_KEY = 'commlink:bgOriginal';
 const OPEN_PANEL_KEY = 'commlink:openPanel';
 const SEEDED_KEY = 'commlink:seeded';
 const SHOW_EXAMPLES_KEY = 'commlink:showExamples';
+const CHOICES_OPEN_KEY = 'commlink:choicesOpen';
 
 function storageSet(key, value) {
   try { localStorage.setItem(key, value); return true; }

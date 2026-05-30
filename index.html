@@ -1,4 +1,4 @@
-<!-- COMMLINK v1.3.17 -->
+<!-- COMMLINK v1.3.18 -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -342,9 +342,7 @@
         <span class="choices-count" id="choicesCount"></span>
       </summary>
       <div class="choices-body">
-        <div id="choices"></div>
-        <div class="btn-row">
-          <button class="btn cyan icon" id="addChoice" type="button" data-i18n="btn.add">+ ADD</button>
+        <div class="choices-header">
           <div class="color-grid choices-palette" id="choicesPalette">
             <div class="swatch" data-color="#fcee0a" style="background:#fcee0a; color:#fcee0a"></div>
             <div class="swatch" data-color="#00f0ff" style="background:#00f0ff; color:#00f0ff"></div>
@@ -364,12 +362,16 @@
           </div>
           <div class="hide-choices-group">
             <span class="fx-label" data-i18n="fx.hide">HIDE</span>
-            <button class="side-switch fx" id="toggleHideChoices" type="button" data-pos="right" aria-label="hide choices in preview">
+            <button class="side-switch fx" id="toggleHideChoices" type="button" data-pos="left" aria-label="hide choices in preview">
               <span class="thumb"></span>
-              <span class="lab l">YES</span>
-              <span class="lab r">NO</span>
+              <span class="lab l">NO</span>
+              <span class="lab r">YES</span>
             </button>
           </div>
+        </div>
+        <div id="choices"></div>
+        <div class="btn-row">
+          <button class="btn cyan icon" id="addChoice" type="button" data-i18n="btn.add">+ ADD</button>
           <button class="btn danger icon" id="clearChoices" type="button" data-i18n="btn.clear">CLEAR</button>
         </div>
       </div>
@@ -529,7 +531,7 @@
   //   Z (third)  — bumped for all small changes (tweaks, fixes, polish).
   // NOTE: when bumping, also update the `<!-- COMMLINK vX.Y.Z -->` comment
   // on line 1 of this file so plain-text readers see the same version.
-  const APP_VERSION = '1.3.17';
+  const APP_VERSION = '1.3.18';
 
   // ---------- External links ----------
   const DONATE_URL = 'https://boosty.to/cyberdelaai/donate';
@@ -1028,6 +1030,14 @@
     storageSet(SHOW_EXAMPLES_KEY, showExamplesToggle.checked ? '1' : '0');
     renderSnapshots();
   });
+  // Persist the CHOICES dropdown open/closed state across reloads.
+  const choicesDropdown = document.getElementById('choicesDropdown');
+  if (choicesDropdown) {
+    choicesDropdown.open = storageGet(CHOICES_OPEN_KEY) !== '0';
+    choicesDropdown.addEventListener('toggle', () => {
+      storageSet(CHOICES_OPEN_KEY, choicesDropdown.open ? '1' : '0');
+    });
+  }
   document.getElementById('tagVersion').textContent = APP_VERSION;
   document.getElementById('donateLink').href = DONATE_URL;
   // Wire up language switcher

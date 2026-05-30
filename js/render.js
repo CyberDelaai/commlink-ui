@@ -569,7 +569,7 @@ function renderChoicesEditor() {
     row.className = 'row choice-edit-row' + (c.chosen ? ' chosen' : '');
     row.innerHTML = `
       <button class="choice-pip" type="button" data-pip aria-label="mark as chosen"></button>
-      <span class="idx">${i + 1}.</span>
+      <span class="idx">[${i + 1}]</span>
       <input type="text" maxlength="120" value="" />
       <div class="reorder-stack">
         <button class="btn ghost reorder-btn" type="button" data-up aria-label="move up" ${i === 0 ? 'disabled' : ''}>↑</button>
@@ -671,7 +671,7 @@ function renderPreview() {
       pChoices.appendChild(row);
     });
   }
-  toggleHideChoicesBtn.setAttribute('data-pos', state.hideChoices ? 'left' : 'right');
+  toggleHideChoicesBtn.setAttribute('data-pos', state.hideChoices ? 'right' : 'left');
   const choicesActive = state.choices.filter(c => c.text.trim()).length;
   choicesCount.textContent = choicesActive ? `(${choicesActive})` : '';
   const choicesColor = state.choicesColor || state.accent || '#fcee0a';

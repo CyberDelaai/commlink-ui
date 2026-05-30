@@ -141,7 +141,7 @@ function buildExampleMessagesFor(lang) {
 }
 
 function seedDefaults() {
-  const SEED_VERSION = '17';
+  const SEED_VERSION = '19';
   if (storageGet(SEEDED_KEY) === SEED_VERSION) return;
   // One-time cleanup: strip portraitOriginal (dead since avatar-recrop was
   // removed) from any existing saved snapshots to reclaim localStorage.
@@ -185,7 +185,8 @@ function seedDefaults() {
       ...clone(defaultState),
       meta: tr.example.meta || defaultState.meta,
       messages: buildExampleMessagesFor(lang),
-      choices: tr.example.choices.map(c => ({ text: c, chosen: false })),
+      choices: tr.example.choices.map((c, i) => ({ text: c, chosen: i === 0 })),
+      choicesColor: '#00f0ff',
       contacts: defaultContacts,
       lang: lang,
       savedAt: Date.now()
