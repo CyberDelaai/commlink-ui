@@ -486,6 +486,19 @@
     background-position: center;
     filter: brightness(0.55) contrast(1.05) saturate(1.1);
   }
+  /* Drag-and-drop highlight: dashed accent overlay + brightened bg while a
+     file is being dragged over the stage. The drop hands the image to the
+     same crop flow used by UPLOAD/PASTE so user gets the cropper. */
+  .stage.bg-drop-target::after {
+    content: '';
+    position: absolute;
+    inset: 8px;
+    border: 2px dashed var(--accent, var(--cyan));
+    pointer-events: none;
+    z-index: 10;
+    box-shadow:
+      inset 0 0 24px color-mix(in srgb, var(--accent, var(--cyan)) 30%, transparent);
+  }
   #stageBg::after {
     content: '';
     position: absolute;
