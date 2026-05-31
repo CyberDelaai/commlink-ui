@@ -233,6 +233,30 @@ function renderMessagesEditor() {
       renderPreview();
       saveState();
     });
+    // Drag-and-drop an image onto the message text field → attach it via the
+    // same crop flow as +IMG → UPLOAD. Text drops fall through to the
+    // textarea's default behavior (we only intercept when `Files` is in the
+    // dataTransfer types list).
+    bd.addEventListener('dragover', (e) => {
+      if (!e.dataTransfer || !Array.from(e.dataTransfer.types || []).includes('Files')) return;
+      e.preventDefault();
+      e.dataTransfer.dropEffect = 'copy';
+      bd.classList.add('dnd-target');
+    });
+    bd.addEventListener('dragleave', () => {
+      bd.classList.remove('dnd-target');
+    });
+    bd.addEventListener('drop', (e) => {
+      if (!e.dataTransfer || !e.dataTransfer.files || !e.dataTransfer.files.length) return;
+      bd.classList.remove('dnd-target');
+      e.preventDefault();
+      e.stopPropagation();
+      const f = e.dataTransfer.files[0];
+      if (!f.type || f.type.indexOf('image/') !== 0) { showToast(t('toast.noImg')); return; }
+      const r = new FileReader();
+      r.onload = (ev) => openBodyImageCrop(ev.target.result);
+      r.readAsDataURL(f);
+    });
 
     // Kaomoji popup — populate grid once per row, insert at cursor on click.
     const kaoToggle = row.querySelector('[data-kao-toggle]');

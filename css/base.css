@@ -388,6 +388,20 @@
   }
 
   .color-grid { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+
+  /* Drag-and-drop hover highlight — applied via the `.dnd-target` class on
+     any drop receiver (contact avatars, message portraits, message body
+     textareas). The stage uses its own `.bg-drop-target::after` pseudo (the
+     stage element has clip-path, so a 2D outline on it would draw outside
+     the clipped silhouette).
+     `!important` on outline is required because `.msg-row textarea` sets
+     `outline: none` at higher specificity (descendant selector) for normal
+     focus styling. */
+  .dnd-target {
+    outline: 2px dashed var(--cyan) !important;
+    outline-offset: 2px;
+    box-shadow: 0 0 8px color-mix(in srgb, var(--cyan) 45%, transparent);
+  }
   .custom-color-group {
     display: inline-flex;
     align-items: center;

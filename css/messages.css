@@ -120,13 +120,7 @@
   .portrait-wrap .portrait-preview.has-image::before {
     display: none;
   }
-  /* Drag-and-drop highlight on a message-row portrait. Only triggers for
-     non-contact-linked rows (locked rows refuse the drop via JS). */
-  .portrait-wrap .portrait-preview.dnd-target {
-    outline: 2px dashed var(--cyan);
-    outline-offset: 2px;
-    box-shadow: 0 0 8px color-mix(in srgb, var(--cyan) 45%, transparent);
-  }
+  /* Drag-and-drop hover style is shared from `.dnd-target` in base.css. */
   .portrait-icon {
     width: 100% !important;
     padding: 0 !important;
@@ -261,6 +255,7 @@
   .msg-row input:focus, .msg-row textarea:focus {
     border-color: var(--yellow);
   }
+  /* Drag-and-drop hover style is shared from `.dnd-target` in base.css. */
   .body-img-file { display: none !important; }
   .body-img-upload { cursor: pointer; }
 
@@ -493,18 +488,22 @@
     background-position: center;
     filter: brightness(0.55) contrast(1.05) saturate(1.1);
   }
-  /* Drag-and-drop highlight: dashed accent overlay + brightened bg while a
-     file is being dragged over the stage. The drop hands the image to the
-     same crop flow used by UPLOAD/PASTE so user gets the cropper. */
-  .stage.bg-drop-target::after {
+  /* Drag-and-drop highlight on the stage — class lives on `.stage-capture`
+     (the parent) so the dashed frame isn't clipped by the stage's
+     augmented-ui clip-path at the notched corners. Matches the universal
+     `.dnd-target` look (cyan dashed + glow). */
+  .stage-capture.bg-drop-target {
+    position: relative;
+  }
+  .stage-capture.bg-drop-target::after {
     content: '';
     position: absolute;
     inset: 8px;
-    border: 2px dashed var(--accent, var(--cyan));
+    border: 2px dashed var(--cyan);
     pointer-events: none;
     z-index: 10;
     box-shadow:
-      inset 0 0 24px color-mix(in srgb, var(--accent, var(--cyan)) 30%, transparent);
+      inset 0 0 24px color-mix(in srgb, var(--cyan) 30%, transparent);
   }
   #stageBg::after {
     content: '';
