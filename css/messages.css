@@ -849,6 +849,12 @@
   .stage.chromatic .signal-bars {
     filter: var(--stage-filter, none);
   }
+  /* Attached message images glitch harder than the surrounding text — they
+     get their own `glitch-slices-strong` (~1.8x the slider) BEFORE the
+     dialog's filter applies on top, so distortion compounds. */
+  .stage.glitch .message .body-image {
+    filter: url(#glitch-slices-strong);
+  }
 
   .stage.scanlines::before {
     content: '';

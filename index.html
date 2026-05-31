@@ -1,4 +1,4 @@
-<!-- COMMLINK v1.4.9 -->
+<!-- COMMLINK v1.4.10 -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -248,6 +248,16 @@
         <feFuncR type="discrete" tableValues="0.46 0.52 0.5 0.48 0.55 0.5 0.45 0.53 0.5 0.49" />
       </feComponentTransfer>
       <feDisplacementMap id="glitchDisplacementSoft" in="SourceGraphic" in2="sdm" scale="22" xChannelSelector="R" yChannelSelector="G" />
+    </filter>
+    <!-- Strong variant — overdriven displacement. Used on attached message
+         body images so they glitch harder than the surrounding dialog text. -->
+    <filter id="glitch-slices-strong" x="-15%" y="0%" width="130%" height="100%" color-interpolation-filters="sRGB">
+      <feTurbulence type="fractalNoise" baseFrequency="0.0014 0.18" numOctaves="2" seed="11" result="strNoise" />
+      <feColorMatrix in="strNoise" type="matrix" result="strConst" values="1 0 0 0 0   0 0 0 0 0.5   0 0 0 0 0   0 0 0 0 1" />
+      <feComponentTransfer in="strConst" result="strDisc">
+        <feFuncR type="discrete" tableValues="0.38 0.6 0.45 0.55 0.42 0.58 0.4 0.62 0.46 0.5" />
+      </feComponentTransfer>
+      <feDisplacementMap id="glitchDisplacementStrong" in="SourceGraphic" in2="strDisc" scale="70" xChannelSelector="R" yChannelSelector="G" />
     </filter>
     <filter id="chromatic-aberration-soft" x="-5%" y="-5%" width="110%" height="110%" color-interpolation-filters="sRGB">
       <feOffset in="SourceGraphic" dx="-1" dy="0" result="sR" />
@@ -595,7 +605,7 @@
   //   Z (third)  — bumped for all small changes (tweaks, fixes, polish).
   // NOTE: when bumping, also update the `<!-- COMMLINK vX.Y.Z -->` comment
   // on line 1 of this file so plain-text readers see the same version.
-  const APP_VERSION = '1.4.9';
+  const APP_VERSION = '1.4.10';
 
   // ---------- External links ----------
   const DONATE_URL = 'https://boosty.to/cyberdelaai/donate';

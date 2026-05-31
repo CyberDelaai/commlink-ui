@@ -680,6 +680,10 @@ function renderPreview() {
   // at ~60% magnitude so its strokes stay readable even at max.
   const softGlitch = document.getElementById('glitchDisplacementSoft');
   if (softGlitch) softGlitch.setAttribute('scale', Math.round(gAmt * 0.6));
+  // Strong variant for attached message images — overdriven so body-image
+  // distortion reads heavier than the dialog text it sits among.
+  const strongGlitch = document.getElementById('glitchDisplacementStrong');
+  if (strongGlitch) strongGlitch.setAttribute('scale', Math.round(gAmt * 1.8));
   const sAmt = (typeof state.scanlinesAmount === 'number') ? state.scanlinesAmount : 0.18;
   stage.style.setProperty('--scanline-alpha', sAmt);
   const cAmt = (typeof state.chromaticAmount === 'number') ? state.chromaticAmount : 2;
