@@ -68,7 +68,10 @@
         img.className = 'body-image';
         img.src = displayUrl(m.bodyImage) || m.bodyImage;
         img.alt = '';
-        el.querySelector('.content').appendChild(img);
+        // Image goes INSIDE the body (the framed element) so when FRAMES is
+        // on it sits within the bubble's clip silhouette. Theme-agnostic —
+        // every theme's frame style targets .body, so this works everywhere.
+        bodyEl.appendChild(img);
       }
       pMessages.appendChild(el);
     });
