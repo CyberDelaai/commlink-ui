@@ -371,6 +371,31 @@ function renderMessagesEditor() {
       }
     });
     portraitPopup.addEventListener('click', (e) => e.stopPropagation());
+    // Drag-and-drop an image onto the portrait → same crop-then-apply flow
+    // as UPLOAD/PASTE. Locked for rows linked to a saved contact (the
+    // contact's avatar is the source of truth there).
+    portraitEl.addEventListener('dragover', (e) => {
+      if (state.messages[i].contactId) return;
+      if (!e.dataTransfer || !Array.from(e.dataTransfer.types || []).includes('Files')) return;
+      e.preventDefault();
+      e.dataTransfer.dropEffect = 'copy';
+      portraitEl.classList.add('dnd-target');
+    });
+    portraitEl.addEventListener('dragleave', () => {
+      portraitEl.classList.remove('dnd-target');
+    });
+    portraitEl.addEventListener('drop', (e) => {
+      portraitEl.classList.remove('dnd-target');
+      if (state.messages[i].contactId) return;
+      if (!e.dataTransfer || !e.dataTransfer.files || !e.dataTransfer.files.length) return;
+      e.preventDefault();
+      e.stopPropagation();
+      const f = e.dataTransfer.files[0];
+      if (!f.type || f.type.indexOf('image/') !== 0) { showToast(t('toast.noImg')); return; }
+      const r = new FileReader();
+      r.onload = (ev) => openPortraitCrop(ev.target.result);
+      r.readAsDataURL(f);
+    });
 
     // Body image controls (popup)
     const bodyImgPreview = row.querySelector('[data-body-img]');

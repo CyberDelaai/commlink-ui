@@ -355,6 +355,14 @@
   .contact.editing .contact-name-input { display: block; }
   .contact.editing { cursor: default; }
   .contact.editing .contact-avatar { cursor: pointer; border-color: var(--yellow); }
+  /* Drag-and-drop highlight (applied while a file is hovered) on the
+     new-contact avatar preview and on each existing contact's avatar. */
+  .contact-avatar-preview.dnd-target,
+  .contact .contact-avatar.dnd-target {
+    outline: 2px dashed var(--cyan);
+    outline-offset: 2px;
+    box-shadow: 0 0 8px color-mix(in srgb, var(--cyan) 45%, transparent);
+  }
   /* Swap the edit/save glyph based on .editing state */
   .contact [data-edit] .icon-save { display: none; }
   .contact.editing [data-edit] .icon-edit { display: none; }

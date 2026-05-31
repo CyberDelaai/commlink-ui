@@ -1,4 +1,4 @@
-<!-- COMMLINK v1.4.7 -->
+<!-- COMMLINK v1.4.8 -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -595,7 +595,7 @@
   //   Z (third)  — bumped for all small changes (tweaks, fixes, polish).
   // NOTE: when bumping, also update the `<!-- COMMLINK vX.Y.Z -->` comment
   // on line 1 of this file so plain-text readers see the same version.
-  const APP_VERSION = '1.4.7';
+  const APP_VERSION = '1.4.8';
 
   // ---------- External links ----------
   const DONATE_URL = 'https://boosty.to/cyberdelaai/donate';
@@ -827,6 +827,27 @@
   });
   document.getElementById('pasteNewAvatar').addEventListener('click', () => {
     tryPasteImage((dataUrl) => openCrop(dataUrl, applyNewAvatar, AVATAR_CROP_OPTS));
+  });
+  // Drag-and-drop an image onto the new-contact avatar preview to feed the
+  // same crop flow that UPLOAD/PASTE use.
+  newAvatarPreview.addEventListener('dragover', (e) => {
+    if (!e.dataTransfer || !Array.from(e.dataTransfer.types || []).includes('Files')) return;
+    e.preventDefault();
+    e.dataTransfer.dropEffect = 'copy';
+    newAvatarPreview.classList.add('dnd-target');
+  });
+  newAvatarPreview.addEventListener('dragleave', () => {
+    newAvatarPreview.classList.remove('dnd-target');
+  });
+  newAvatarPreview.addEventListener('drop', (e) => {
+    newAvatarPreview.classList.remove('dnd-target');
+    if (!e.dataTransfer || !e.dataTransfer.files || !e.dataTransfer.files.length) return;
+    e.preventDefault();
+    const f = e.dataTransfer.files[0];
+    if (!f.type || f.type.indexOf('image/') !== 0) { showToast(t('toast.noImg')); return; }
+    const r = new FileReader();
+    r.onload = (ev) => openCrop(ev.target.result, applyNewAvatar, AVATAR_CROP_OPTS);
+    r.readAsDataURL(f);
   });
   clearNewAvatarBtn.addEventListener('click', () => {
     newAvatarData = '';

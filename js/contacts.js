@@ -119,6 +119,41 @@ function renderContacts() {
         item.querySelector('[data-edit]').click();
       }
     });
+    // Drag-and-drop an image onto a contact's avatar to update it.
+    // Goes through the crop modal like UPLOAD/PASTE and persists immediately
+    // (no need to enter edit mode first).
+    const avatarEl = item.querySelector('.contact-avatar');
+    avatarEl.addEventListener('dragover', (e) => {
+      if (!e.dataTransfer || !Array.from(e.dataTransfer.types || []).includes('Files')) return;
+      e.preventDefault();
+      e.dataTransfer.dropEffect = 'copy';
+      avatarEl.classList.add('dnd-target');
+    });
+    avatarEl.addEventListener('dragleave', () => {
+      avatarEl.classList.remove('dnd-target');
+    });
+    avatarEl.addEventListener('drop', (e) => {
+      avatarEl.classList.remove('dnd-target');
+      if (!e.dataTransfer || !e.dataTransfer.files || !e.dataTransfer.files.length) return;
+      e.preventDefault();
+      e.stopPropagation();
+      const f = e.dataTransfer.files[0];
+      if (!f.type || f.type.indexOf('image/') !== 0) { showToast(t('toast.noImg')); return; }
+      const r = new FileReader();
+      r.onload = (ev) => {
+        openCrop(ev.target.result, (cropped) => {
+          const list = loadContacts();
+          const target = list.find(x => x.id === c.id);
+          if (!target) return;
+          target.avatar = cropped;
+          saveContacts(list);
+          renderContacts();
+          renderPreview();
+          renderMessagesEditor();
+        }, AVATAR_CROP_OPTS);
+      };
+      r.readAsDataURL(f);
+    });
     item.querySelector('[data-del]').addEventListener('click', (e) => {
       e.stopPropagation();
       if (!confirm(`Delete contact "${c.name}"?`)) return;

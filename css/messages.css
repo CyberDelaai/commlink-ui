@@ -120,6 +120,13 @@
   .portrait-wrap .portrait-preview.has-image::before {
     display: none;
   }
+  /* Drag-and-drop highlight on a message-row portrait. Only triggers for
+     non-contact-linked rows (locked rows refuse the drop via JS). */
+  .portrait-wrap .portrait-preview.dnd-target {
+    outline: 2px dashed var(--cyan);
+    outline-offset: 2px;
+    box-shadow: 0 0 8px color-mix(in srgb, var(--cyan) 45%, transparent);
+  }
   .portrait-icon {
     width: 100% !important;
     padding: 0 !important;
