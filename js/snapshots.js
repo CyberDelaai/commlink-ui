@@ -32,21 +32,54 @@ function renderSnapshots() {
     .sort((a, b) => (snaps[b].savedAt || 0) - (snaps[a].savedAt || 0));
   snapshotList.innerHTML = '';
   names.forEach((name) => {
-    const item = document.createElement('div');
-    item.className = 'snapshot-item';
-    const date = new Date(snaps[name].savedAt || 0);
-    const stamp = isNaN(date.getTime()) ? '' : date.toISOString().slice(5, 16).replace('T', ' ');
     // Seeded language examples (carry a `lang` field) are immutable.
     const isExample = !!snaps[name].lang;
-    item.innerHTML = `
+    const item = document.createElement('div');
+    item.className = 'snapshot-item' + (isExample ? ' example' : '');
+    // Local-time `dd.mm.yy HH:MM` — toISOString gives UTC + ISO format;
+    // assemble from get* methods so the timestamp reflects the user's tz.
+    const date = new Date(snaps[name].savedAt || 0);
+    const stamp = isNaN(date.getTime()) ? ''
+      : String(date.getDate()).padStart(2, '0') + '.'
+      + String(date.getMonth() + 1).padStart(2, '0') + '.'
+      + String(date.getFullYear() % 100).padStart(2, '0') + ' '
+      + String(date.getHours()).padStart(2, '0') + ':'
+      + String(date.getMinutes()).padStart(2, '0');
+    // Example snapshots get a single-row layout — no meta, no override/delete,
+    // just name + LOAD. User snapshots keep the stacked structure with meta
+    // + full action row.
+    item.innerHTML = isExample ? `
       <span class="name"></span>
-      <span class="meta"></span>
       <button class="btn cyan icon" type="button" data-load>${t('btn.load')}</button>
-      ${isExample ? '' : '<button class="btn danger icon" type="button" data-del aria-label="delete">✕</button>'}
+    ` : `
+      <div class="snapshot-row name-row">
+        <span class="name"></span>
+        <button class="btn cyan icon" type="button" data-override aria-label="override" title="Override snapshot with current state">⇪</button> 
+        <button class="btn danger icon" type="button" data-del aria-label="delete">✕</button>
+      </div>
+      <div class="snapshot-row meta-row">
+        <span class="meta"></span>
+        <button class="btn cyan icon" type="button" data-load>${t('btn.load')}</button>            
+      </div>
     `;
     item.querySelector('.name').textContent = name;
-    item.querySelector('.meta').textContent = stamp;
+    const metaEl = item.querySelector('.meta');
+    if (metaEl) metaEl.textContent = stamp;
     item.querySelector('[data-load]').addEventListener('click', () => loadSnapshotInto(name));
+    const overrideBtn = item.querySelector('[data-override]');
+    if (overrideBtn) {
+      overrideBtn.addEventListener('click', () => {
+        if (!confirm(`Override snapshot "${name}" with current state?`)) return;
+        const s = loadSnapshots();
+        s[name] = snapshotFromState();
+        persistSnapshots(s);
+        renderSnapshots();
+        // Orphaned images from the previous snapshot version may exist in IDB —
+        // mirror the delete-snapshot flow and GC.
+        gcImages().catch(() => {});
+        showToast(t('toast.saved', { name }));
+      });
+    }
     const delBtn = item.querySelector('[data-del]');
     if (delBtn) {
       delBtn.addEventListener('click', () => {

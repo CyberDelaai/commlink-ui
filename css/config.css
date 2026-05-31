@@ -174,27 +174,81 @@
     letter-spacing: 2px;
     padding: 6px 0;
   }
+  /* Card stacks vertically: name on its own line (full width, wraps long
+     names), meta + action buttons on a second line with buttons pushed to
+     the right via meta's flex:1. */
   .snapshot-item {
     display: flex;
-    align-items: center;
-    gap: 8px;
+    flex-direction: column;
+    gap: 7px;
     background: var(--panel-2);
     border-left: 2px solid var(--cyan);
-    padding: 6px 10px;
+    padding: 10px 12px;
   }
   .snapshot-item .name {
-    flex: 1;
     font-family: 'JetBrains Mono', monospace;
-    font-size: 12px;
+    font-size: 14px;
     letter-spacing: 1px;
     color: var(--text);
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
+    word-break: break-all;
+    line-height: 1.3;
+    margin: 0;
+  }
+  .snapshot-item .snapshot-row {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  /* Name (row 1) and meta (row 2) both expand to fill so trailing buttons
+     are pushed to the right edge. `min-width: 0` lets the name wrap long
+     strings instead of forcing the row to overflow. */
+  .snapshot-item .snapshot-row .name,
+  .snapshot-item .snapshot-row .meta {
+    flex: 1;
+    min-width: 0;
   }
   .snapshot-item .meta {
     font-family: 'JetBrains Mono', monospace;
-    font-size: 10px;
+    font-size: 11px;
     color: var(--dim);
     letter-spacing: 1px;
+  }
+  .snapshot-item .meta:not(:empty)::before {
+    content: '// ';
+  }
+  /* Override (⇪) and delete (✕) share the same 32×32 square footprint so
+     they line up visually. LOAD spans the combined width of the two icons
+     + the row gap so it aligns under them in the meta row. */
+  .snapshot-item .snapshot-row [data-del],
+  .snapshot-item .snapshot-row [data-override] {
+    width: 32px;
+    padding: 0;
+  }
+  .snapshot-item .snapshot-row [data-load] {
+    width: 70px; /* 32 + 6 (gap) + 32 */
+    padding: 0;
+  }
+  /* Override glyph (⇪) is larger than ✕ so the arrow reads as a deliberate
+     action affordance, not a typo. */
+  .snapshot-item [data-override] {
+    font-size: 20px;
+    line-height: 1;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+  /* Seeded EXAMPLE_* snapshots are read-only and have no meta — use a
+     compact single-row layout. */
+  .snapshot-item.example {
+    flex-direction: row;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 12px;
+  }
+  .snapshot-item.example .name {
+    flex: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    word-break: normal;
   }
