@@ -61,7 +61,6 @@ window.I18N = {
       import: 'Importing will replace your current state and contacts.\n\nIf you want to keep them, save a snapshot first.\n\nProceed?'
     },
     snapshot: { showExamples: 'SHOW EXAMPLES' },
-    badge: { noContact: '// NO CONTACT' },
     example: {
       meta: '//ENCRYPTED',
       messages: [
@@ -162,7 +161,6 @@ window.I18N = {
       import: 'Импорт заменит текущее состояние и контакты.\n\nЕсли хочешь их сохранить, сначала сделай слепок.\n\nПродолжить?'
     },
     snapshot: { showExamples: 'ПОКАЗ. ПРИМЕРЫ' },
-    badge: { noContact: '// БЕЗ КОНТАКТА' },
     example: {
       meta: '//ЗАШИФРОВАНО',
       messages: [
@@ -263,7 +261,6 @@ window.I18N = {
       import: "L'importation va remplacer ton état actuel et tes contacts.\n\nSi tu veux les garder, sauvegarde d'abord un snapshot.\n\nContinuer ?"
     },
     snapshot: { showExamples: 'AFF. EXEMPLES' },
-    badge: { noContact: '// SANS CONTACT' },
     example: {
       meta: '//CRYPTÉ',
       messages: [
@@ -364,7 +361,6 @@ window.I18N = {
       import: 'Der Import ersetzt deinen aktuellen Zustand und deine Kontakte.\n\nWenn du sie behalten willst, speichere zuerst einen Snapshot.\n\nFortfahren?'
     },
     snapshot: { showExamples: 'BSP. ZEIGEN' },
-    badge: { noContact: '// KEIN KONTAKT' },
     example: {
       meta: '//CHIFFRIERT',
       messages: [
@@ -465,7 +461,6 @@ window.I18N = {
       import: 'La importación reemplazará tu estado actual y contactos.\n\nSi quieres conservarlos, guarda una instantánea primero.\n\n¿Continuar?'
     },
     snapshot: { showExamples: 'VER EJEMPLOS' },
-    badge: { noContact: '// SIN CONTACTO' },
     example: {
       meta: '//CIFRADO',
       messages: [
@@ -566,7 +561,6 @@ window.I18N = {
       import: "L'importazione sostituirà lo stato e i contatti correnti.\n\nSe vuoi conservarli, salva prima un'istantanea.\n\nContinuare?"
     },
     snapshot: { showExamples: 'MOSTRA ESEMPI' },
-    badge: { noContact: '// SENZA CONTATTO' },
     example: {
       meta: '//CRITTATO',
       messages: [
@@ -667,7 +661,6 @@ window.I18N = {
       import: 'インポートすると現在の状態とコンタクトが置き換えられます。\n\n保存したい場合は、まず状態を保存してください。\n\n続行しますか?'
     },
     snapshot: { showExamples: 'サンプル表示' },
-    badge: { noContact: '// コンタクトなし' },
     example: {
       meta: '//暗号化',
       messages: [
@@ -768,7 +761,6 @@ window.I18N = {
       import: '导入将替换您当前的状态和联系人。\n\n如果想保留它们，请先保存状态。\n\n继续?'
     },
     snapshot: { showExamples: '显示示例' },
-    badge: { noContact: '// 无联系人' },
     example: {
       meta: '//加密',
       messages: [

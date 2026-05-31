@@ -173,6 +173,9 @@ function renderMessagesEditor() {
               <div class="kao-grid"></div>
             </div>
           </div>
+          <button class="btn cyan icon" type="button" data-insert-symbol="¥" title="Insert yen">¥</button>
+          <button class="btn cyan icon" type="button" data-insert-symbol="€" title="Insert euro">€</button>
+          <button class="btn cyan icon" type="button" data-insert-symbol="§" title="Insert eurodollar">§</button>
           <div class="img-popup-wrap">
             <button class="btn cyan icon img-toggle${m.bodyImage ? ' has-image' : ''}" type="button" data-img-toggle title="Image options">+ IMG</button>
             <div class="img-popup" hidden>
@@ -184,7 +187,7 @@ function renderMessagesEditor() {
               <button class="btn danger icon" type="button" data-body-img-clear title="Remove image">CLEAR</button>
             </div>
           </div>
-          <span class="no-contact-badge">${t('badge.noContact')}</span>
+          <span class="toolbar-spacer"></span>
           <button class="btn cyan icon" type="button" data-clone aria-label="clone" title="Clone message">
             <svg class="mi" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg>
           </button>
@@ -258,6 +261,20 @@ function renderMessagesEditor() {
       r.readAsDataURL(f);
     });
 
+    // Shared cursor-insert used by kaomoji popup AND the currency-symbol
+    // buttons below — substitutes selection with `insert`, then re-renders.
+    const insertAtCursor = (insert) => {
+      const start = bd.selectionStart;
+      const end = bd.selectionEnd;
+      bd.value = bd.value.substring(0, start) + insert + bd.value.substring(end);
+      bd.selectionStart = bd.selectionEnd = start + insert.length;
+      bd.focus();
+      state.messages[i].body = bd.value;
+      autoGrow(bd);
+      renderPreview();
+      saveState();
+    };
+
     // Kaomoji popup — populate grid once per row, insert at cursor on click.
     const kaoToggle = row.querySelector('[data-kao-toggle]');
     const kaoPopup = row.querySelector('.kao-popup');
@@ -269,19 +286,18 @@ function renderMessagesEditor() {
       b.textContent = k;
       b.addEventListener('click', (e) => {
         e.stopPropagation();
-        const start = bd.selectionStart;
-        const end = bd.selectionEnd;
-        const insert = k;
-        bd.value = bd.value.substring(0, start) + insert + bd.value.substring(end);
-        bd.selectionStart = bd.selectionEnd = start + insert.length;
-        bd.focus();
-        state.messages[i].body = bd.value;
-        autoGrow(bd);
-        renderPreview();
-        saveState();
+        insertAtCursor(k);
         kaoPopup.hidden = true;
       });
       kaoGrid.appendChild(b);
+    });
+
+    // Currency symbol buttons (¥/€/§) — same cursor-insert behaviour.
+    row.querySelectorAll('[data-insert-symbol]').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        insertAtCursor(btn.getAttribute('data-insert-symbol'));
+      });
     });
     const positionKaoPopup = () => {
       const r = kaoToggle.getBoundingClientRect();
