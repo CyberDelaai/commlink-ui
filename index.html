@@ -1,4 +1,4 @@
-<!-- COMMLINK v1.4.14 -->
+<!-- COMMLINK v1.4.15 -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -607,7 +607,7 @@
   //   Z (third)  — bumped for all small changes (tweaks, fixes, polish).
   // NOTE: when bumping, also update the `<!-- COMMLINK vX.Y.Z -->` comment
   // on line 1 of this file so plain-text readers see the same version.
-  const APP_VERSION = '1.4.14';
+  const APP_VERSION = '1.4.15';
 
   // ---------- External links ----------
   const DONATE_URL = 'https://boosty.to/cyberdelaai/donate';
@@ -809,7 +809,11 @@
   // Close any open side panel when clicking outside it
   document.addEventListener('click', (e) => {
     const openPanel = document.querySelector('.side-panel.open');
-    if (openPanel && !openPanel.contains(e.target) && !(cropModal && !cropModal.hidden && cropModal.contains(e.target))) {
+    // NB: don't gate on cropModal.hidden — the crop Confirm handler runs
+    // closeCrop() (hiding the modal) before this bubble handler fires, so by
+    // now the modal is already hidden. The click target is still a descendant
+    // of #cropModal in the DOM, so contains() keeps the panel open as intended.
+    if (openPanel && !openPanel.contains(e.target) && !(cropModal && cropModal.contains(e.target))) {
       setOpenPanel('');
     }
     // Close any open image / kaomoji popup if click is outside the popup
