@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://cyberdelaai.github.io/commlink-ui/sitemap.xml
+Sitemap: https://cyberdeck.tools/commlink-ui/sitemap.xml
