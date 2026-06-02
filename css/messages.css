@@ -640,7 +640,7 @@
     flex-direction: row-reverse;
   }
   .message .name {
-    font-family: 'JetBrains Mono', monospace;
+    font-family: 'Tektur', sans-serif;
     color: var(--accent);
     font-size: 13px;
     letter-spacing: 3px;
