@@ -1,4 +1,4 @@
-<!-- COMMLINK v1.4.16 -->
+<!-- COMMLINK v1.4.17 -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -353,7 +353,14 @@
 </aside>
 
 <header>
-  <div class="logo">&gt; COMMLINK_</div>
+  <div class="logo-menu">
+    <button class="logo" id="logoBtn" type="button" aria-haspopup="true" aria-expanded="false" aria-controls="appMenu"><span class="chev" aria-hidden="true">&gt;</span> COMMLINK_</button>
+    <nav class="app-menu" id="appMenu" data-augmented-ui="tl-clip br-clip border" aria-label="cyberdeck.tools navigation" hidden>
+      <a class="app-menu-item" href="https://cyberdeck.tools/">/ CYBERDECK_TOOLS</a>
+      <a class="app-menu-item current" href="https://cyberdeck.tools/commlink-ui/" aria-current="page">&gt; COMMLINK_</a>
+      <a class="app-menu-item" href="https://cyberdeck.tools/chronos-ui/">&gt; CHRONOS_</a>
+    </nav>
+  </div>
   <div class="tag"><span id="tagWord" class="glitchable">DIALOG CONSTRUCTOR</span><span id="tagMeta" class="tag-meta"> // v<span id="tagVersion"></span></span></div>
   <div class="status"><span class="dot"></span><span data-i18n="status">NETRUNNER ONLINE</span></div>
   <select class="lang-select" id="langSelect" aria-label="language">
@@ -607,7 +614,7 @@
   //   Z (third)  — bumped for all small changes (tweaks, fixes, polish).
   // NOTE: when bumping, also update the `<!-- COMMLINK vX.Y.Z -->` comment
   // on line 1 of this file so plain-text readers see the same version.
-  const APP_VERSION = '1.4.16';
+  const APP_VERSION = '1.4.17';
 
   // ---------- External links ----------
   const DONATE_URL = 'https://boosty.to/cyberdelaai/donate';

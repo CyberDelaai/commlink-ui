@@ -154,3 +154,19 @@ fetchCommitCount().then(count => { if (count) _commitCountCache = count; });
 
   setTimeout(runGlitch, 8000 + Math.random() * 6000);
 })();
+
+// ---------- Tool-switcher menu (ported from chronos) ----------
+// The COMMLINK logo opens an augmented-ui dropdown of cyberdeck.tools apps.
+(function setupAppMenu() {
+  const btn = document.getElementById('logoBtn');
+  const menu = document.getElementById('appMenu');
+  if (!btn || !menu) return;
+  const open = () => { menu.hidden = false; btn.setAttribute('aria-expanded', 'true'); };
+  const close = () => { menu.hidden = true; btn.setAttribute('aria-expanded', 'false'); };
+  btn.addEventListener('click', (e) => { e.stopPropagation(); menu.hidden ? open() : close(); });
+  // Close on outside click or Escape
+  document.addEventListener('click', (e) => {
+    if (!menu.hidden && !menu.contains(e.target) && e.target !== btn) close();
+  });
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape') close(); });
+})();

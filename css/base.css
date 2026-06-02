@@ -99,7 +99,7 @@
 
   header {
     position: relative;
-    z-index: 2;
+    z-index: 90; /* above side panels (50) so the tools dropdown isn't covered; below modals/toasts (100+) */
     padding: 18px 32px;
     border-bottom: 1px solid rgba(252, 238, 10, 0.25);
     display: flex;
@@ -107,12 +107,37 @@
     gap: 18px;
     background: linear-gradient(180deg, rgba(252, 238, 10, 0.05), transparent);
   }
+  /* logo doubles as the tool-switcher trigger (ported from chronos) */
+  header .logo-menu { position: relative; }
   header .logo {
     font-family: 'JetBrains Mono', monospace;
     color: var(--yellow);
     font-size: 22px;
     letter-spacing: 2px;
+    background: none; border: none; padding: 0; cursor: pointer;
+    transition: filter 0.15s;
   }
+  header .logo:hover { filter: drop-shadow(0 0 6px rgba(252, 238, 10, 0.6)); }
+  /* leading ">" rotates 90° while the menu is open */
+  header .logo .chev { display: inline-block; transition: transform 0.2s ease; }
+  header .logo[aria-expanded="true"] .chev { transform: rotate(90deg); }
+  header .app-menu {
+    position: absolute; top: calc(100% + 12px); left: 0; z-index: 30;
+    display: flex; flex-direction: column; gap: 4px;
+    min-width: 240px; padding: 12px 14px;
+    background: var(--panel);
+    --aug-border-all: 1px; --aug-border-bg: rgba(0, 240, 255, 0.5);
+    --aug-tl: 10px; --aug-br: 10px;
+  }
+  header .app-menu[hidden] { display: none; }
+  header .app-menu-item {
+    font-family: 'JetBrains Mono', monospace; font-size: 16px; letter-spacing: 2px;
+    color: var(--yellow); text-decoration: none; white-space: nowrap;
+    padding: 6px 8px; transition: color 0.12s, background 0.12s;
+  }
+  header .app-menu-item:hover { background: rgba(0, 240, 255, 0.12); color: var(--cyan); }
+  header .app-menu-item.current { color: var(--cyan); cursor: default; }
+  header .app-menu-item.current:hover { background: none; }
   header .tag {
     font-family: 'JetBrains Mono', monospace;
     color: var(--cyan);
