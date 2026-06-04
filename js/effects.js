@@ -161,8 +161,15 @@ fetchCommitCount().then(count => { if (count) _commitCountCache = count; });
   const btn = document.getElementById('logoBtn');
   const menu = document.getElementById('appMenu');
   if (!btn || !menu) return;
-  const open = () => { menu.hidden = false; btn.setAttribute('aria-expanded', 'true'); };
-  const close = () => { menu.hidden = true; btn.setAttribute('aria-expanded', 'false'); };
+  const header = btn.closest('header');
+  const open = () => {
+    menu.hidden = false; btn.setAttribute('aria-expanded', 'true');
+    if (header) header.classList.add('menu-open'); // lift header above side panels
+  };
+  const close = () => {
+    menu.hidden = true; btn.setAttribute('aria-expanded', 'false');
+    if (header) header.classList.remove('menu-open');
+  };
   btn.addEventListener('click', (e) => { e.stopPropagation(); menu.hidden ? open() : close(); });
   // Close on outside click or Escape
   document.addEventListener('click', (e) => {

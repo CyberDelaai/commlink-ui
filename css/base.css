@@ -99,7 +99,7 @@
 
   header {
     position: relative;
-    z-index: 90; /* above side panels (50) so the tools dropdown isn't covered; below modals/toasts (100+) */
+    z-index: 2;
     padding: 18px 32px;
     border-bottom: 1px solid rgba(252, 238, 10, 0.25);
     display: flex;
@@ -107,6 +107,10 @@
     gap: 18px;
     background: linear-gradient(180deg, rgba(252, 238, 10, 0.05), transparent);
   }
+  /* While the tools menu is open, lift the header above side panels (50) etc.
+     so the dropdown isn't covered; otherwise the header stays low (z-index 2)
+     so the left side-panel tabs sit on top of it. */
+  header.menu-open { z-index: 90; }
   /* logo doubles as the tool-switcher trigger (ported from chronos) */
   header .logo-menu { position: relative; }
   header .logo {
