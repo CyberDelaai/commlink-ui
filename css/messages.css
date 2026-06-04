@@ -398,12 +398,12 @@
   .choices-header {
     display: flex;
     align-items: center;
-    justify-content: space-between;
     gap: 16px;
     padding-top: 14px;
-    flex-wrap: wrap;
+    flex-wrap: nowrap;
   }
   .choices-palette {
+    flex: 1; min-width: 0;
     margin: 0;
     padding: 0;
     border: 0;
@@ -414,6 +414,10 @@
     gap: 6px;
     flex-shrink: 0;
   }
+  /* choices button row: + ADD (left) … HIDE + CLEAR (grouped on the right) */
+  .choices-body .btn-row { display: flex; align-items: center; gap: 10px; }
+  .choices-body .btn-row .hide-choices-group { margin-left: auto; } /* push HIDE (+ CLEAR) right */
+  .choices-body .btn-row #clearChoices { margin-left: 0; }          /* override global auto so CLEAR sits next to HIDE */
   .choices-body .choice-edit-row {
     gap: 6px;
   }
