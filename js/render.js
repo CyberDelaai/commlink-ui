@@ -168,7 +168,7 @@ function renderMessagesEditor() {
         <textarea class="body-input" maxlength="500" placeholder="Message text..."></textarea>
         <div class="msg-row-toolbar">
           <div class="img-popup-wrap kao-popup-wrap">
-            <button class="btn cyan icon" type="button" data-kao-toggle title="Insert kaomoji">顔</button>
+            <button class="btn cyan icon" type="button" data-kao-toggle title="Insert kaomoji">ツ</button>
             <div class="img-popup kao-popup" hidden>
               <div class="kao-grid"></div>
             </div>
