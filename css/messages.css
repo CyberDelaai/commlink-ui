@@ -647,6 +647,7 @@
     font-family: 'Tektur', sans-serif;
     color: var(--accent);
     font-size: 13px;
+    font-weight: 700; /* match bubblegum/gothic name weight */
     letter-spacing: 3px;
   }
   .message .time {
