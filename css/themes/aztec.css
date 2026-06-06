@@ -1,0 +1,127 @@
+/* AZTEC theme — stone & gold codex: geometric tile frame around the stage.
+   Scoped via :root[data-theme="aztec"]; tile art + step-sizing live in
+   js/themes/aztec.js which publishes:
+     --az-cTL/cTR/cBL/cBR  corner tiles (accent-colored data-URI SVGs)
+     --az-eT/eB/eL/eR      edge tile units
+     --az-w / --az-h       stage size snapped to whole tiles
+   GEOMETRY (keep in sync with aztec.js): corner 42px, band 39px, step 66px. */
+
+  /* Snapped capture width, centered in the preview column */
+  :root[data-theme="aztec"] .stage-capture {
+    width: var(--az-w, 100%);
+    margin: 0 auto;
+  }
+
+  :root[data-theme="aztec"] .stage {
+    height: var(--az-h, auto);
+    background-color: #15100a; /* dark volcanic stone */
+    padding: 48px;             /* clearance for the tile frame */
+    /* 16 frame layers, top to bottom:
+         4 corners (mirrored top-right tile)
+         4 center medallions (right-middle rotated 0/180/90/270)
+         8 fill half-runs — every edge is symmetric about its medallion:
+           vertical sides: below as drawn / above mirrored vertically
+           top & bottom:  right as rotated / left mirrored horizontally
+         Half-runs are k-tile stacked SVGs built in JS (a CSS repeat can't
+         switch art at the midpoint); lengths come in via --az-runh/--az-runv.
+       Step sizing keeps each run an ODD number of 33px tiles, so the
+       medallion lands dead-center replacing exactly one fill tile and the
+       half-runs meet it flush — no partial tiles anywhere. */
+    background-image:
+      var(--az-cTL), var(--az-cTR), var(--az-cBL), var(--az-cBR),
+      var(--az-mT), var(--az-mB), var(--az-mL), var(--az-mR),
+      var(--az-fTl), var(--az-fTr), var(--az-fBl), var(--az-fBr),
+      var(--az-fRa), var(--az-fRb), var(--az-fLa), var(--az-fLb),
+      radial-gradient(ellipse at 50% 28%, rgba(255, 178, 80, 0.06), transparent 70%);
+    background-repeat:
+      no-repeat, no-repeat, no-repeat, no-repeat,
+      no-repeat, no-repeat, no-repeat, no-repeat,
+      no-repeat, no-repeat, no-repeat, no-repeat,
+      no-repeat, no-repeat, no-repeat, no-repeat,
+      no-repeat;
+    background-position:
+      left top, right top, left bottom, right bottom,
+      center top, center bottom, left center, right center,
+      left 42px top 0, right 42px top 0, left 42px bottom 0, right 42px bottom 0,
+      right 0 top 42px, right 0 bottom 42px, left 0 top 42px, left 0 bottom 42px,
+      center;
+    background-size:
+      42px 42px, 42px 42px, 42px 42px, 42px 42px,
+      33px 39px, 33px 39px, 39px 33px, 39px 33px,
+      var(--az-runh, 0px) 39px, var(--az-runh, 0px) 39px, var(--az-runh, 0px) 39px, var(--az-runh, 0px) 39px,
+      39px var(--az-runv, 0px), 39px var(--az-runv, 0px), 39px var(--az-runv, 0px), 39px var(--az-runv, 0px),
+      100% 100%;
+  }
+
+  /* Keep the user's background image / vignette inside the frame */
+  :root[data-theme="aztec"] #stageBg { inset: 42px; }
+  :root[data-theme="aztec"] .stage.vignette .stage-vignette { inset: 42px; }
+
+  /* Overlays normally hug the stage edge — nudge them inside the frame.
+     Channels shrink to their text and sit centered at 30% (top) / 70%
+     (bottom) of the stage width instead of dead-center. */
+  /* Sit just OUTSIDE the dialog's edges (dialog top = 48px frame + 44px gap
+     = 92px; dialog bottom = 48px + 26px = 74px from the stage bottom). */
+  :root[data-theme="aztec"] .stage-channel.top {
+    top: 70px;
+    left: 30%; right: auto;
+    transform: translateX(-50%);
+  }
+  :root[data-theme="aztec"] .stage-channel.bottom {
+    bottom: 52px;
+    left: 70%; right: auto;
+    transform: translateX(-50%);
+  }
+  /* Signal grail: centered, standing in the dialog's top rect niche.
+     Geometry: dialog top = 48px frame padding + 44px gap = 92px; niche is
+     10px deep → its floor at 102px; grail is 36x45 → top = 102 - 45 = 57px. */
+  :root[data-theme="aztec"] .signal-bars {
+    top: 57px !important;
+    right: auto !important;
+    left: 50% !important;
+    transform: translateX(-50%);
+    width: 36px;
+    height: 45px;
+    display: block;
+    background-color: transparent;
+    background-position: center bottom;
+    background-size: contain;
+    background-repeat: no-repeat;
+    filter: drop-shadow(0 0 6px color-mix(in srgb, var(--accent) 45%, transparent));
+  }
+  :root[data-theme="aztec"] .signal-bars .bar { display: none; }
+
+  /* Dialog (inner frame): augmented-ui stepped-pyramid silhouette.
+     Corner steps use the 11px tile module; the top/bottom rect niches span
+     ~one medallion (33px wide, 10px deep). Border + inlay replace the old
+     plain slab border. */
+  :root[data-theme="aztec"] .dialog {
+    /* fill all vertical space inside the frame; the fixed top/bottom margins
+       are the defined gaps for the channel labels — top one widened so the
+       signal grail can stand in the niche */
+    flex: 1;
+    margin: 44px 4% 26px;
+    --aug-border-all: 2px;
+    --aug-border-bg: color-mix(in srgb, var(--accent) 80%, #5a3a18);
+    --aug-inlay-all: 0px;
+    --aug-inlay-bg: rgba(10, 7, 4, 0.82);
+    --aug-tl: 11px;
+    --aug-tr: 11px;
+    --aug-br: 11px;
+    --aug-bl: 11px;
+    --aug-t: 10px;
+    --aug-t-extend1: 33px;
+    --aug-t-height: 10px; /* base .dialog sets 2px for its channel — restore depth */
+    --aug-b: 10px;
+    --aug-b-extend1: 33px;
+    --aug-b-height: 10px;
+  }
+
+  /* Names: sun-bleached gold over the accent, with a soft shadow */
+  :root[data-theme="aztec"] .stage .message .name {
+    color: color-mix(in srgb, var(--accent), #ffe2b0 25%);
+    text-shadow: 0 0 6px rgba(0, 0, 0, 0.85);
+  }
+  :root[data-theme="aztec"] .stage .message .time {
+    color: #b9a98e;
+  }
