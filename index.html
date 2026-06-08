@@ -1,4 +1,4 @@
-<!-- COMMLINK v1.4.24 -->
+<!-- COMMLINK v1.4.25 -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -13,7 +13,13 @@
 <meta name="robots" content="index, follow" />
 <meta name="theme-color" content="#0a0800" />
 <link rel="canonical" href="https://cyberdeck.tools/commlink-ui/" />
-<link rel="icon" type="image/svg+xml" href="favicon.svg" />
+<!-- favicons: .ico + PNG (48px multiples) for Google/browsers, SVG for modern browsers.
+     Relative paths — commlink is served from the /commlink-ui/ subpath. -->
+<link rel="icon" href="icons/favicon.ico" sizes="any" />
+<link rel="icon" type="image/png" sizes="96x96" href="icons/favicon-96.png" />
+<link rel="icon" type="image/png" sizes="48x48" href="icons/favicon-48.png" />
+<link rel="icon" type="image/svg+xml" href="icons/favicon.svg" />
+<link rel="apple-touch-icon" href="icons/favicon-192.png" />
 <meta name="google-site-verification" content="v1t-8eGgW1iyPTi9BGwQ-ro3zmJ4S6GBeRJOi4mybQc" />
 <meta name="yandex-verification" content="03c37f4642635977" />
 
@@ -637,7 +643,7 @@
   //   Z (third)  — bumped for all small changes (tweaks, fixes, polish).
   // NOTE: when bumping, also update the `<!-- COMMLINK vX.Y.Z -->` comment
   // on line 1 of this file so plain-text readers see the same version.
-  const APP_VERSION = '1.4.24';
+  const APP_VERSION = '1.4.25';
 
   // ---------- External links ----------
   const DONATE_URL = 'https://boosty.to/cyberdelaai/donate';
