@@ -14,44 +14,61 @@
 
   :root[data-theme="aztec"] .stage {
     height: var(--az-h, auto);
-    background-color: #15100a; /* dark volcanic stone */
     padding: 48px;             /* clearance for the tile frame */
-    /* 16 frame layers, top to bottom:
-         4 corners (mirrored top-right tile)
-         4 center medallions (right-middle rotated 0/180/90/270)
-         8 fill half-runs — every edge is symmetric about its medallion:
-           vertical sides: below as drawn / above mirrored vertically
-           top & bottom:  right as rotated / left mirrored horizontally
-         Half-runs are k-tile stacked SVGs built in JS (a CSS repeat can't
-         switch art at the midpoint); lengths come in via --az-runh/--az-runv.
-       Step sizing keeps each run an ODD number of 33px tiles, so the
-       medallion lands dead-center replacing exactly one fill tile and the
-       half-runs meet it flush — no partial tiles anywhere. */
+    /* dark volcanic stone + a faint central glow */
+    background:
+      radial-gradient(ellipse at 50% 28%, rgba(255, 178, 80, 0.06), transparent 70%)
+      #15100a;
+  }
+
+  /* The tile FRAME lives on its OWN layer (::after, free since aztec turns
+     augmented-ui off) so it can be glitched independently of the messages.
+     16 layers, top to bottom:
+       4 corners (mirrored top-right tile)
+       4 center medallions (right-middle rotated 0/180/90/270)
+       8 fill half-runs — every edge symmetric about its medallion:
+         vertical sides: below as drawn / above mirrored vertically
+         top & bottom:  right as rotated / left mirrored horizontally
+     Half-runs are k-tile stacked SVGs built in JS (a CSS repeat can't switch
+     art at the midpoint); lengths come in via --az-runh/--az-runv. Step
+     sizing keeps each run an ODD number of 33px tiles so the medallion lands
+     dead-center and the half-runs meet it flush — no partial tiles. */
+  :root[data-theme="aztec"] .stage::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
     background-image:
       var(--az-cTL), var(--az-cTR), var(--az-cBL), var(--az-cBR),
       var(--az-mT), var(--az-mB), var(--az-mL), var(--az-mR),
       var(--az-fTl), var(--az-fTr), var(--az-fBl), var(--az-fBr),
-      var(--az-fRa), var(--az-fRb), var(--az-fLa), var(--az-fLb),
-      radial-gradient(ellipse at 50% 28%, rgba(255, 178, 80, 0.06), transparent 70%);
+      var(--az-fRa), var(--az-fRb), var(--az-fLa), var(--az-fLb);
     background-repeat:
       no-repeat, no-repeat, no-repeat, no-repeat,
       no-repeat, no-repeat, no-repeat, no-repeat,
       no-repeat, no-repeat, no-repeat, no-repeat,
-      no-repeat, no-repeat, no-repeat, no-repeat,
-      no-repeat;
+      no-repeat, no-repeat, no-repeat, no-repeat;
     background-position:
       left top, right top, left bottom, right bottom,
       center top, center bottom, left center, right center,
       left 42px top 0, right 42px top 0, left 42px bottom 0, right 42px bottom 0,
-      right 0 top 42px, right 0 bottom 42px, left 0 top 42px, left 0 bottom 42px,
-      center;
+      right 0 top 42px, right 0 bottom 42px, left 0 top 42px, left 0 bottom 42px;
     background-size:
       42px 42px, 42px 42px, 42px 42px, 42px 42px,
       33px 39px, 33px 39px, 39px 33px, 39px 33px,
       var(--az-runh, 0px) 39px, var(--az-runh, 0px) 39px, var(--az-runh, 0px) 39px, var(--az-runh, 0px) 39px,
-      39px var(--az-runv, 0px), 39px var(--az-runv, 0px), 39px var(--az-runv, 0px), 39px var(--az-runv, 0px),
-      100% 100%;
+      39px var(--az-runv, 0px), 39px var(--az-runv, 0px), 39px var(--az-runv, 0px), 39px var(--az-runv, 0px);
   }
+
+  /* Low-potency glitch on the FRAME and the signal grail only (the messages
+     keep their normal full-strength FX). Uses the pre-defined *-soft SVG
+     filter variants — same approach as gothic's graveyard signal-bars. */
+  :root[data-theme="aztec"] .stage.glitch::after,
+  :root[data-theme="aztec"] .stage.glitch .signal-bars { filter: url(#glitch-slices-soft) !important; }
+  :root[data-theme="aztec"] .stage.chromatic::after,
+  :root[data-theme="aztec"] .stage.chromatic .signal-bars { filter: url(#chromatic-aberration-soft) !important; }
+  :root[data-theme="aztec"] .stage.glitch.chromatic::after,
+  :root[data-theme="aztec"] .stage.glitch.chromatic .signal-bars { filter: url(#chromatic-aberration-soft) url(#glitch-slices-soft) !important; }
 
   /* Keep the user's background image / vignette inside the frame */
   :root[data-theme="aztec"] #stageBg { inset: 42px; }
