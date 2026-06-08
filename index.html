@@ -1,4 +1,4 @@
-<!-- COMMLINK v1.4.26 -->
+<!-- COMMLINK v1.4.27 -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -13,14 +13,10 @@
 <meta name="robots" content="index, follow" />
 <meta name="theme-color" content="#0a0800" />
 <link rel="canonical" href="https://cyberdeck.tools/commlink-ui/" />
-<!-- favicons: .ico + PNG (48px multiples) for Google/browsers, SVG for modern browsers.
-     Relative paths — commlink is served from the /commlink-ui/ subpath. -->
-<!-- ico (sizes=any) is the Google Search / legacy fallback; SVG is preferred
-     by modern browsers for the tab. No explicit PNG <link>s, or Chrome would
-     pick a raster over the SVG. -->
-<link rel="icon" href="icons/favicon.ico" sizes="any" />
-<link rel="icon" type="image/svg+xml" href="icons/favicon.svg" />
-<link rel="apple-touch-icon" href="icons/favicon-192.png" />
+<!-- SVG-first: modern browsers use the SVG for the tab; .ico is the fallback -->
+<link rel="icon" type="image/svg+xml" href="favicon.svg" />
+<link rel="icon" href="favicon.ico" sizes="32x32" />
+<link rel="apple-touch-icon" href="favicon-192.png" />
 <meta name="google-site-verification" content="v1t-8eGgW1iyPTi9BGwQ-ro3zmJ4S6GBeRJOi4mybQc" />
 <meta name="yandex-verification" content="03c37f4642635977" />
 
@@ -644,7 +640,7 @@
   //   Z (third)  — bumped for all small changes (tweaks, fixes, polish).
   // NOTE: when bumping, also update the `<!-- COMMLINK vX.Y.Z -->` comment
   // on line 1 of this file so plain-text readers see the same version.
-  const APP_VERSION = '1.4.26';
+  const APP_VERSION = '1.4.27';
 
   // ---------- External links ----------
   const DONATE_URL = 'https://boosty.to/cyberdelaai/donate';
