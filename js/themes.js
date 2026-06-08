@@ -56,15 +56,50 @@ function applyThemeShapes(themeId) {
   });
 }
 
+// ---- Per-theme color memory -------------------------------------------
+// Each theme remembers its own accent / choices colors (presets + custom
+// swatches). On switch we snapshot the outgoing theme's colors and restore
+// the incoming theme's saved set, so e.g. NEO_AZTEC can keep a gold accent
+// while the default theme keeps cyan. Colors live in `state`, persisted via
+// saveState; the snapshots live in state.themeColors[themeId].
+const THEME_COLOR_FIELDS = ['accent', 'choicesColor', 'customAccent', 'customChoicesColor'];
+
+function rememberThemeColors(themeId) {
+  if (typeof state === 'undefined' || !themeId) return;
+  if (!state.themeColors) state.themeColors = {};
+  const snap = {};
+  THEME_COLOR_FIELDS.forEach((f) => { snap[f] = state[f]; });
+  state.themeColors[themeId] = snap;
+}
+function restoreThemeColors(themeId) {
+  if (typeof state === 'undefined') return;
+  const saved = state.themeColors && state.themeColors[themeId];
+  if (!saved) return; // unseen theme — keep the current colors as its seed
+  THEME_COLOR_FIELDS.forEach((f) => {
+    if (saved[f] !== undefined) state[f] = saved[f];
+  });
+}
+
 function applyTheme(themeId) {
   if (!THEMES[themeId]) return;
+  // If applied mid-hover, the live state holds PREVIEW colors — revert to the
+  // real applied-theme colors first so the outgoing snapshot is correct.
+  if (previewColorBackup) {
+    THEME_COLOR_FIELDS.forEach((f) => { state[f] = previewColorBackup[f]; });
+    previewColorBackup = null;
+  }
+  // Snapshot the outgoing theme's colors, then load the incoming theme's.
+  rememberThemeColors(appliedThemeId);
   appliedThemeId = themeId;
   previewingThemeId = null;
   document.documentElement.dataset.theme = themeId;
   storageSet(THEME_KEY, themeId);
+  restoreThemeColors(themeId);
+  if (typeof saveState === 'function') saveState();
   applyThemeShapes(themeId);
   if (typeof renderThemes === 'function') renderThemes();
-  // Re-paint the stage so the new theme's renderStage takes over.
+  // Re-paint the stage so the new theme's renderStage + restored colors take
+  // over (renderPreview also refreshes the accent/choices palette UI).
   if (typeof renderPreview === 'function') renderPreview();
 }
 
@@ -86,11 +121,27 @@ function stopPreviewGlitch() {
   }
 }
 
+// While hovering, the live (applied-theme) colors are stashed here so the
+// preview can show the hovered theme's remembered colors, then revert.
+let previewColorBackup = null;
+
 function previewTheme(themeId) {
   if (!THEMES[themeId]) return;
   previewingThemeId = themeId;
   document.documentElement.dataset.theme = themeId;
   applyThemeShapes(themeId);
+  // Show the hovered theme's remembered colors (no persistence). Back up the
+  // live colors once per hover-sequence so endThemePreview can restore them.
+  if (typeof state !== 'undefined') {
+    if (!previewColorBackup) {
+      previewColorBackup = {};
+      THEME_COLOR_FIELDS.forEach((f) => { previewColorBackup[f] = state[f]; });
+    }
+    const saved = themeId !== appliedThemeId && state.themeColors && state.themeColors[themeId];
+    THEME_COLOR_FIELDS.forEach((f) => {
+      state[f] = (saved && saved[f] !== undefined) ? saved[f] : previewColorBackup[f];
+    });
+  }
   if (previewGlitchTimer) clearTimeout(previewGlitchTimer);
   if (typeof stage !== 'undefined' && stage) {
     stage.classList.add('theme-previewing');
@@ -114,6 +165,11 @@ function endThemePreview() {
   previewingThemeId = null;
   document.documentElement.dataset.theme = appliedThemeId;
   applyThemeShapes(appliedThemeId);
+  // Restore the live colors stashed at hover start.
+  if (typeof state !== 'undefined' && previewColorBackup) {
+    THEME_COLOR_FIELDS.forEach((f) => { state[f] = previewColorBackup[f]; });
+    previewColorBackup = null;
+  }
   // Always kill the flash on unhover, even if mid-burst.
   stopPreviewGlitch();
   if (typeof renderPreview === 'function') renderPreview();

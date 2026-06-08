@@ -71,6 +71,9 @@ const defaultState = {
   customChoicesColor: '#00aaff',
   hideChoices: false,
   customAccent: '#00aaff',
+  // Per-theme color memory: { [themeId]: {accent, choicesColor, customAccent,
+  // customChoicesColor} }. Saved/restored on theme switch (see themes.js).
+  themeColors: {},
   glitch: false,
   glitchAmount: 38,
   scanlines: true,
