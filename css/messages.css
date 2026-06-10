@@ -861,12 +861,14 @@
   }
   /* Vignette — radial dark fade from clear center to dark corners. Real DOM
      overlay (not ::after) because augmented-ui owns that pseudo on .stage.
-     Drawn at z=3 so it sits above scanlines (z=2) and tints them too. */
+     Drawn at z=6 so it sits ABOVE scanlines (z=2), the rain (z=4) and the
+     themes' outer frame decorations (z=5: noir film strip, aztec tiles) —
+     i.e. the vignette darkens the whole composed preview, frame included. */
   .stage-vignette {
     position: absolute;
     inset: 0;
     pointer-events: none;
-    z-index: 3;
+    z-index: 6;
     display: none;
   }
   .stage.vignette .stage-vignette {

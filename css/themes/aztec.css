@@ -70,9 +70,10 @@
   :root[data-theme="aztec"] .stage.glitch.chromatic::after,
   :root[data-theme="aztec"] .stage.glitch.chromatic .signal-bars { filter: url(#chromatic-aberration-soft) url(#glitch-slices-soft) !important; }
 
-  /* Keep the user's background image / vignette inside the frame */
+  /* Keep the user's background image inside the frame, but let the vignette
+     span the full preview so it darkens the outer tile frame too. */
   :root[data-theme="aztec"] #stageBg { inset: 42px; }
-  :root[data-theme="aztec"] .stage.vignette .stage-vignette { inset: 42px; }
+  :root[data-theme="aztec"] .stage.vignette .stage-vignette { inset: 0; }
 
   /* Overlays normally hug the stage edge — nudge them inside the frame.
      Channels shrink to their text and sit centered at 30% (top) / 70%
@@ -141,4 +142,13 @@
   }
   :root[data-theme="aztec"] .stage .message .time {
     color: #b9a98e;
+  }
+
+  /* FRAMES on: message bubbles get an accent-color border. The base only
+     supplies a background + aug-ui vars, and aztec (like every non-default
+     theme) never receives the augmented-ui attribute, so this is a plain CSS
+     border in the accent gold. */
+  :root[data-theme="aztec"] .stage.frames .message:not(.system) .body {
+    border: 1px solid var(--accent);
+    box-shadow: 0 0 8px color-mix(in srgb, var(--accent) 25%, transparent);
   }
