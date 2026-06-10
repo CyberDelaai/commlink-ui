@@ -1,4 +1,4 @@
-<!-- COMMLINK v1.4.29 -->
+<!-- COMMLINK v1.4.30 -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -658,9 +658,9 @@
   //   X (first)  — almost certainly never bumped.
   //   Y (second) — bumped for major features.
   //   Z (third)  — bumped for all small changes (tweaks, fixes, polish).
-  // NOTE: when bumping, also update the `<!-- COMMLINK vX.Y.Z -->` comment
-  // on line 1 of this file so plain-text readers see the same version.
-  const APP_VERSION = '1.4.29';
+  // To bump, run `python3 bump_version.py {x|y|z}` — it updates this constant
+  // AND the mirrored `<!-- COMMLINK vX.Y.Z -->` comment on line 1 in sync.
+  const APP_VERSION = '1.4.30';
 
   // ---------- External links ----------
   const DONATE_URL = 'https://boosty.to/cyberdelaai/donate';
