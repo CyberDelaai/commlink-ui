@@ -36,6 +36,8 @@ exportBtn.addEventListener('click', async () => {
         // load so PNG export picks them up even if the user has never
         // activated the gothic theme this session.
         document.fonts.load('17px "Oswald"'),
+        document.fonts.load('17px "Cousine"'),
+        document.fonts.load('17px "Cousine"', 'Я'), // Cyrillic face
         document.fonts.ready
       ]);
     }

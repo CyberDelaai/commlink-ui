@@ -1,0 +1,285 @@
+/* NOIR theme — high-contrast monochrome film-noir.
+   Active only when `<html data-theme="noir">`. Everything in the frame goes
+   black & white; the user's accent color is the lone splash of color (spot
+   color), surviving on speaker names, the chosen choice, the lit signal bars,
+   the channel marker and the system line. Background image / portraits /
+   attached images are grayscaled (the grayscale on #stageBg is applied inline
+   by js/themes/noir.js so it beats renderPreview's colored filter).
+   The RAIN overlay (#stageRain) is gated on `.stage.rain`, toggled by
+   noir.js when the signal meter drops. */
+
+  /* ---------- Typeface: a Courier-style typewriter (Cousine, embedded as
+     base64 in index.html so it rides into the PNG export). One family covers
+     BOTH Latin and Cyrillic (two complementary unicode-range faces), giving
+     the whole stage a consistent typed-dossier / screenplay feel in every
+     language. CJK still falls through to the system stack per glyph. ---------- */
+  :root[data-theme="noir"] .stage,
+  :root[data-theme="noir"] .stage .stage-channel,
+  :root[data-theme="noir"] .stage .message .name,
+  :root[data-theme="noir"] .stage .message .time,
+  :root[data-theme="noir"] .stage .message:not(.system) .body,
+  :root[data-theme="noir"] .stage .message.system .body,
+  :root[data-theme="noir"] .stage .choice,
+  :root[data-theme="noir"] .stage .choice .num,
+  :root[data-theme="noir"] .stage .choice .arrow {
+    font-family: 'Cousine', 'JetBrains Mono', 'Tektur', monospace;
+  }
+
+  /* ---------- Stage: near-black wash; top/bottom hairline, and a movie-film
+     strip down the left & right edges (see below). augmented-ui is switched
+     OFF (shape "none"), which both frees the ::after pseudo for the film
+     frame and means the top/bottom edges are a plain CSS border. ---------- */
+  :root[data-theme="noir"] .stage {
+    border: 1px solid rgba(255, 255, 255, 0.45);
+    border-left: 0;
+    border-right: 0;
+    background:
+      radial-gradient(ellipse at 50% 0%, rgba(255, 255, 255, 0.05), transparent 60%)
+      #050506;
+  }
+
+  /* ---------- Film-strip outer frame (left + right edges) ----------
+     ONE 34x26 SVG tile — an opaque black film band with a real punched-out
+     sprocket perforation (transparent rounded-rect hole, cut with an
+     even-odd path so the scene/rain shows THROUGH it like actual film) plus
+     faint edge rules and a thin highlight ring to define the hole edge. The
+     tile is reused for BOTH sides via the `--noir-film` custom property and
+     tiled vertically (`repeat-y`). Lives on `.stage::after` (free because
+     noir turns augmented-ui off, same trick as aztec's frame) at z-index 5
+     above the rain/overlays. Static background → captured fine in PNG export. */
+  :root[data-theme="noir"] {
+    --noir-film: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='34' height='26'><path fill-rule='evenodd' fill='%230b0b0d' d='M0 0 H34 V26 H0 Z M11.5 5.5 H22.5 A3 3 0 0 1 25.5 8.5 V17.5 A3 3 0 0 1 22.5 20.5 H11.5 A3 3 0 0 1 8.5 17.5 V8.5 A3 3 0 0 1 11.5 5.5 Z'/><rect x='0' y='0' width='1' height='26' fill='rgba(255,255,255,0.22)'/><rect x='33' y='0' width='1' height='26' fill='rgba(255,255,255,0.22)'/><rect x='8.5' y='5.5' width='17' height='15' rx='3' ry='3' fill='none' stroke='rgba(255,255,255,0.18)' stroke-width='1'/></svg>");
+  }
+  :root[data-theme="noir"] .stage::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 5;
+    background-image: var(--noir-film), var(--noir-film);
+    background-repeat: repeat-y, repeat-y;
+    background-position: left top, right top;
+    background-size: 34px 26px, 34px 26px;
+  }
+  /* Keep the dialog clear of the wider film strips (≥46px each side). */
+  :root[data-theme="noir"] .stage .dialog {
+    margin-left: max(6%, 46px);
+    margin-right: max(6%, 46px);
+  }
+  /* Keep the (now grayscaled) background image visible, and replace the
+     default's colored radials with a moody B&W vignette + faint film grain.
+     #stageBg's grayscale+brightness filter (set inline by noir.js) also dims
+     this generated content, so the grain stays subtle. */
+  :root[data-theme="noir"] #stageBg {
+    opacity: 1;
+  }
+  :root[data-theme="noir"] #stageBg::after {
+    background:
+      radial-gradient(ellipse at 50% 32%, transparent 22%, rgba(0, 0, 0, 0.78) 100%),
+      url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='g'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix type='saturate' values='0'/></filter><rect width='100%' height='100%' filter='url(%23g)' opacity='0.4'/></svg>");
+    background-size: cover, 160px 160px;
+  }
+
+  /* ---------- Dialog: dark translucent slab, hairline white border ---------- */
+  :root[data-theme="noir"] .stage .dialog {
+    --aug-border-all: 1px;
+    --aug-border-bg: rgba(255, 255, 255, 0.82);
+    --aug-inlay-bg: rgba(10, 10, 12, 0.82);
+    --aug-tl: 16px;
+    --aug-br: 16px;
+    background:
+      linear-gradient(180deg,
+        rgba(8, 8, 10, 0.74) 0%,
+        rgba(2, 2, 4, 0.82) 100%);
+    box-shadow: 0 12px 34px rgba(0, 0, 0, 0.75);
+  }
+
+  /* ---------- Channel labels: stark white title-card lettering, both
+     LEFT-aligned to the dialog's left edge. The top channel rides at the
+     cigarette's level (so the header reads channel-left / cigarette-right
+     across the top of the frame); the bottom channel sits just under it. ---------- */
+  :root[data-theme="noir"] .stage .stage-channel {
+    color: rgba(255, 255, 255, 0.88);
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    text-shadow: 0 0 4px rgba(0, 0, 0, 0.85);
+    left: max(6%, 46px);
+    right: auto;
+    width: auto;
+    text-align: left;
+  }
+  :root[data-theme="noir"] .stage .stage-channel.top {
+    top: 14px;          /* level with the cigarette resting above the frame */
+  }
+  :root[data-theme="noir"] .stage .stage-channel.bottom {
+    bottom: 16px;
+  }
+  /* The only colored mark up here: the accent pip before the top channel. */
+  :root[data-theme="noir"] .stage .stage-channel.top:not(:empty)::before {
+    background: var(--accent);
+    box-shadow: 0 0 6px var(--accent);
+  }
+
+  /* ---------- Messages: white body text, accent speaker names ---------- */
+  :root[data-theme="noir"] .stage .message .name {
+    color: var(--accent);
+    text-shadow:
+      0 0 6px color-mix(in srgb, var(--accent) 35%, transparent),
+      0 0 4px rgba(0, 0, 0, 0.85);
+  }
+  :root[data-theme="noir"] .stage .message .time {
+    color: rgba(255, 255, 255, 0.5);
+  }
+  :root[data-theme="noir"] .stage .message:not(.system) .body {
+    color: #ffffff;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.95);
+  }
+  /* FRAMES on: dark panel with a thin WHITE edge (matching the dialog and
+     system-card frames). noir.js applies the augmented-ui attribute per side
+     (default.js only does that for the default theme) so the white border
+     follows the notched silhouette; the base already sets --aug-tl/tr/br/bl
+     and --aug-border-all, so we just recolor the border white. */
+  :root[data-theme="noir"] .stage.frames .message:not(.system) .body {
+    background: rgba(0, 0, 0, 0.45);
+    --aug-border-bg: rgba(255, 255, 255, 0.6);
+  }
+  /* Square portraits: hairline white frame, fully desaturated. */
+  :root[data-theme="noir"] .stage .message .portrait {
+    border: 1px solid rgba(255, 255, 255, 0.85);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.7);
+    filter: grayscale(1) contrast(1.5) brightness(1.05);
+  }
+  /* Attached images: grayscaled too. The .glitch variant re-adds the strong
+     displacement filter (the rule above would otherwise win on specificity
+     and drop the glitch distortion). */
+  :root[data-theme="noir"] .stage .message .body-image {
+    border-color: rgba(255, 255, 255, 0.45);
+    filter: grayscale(1) contrast(1.5) brightness(1.05);
+  }
+  :root[data-theme="noir"] .stage.glitch .message .body-image {
+    filter: grayscale(1) contrast(1.5) url(#glitch-slices-strong);
+  }
+
+  /* ---------- System message: a film title-card / case-file stamp ----------
+     The default top/bottom rules are dropped for a centered card with a
+     DOUBLE accent frame — an inner border plus a gapped outer ring drawn with
+     layered box-shadows (the middle shadow is the stage-dark gap between the
+     two lines) — and uppercase typewriter caps in the accent color. Reads
+     like an intertitle slugline stamped onto the dossier. */
+  :root[data-theme="noir"] .stage .message.system .sys-rule {
+    display: none;
+  }
+  /* Compact card — hugs its slugline (doesn't span the whole row), centered
+     in the column with clearance above it. */
+  :root[data-theme="noir"] .stage .message.system {
+    max-width: 84%;
+    margin: 18px auto 8px;   /* extra clearance above the card from the message before it */
+    align-items: center;     /* shrink-wrap the card to its content width */
+  }
+  /* The message that follows a system card also gets a little top gap back
+     (base.css zeroes it) so the card isn't crowded from below either. */
+  :root[data-theme="noir"] .stage .message.system + .message {
+    padding-top: 10px;
+  }
+  /* WHITE frame — matches the dialog (inner messages frame) and the message
+     bubble frames; the slugline + its flanking ticks stay the accent color. */
+  :root[data-theme="noir"] .stage .message.system .body {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    padding: 8px 18px;
+    white-space: nowrap;
+    color: var(--accent);
+    background: rgba(0, 0, 0, 0.42);
+    border: 1px solid rgba(255, 255, 255, 0.82);
+    box-shadow:
+      0 0 0 3px rgba(6, 6, 8, 0.92),          /* gap */
+      0 0 0 4px rgba(255, 255, 255, 0.4);     /* outer line → double white frame */
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    font-size: 12px;
+    text-shadow: 0 0 6px color-mix(in srgb, var(--accent) 35%, transparent);
+  }
+  /* Short accent ticks flanking the slugline. */
+  :root[data-theme="noir"] .stage .message.system .body:not(:empty)::before,
+  :root[data-theme="noir"] .stage .message.system .body:not(:empty)::after {
+    content: '';
+    width: 16px;
+    height: 1px;
+    background: var(--accent);
+    box-shadow: 0 0 6px color-mix(in srgb, var(--accent) 60%, transparent);
+  }
+
+  /* ---------- Choices: grey list, accent on the chosen line ---------- */
+  :root[data-theme="noir"] .stage .choices {
+    border-top: 1px dashed rgba(255, 255, 255, 0.2);
+  }
+  :root[data-theme="noir"] .stage .choice,
+  :root[data-theme="noir"] .stage .choice .num,
+  :root[data-theme="noir"] .stage .choice .arrow {
+    color: rgba(255, 255, 255, 0.78);
+  }
+  :root[data-theme="noir"] .stage .choice.chosen,
+  :root[data-theme="noir"] .stage .choice.chosen .num,
+  :root[data-theme="noir"] .stage .choice.chosen .arrow {
+    color: var(--choices-color);
+    text-shadow: 0 0 6px color-mix(in srgb, var(--choices-color) 45%, transparent);
+  }
+
+  /* ---------- Signal meter: a single cigarette ----------
+     The 5 bar spans are hidden; noir.js paints a cigarette as the
+     background-image — it burns shorter, sheds ash and glows the accent as
+     the signal drops. The element is lifted ABOVE the inner frame and
+     anchored to its bottom so the fallen ash rests on the dialog's top edge.
+     `!important` beats the inline top/right that default.js writes for the
+     cyberpunk layout; the higher specificity here also keeps the accent glow
+     instead of the stage glitch/chromatic filter (the cigarette stays a
+     steady, readable focal point even when the rest of the stage tears). */
+  :root[data-theme="noir"] .signal-bars {
+    top: 0 !important;
+    right: max(6%, 46px) !important;   /* line the filter end up with the dialog's right corner */
+    left: auto !important;
+    bottom: auto !important;
+    width: 130px;
+    height: 44px;
+    display: block;
+    transform: none;
+    background-color: transparent;
+    background-position: center bottom;
+    background-size: contain;
+    background-repeat: no-repeat;
+    filter: drop-shadow(0 0 5px color-mix(in srgb, var(--accent) 50%, transparent));
+  }
+  :root[data-theme="noir"] .signal-bars .bar { display: none; }
+
+  /* ---------- RAIN ----------
+     Two scattered-streak layers tiled and scrolled vertically; translating
+     each by exactly one tile-height per cycle keeps the loop seamless, and
+     the larger near layer covers more ground per cycle so it reads as faster
+     (parallax). Hidden unless noir is active AND noir.js has flagged a bad
+     signal with `.stage.rain`; `--rain-alpha` / `--rain-speed` are set by
+     noir.js so heavier signal loss = denser, faster rain. White streaks sit
+     ABOVE the bg's grayscale filter, so they stay crisp. */
+  .stage-rain {
+    position: absolute;
+    inset: 0;
+    z-index: 4;
+    pointer-events: none;
+    display: none;
+    opacity: var(--rain-alpha, 0);
+    background-image:
+      url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100' height='100'><g stroke='rgba(255,255,255,0.30)' stroke-width='1' stroke-linecap='round'><line x1='10' y1='4' x2='7' y2='20'/><line x1='34' y1='12' x2='31' y2='28'/><line x1='58' y1='2' x2='55' y2='18'/><line x1='82' y1='16' x2='79' y2='32'/><line x1='20' y1='44' x2='17' y2='60'/><line x1='48' y1='52' x2='45' y2='68'/><line x1='72' y1='40' x2='69' y2='56'/><line x1='92' y1='60' x2='89' y2='76'/><line x1='14' y1='76' x2='11' y2='92'/><line x1='40' y1='84' x2='37' y2='100'/><line x1='64' y1='80' x2='61' y2='96'/><line x1='88' y1='88' x2='85' y2='100'/></g></svg>"),
+      url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='150' height='150'><g stroke='rgba(255,255,255,0.55)' stroke-width='1.6' stroke-linecap='round'><line x1='18' y1='6' x2='13' y2='38'/><line x1='52' y1='18' x2='47' y2='50'/><line x1='96' y1='4' x2='91' y2='36'/><line x1='128' y1='22' x2='123' y2='54'/><line x1='30' y1='64' x2='25' y2='96'/><line x1='74' y1='72' x2='69' y2='104'/><line x1='112' y1='60' x2='107' y2='92'/><line x1='140' y1='80' x2='135' y2='112'/><line x1='24' y1='108' x2='19' y2='140'/><line x1='66' y1='118' x2='61' y2='150'/><line x1='104' y1='112' x2='99' y2='144'/><line x1='134' y1='124' x2='129' y2='150'/></g></svg>");
+    background-size: 100px 100px, 150px 150px;
+    background-repeat: repeat, repeat;
+    animation: noir-rain var(--rain-speed, 0.8s) linear infinite;
+    will-change: background-position;
+  }
+  :root[data-theme="noir"] .stage.rain .stage-rain {
+    display: block;
+  }
+  @keyframes noir-rain {
+    from { background-position: 0 0, 0 0; }
+    to   { background-position: 0 100px, 0 150px; }
+  }
