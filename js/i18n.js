@@ -10,20 +10,11 @@ window.I18N = {
       contacts: 'CONTACTS',
       snapshots: 'SNAPSHOTS',
       themes: 'THEMES',
-      donate: 'DONATE',
       messages: '// MESSAGES',
       preview: '// PREVIEW',
       config: '// CONFIG'
     },
     theme: { default: 'DEFAULT', bubblegum: 'BUBBLEGUM', gothic: 'GOTHIC', aztec: 'NEO_AZTEC', noir: 'NOIR', moreToCome: '// MORE TO COME' },
-    donate: {
-      title: '// INCOMING TRANSMISSION',
-      line1: 'You jacked in. You forged dialogs worth flashing across the Net.',
-      line2: 'If DIALOG_CONSTRUCTOR lit up your screen and earned a slot in your loadout — toss some into the rig.',
-      line3: 'Every signal keeps the netrunner humming and the chrome moving.',
-      cta: 'HELL YEAH',
-      scan: '// OR SCAN TO JACK IN'
-    },
     field: {
       channelTop: 'Channel — Top',
       channelBottom: 'Channel — Bottom',
@@ -110,20 +101,11 @@ window.I18N = {
       contacts: 'КОНТАКТЫ',
       snapshots: 'СЛЕПКИ',
       themes: 'ТЕМЫ',
-      donate: 'ДОНАТ',
       messages: '// СООБЩЕНИЯ',
       preview: '// ПРОСМОТР',
       config: '// НАСТРОЙКИ'
     },
     theme: { default: 'СТАНДАРТ', bubblegum: 'БАБЛГАМ', gothic: 'ГОТИКА', aztec: 'НЕО_АЦТЕК', noir: 'НУАР', moreToCome: '// СКОРО ЕЩЁ' },
-    donate: {
-      title: '// ВХОДЯЩАЯ ПЕРЕДАЧА',
-      line1: 'Ты подключился. Ты подделал диалоги, достойные мелькать в Сети.',
-      line2: 'Если КОНСТРУКТОР_ДИАЛОГОВ зажёг твой экран и занял слот в арсенале — подкинь немного в копилку.',
-      line3: 'Каждый сигнал держит нетраннера в строю, а хром — на ходу.',
-      cta: 'ПОЕХАЛИ',
-      scan: '// ИЛИ СКАНИРУЙ ДЛЯ ПОДКЛЮЧЕНИЯ'
-    },
     field: {
       channelTop: 'Канал — Верх',
       channelBottom: 'Канал — Низ',
@@ -210,20 +192,11 @@ window.I18N = {
       contacts: 'CONTACTS',
       snapshots: 'SAUVEGARDES',
       themes: 'THÈMES',
-      donate: 'DON',
       messages: '// MESSAGES',
       preview: '// APERÇU',
       config: '// CONFIG'
     },
     theme: { default: 'DÉFAUT', bubblegum: 'BUBBLEGUM', gothic: 'GOTHIQUE', aztec: 'NÉO_AZTÈQUE', noir: 'NOIR', moreToCome: '// BIENTÔT PLUS' },
-    donate: {
-      title: '// TRANSMISSION ENTRANTE',
-      line1: "Tu t'es connecté. Tu as falsifié des dialogues dignes de circuler sur le Net.",
-      line2: "Si CONSTRUCTEUR_DE_DIALOGUES a illuminé ton écran et a sa place dans ton arsenal — balance quelques eurodollars dans le tirelire.",
-      line3: 'Chaque signal garde le netrunner en marche et le chrome qui coule.',
-      cta: 'CARRÉMENT',
-      scan: '// OU SCANNE POUR TE CONNECTER'
-    },
     field: {
       channelTop: 'Canal — Haut',
       channelBottom: 'Canal — Bas',
@@ -310,20 +283,11 @@ window.I18N = {
       contacts: 'KONTAKTE',
       snapshots: 'SNAPSHOTS',
       themes: 'THEMEN',
-      donate: 'SPENDEN',
       messages: '// NACHRICHTEN',
       preview: '// VORSCHAU',
       config: '// KONFIG'
     },
     theme: { default: 'STANDARD', bubblegum: 'BUBBLEGUM', gothic: 'GOTISCH', aztec: 'NEO_AZTEKISCH', noir: 'NOIR', moreToCome: '// MEHR FOLGT' },
-    donate: {
-      title: '// EINGEHENDE ÜBERTRAGUNG',
-      line1: 'Du hast dich eingeloggt. Du hast Dialoge gefälscht, die im Netz Aufsehen erregen.',
-      line2: 'Wenn DIALOG-KONSTRUKTOR deinen Bildschirm zum Leuchten brachte und einen Slot in deinem Loadout verdient hat — wirf ein paar Eddies in das Sparschwein.',
-      line3: 'Jedes Signal hält den Netrunner am Laufen und das Chrom in Fluss.',
-      cta: 'AUF GEHT’S',
-      scan: '// ODER SCANNE ZUM EINKLINKEN'
-    },
     field: {
       channelTop: 'Kanal — Oben',
       channelBottom: 'Kanal — Unten',
@@ -410,20 +374,11 @@ window.I18N = {
       contacts: 'CONTACTOS',
       snapshots: 'INSTANTÁNEAS',
       themes: 'TEMAS',
-      donate: 'DONAR',
       messages: '// MENSAJES',
       preview: '// VISTA PREVIA',
       config: '// CONFIG'
     },
     theme: { default: 'POR DEFECTO', bubblegum: 'BUBBLEGUM', gothic: 'GÓTICO', aztec: 'NEO_AZTECA', noir: 'NOIR', moreToCome: '// PRÓXIMAMENTE MÁS' },
-    donate: {
-      title: '// TRANSMISIÓN ENTRANTE',
-      line1: 'Te conectaste. Falsificaste diálogos dignos de circular por la Red.',
-      line2: 'Si CONSTRUCTOR_DE_DIÁLOGOS iluminó tu pantalla y se ganó un sitio en tu equipo — tira unos eddies al puchero.',
-      line3: 'Cada señal mantiene al netrunner zumbando y el cromo fluyendo.',
-      cta: '¡DALE!',
-      scan: '// O ESCANEA PARA CONECTAR'
-    },
     field: {
       channelTop: 'Canal — Arriba',
       channelBottom: 'Canal — Abajo',
@@ -510,20 +465,11 @@ window.I18N = {
       contacts: 'CONTATTI',
       snapshots: 'ISTANTANEE',
       themes: 'TEMI',
-      donate: 'DONA',
       messages: '// MESSAGGI',
       preview: '// ANTEPRIMA',
       config: '// CONFIG'
     },
     theme: { default: 'PREDEFINITO', bubblegum: 'BUBBLEGUM', gothic: 'GOTICO', aztec: 'NEO_AZTECO', noir: 'NOIR', moreToCome: '// ALTRI IN ARRIVO' },
-    donate: {
-      title: '// TRASMISSIONE IN ARRIVO',
-      line1: 'Ti sei collegato. Hai falsificato dialoghi degni di girare sulla Net.',
-      line2: 'Se COSTRUTTORE_DI_DIALOGHI ha acceso il tuo schermo e si è guadagnato uno slot nel tuo arsenale — butta qualche eddie nel salvadanaio.',
-      line3: 'Ogni segnale tiene il netrunner in moto e il cromo in scorrimento.',
-      cta: 'ALLA GRANDE',
-      scan: '// O SCANSIONA PER COLLEGARTI'
-    },
     field: {
       channelTop: 'Canale — Sopra',
       channelBottom: 'Canale — Sotto',
@@ -610,20 +556,11 @@ window.I18N = {
       contacts: 'コンタクト',
       snapshots: '状態',
       themes: 'テーマ',
-      donate: '支援',
       messages: '// メッセージ',
       preview: '// プレビュー',
       config: '// 設定'
     },
     theme: { default: 'デフォルト', bubblegum: 'バブルガム', gothic: 'ゴシック', aztec: 'ネオアステカ', noir: 'ノワール', moreToCome: '// 続々登場予定' },
-    donate: {
-      title: '// 着信通信',
-      line1: 'ジャックインした。ネットで光る価値あるダイアログを鍛えた。',
-      line2: 'ダイアログ_コンストラクターが画面を灯し、装備のスロットを勝ち取ったなら—エディをリグに投げ込め。',
-      line3: 'すべてのシグナルがネットランナーを動かし、クロームを流す。',
-      cta: '上等！',
-      scan: '// またはスキャンで接続'
-    },
     field: {
       channelTop: 'チャネル — 上',
       channelBottom: 'チャネル — 下',
@@ -710,20 +647,11 @@ window.I18N = {
       contacts: '联系人',
       snapshots: '状态',
       themes: '主题',
-      donate: '赞助',
       messages: '// 消息',
       preview: '// 预览',
       config: '// 配置'
     },
     theme: { default: '默认', bubblegum: '泡泡糖', gothic: '哥特', aztec: '新阿兹特克', noir: '黑色电影', moreToCome: '// 更多即将推出' },
-    donate: {
-      title: '// 信号传入',
-      line1: '你已接入。你打造了值得在网络上闪耀的对话。',
-      line2: '如果对话构造器点亮了你的屏幕，赢得了你装备中的一席之地——往机柜里扔点电子币吧。',
-      line3: '每个信号都让网络流浪者保持运转，铬合金持续流动。',
-      cta: '干吧！',
-      scan: '// 或扫描以接入'
-    },
     field: {
       channelTop: '频道 — 上',
       channelBottom: '频道 — 下',

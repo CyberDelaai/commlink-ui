@@ -1,4 +1,4 @@
-<!-- COMMLINK v1.4.31 -->
+<!-- COMMLINK v1.4.32 -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -325,26 +325,6 @@
   </div>
 </aside>
 
-<aside class="side-panel" id="sideDonate" data-name="donate">
-  <button class="side-toggle side-toggle-donate" id="donateToggle" type="button" aria-label="toggle donate" data-augmented-ui="tr-clip br-clip border">
-    <span class="label" data-i18n="panel.donate">DONATE</span>
-    <span class="arrow" id="donateArrow">&gt;</span>
-  </button>
-  <div class="side-inner">
-    <h2 data-i18n="donate.title">// INCOMING TRANSMISSION</h2>
-    <div class="donate-message">
-      <p data-i18n="donate.line1">You jacked in. You forged dialogs worth flashing across the Net.</p>
-      <p data-i18n="donate.line2">If DIALOG_CONSTRUCTOR lit up your screen and earned a slot in your loadout — toss some into the rig.</p>
-      <p data-i18n="donate.line3">Every signal keeps the netrunner humming and the chrome moving.</p>
-    </div>
-    <a class="btn donate-btn" id="donateLink" target="_blank" rel="noopener noreferrer" data-augmented-ui="tl-clip br-clip border" data-i18n="donate.cta">HELL YEAH</a>
-    <div class="donate-qr-wrap">
-      <p class="donate-qr-caption" data-i18n="donate.scan">// OR SCAN TO JACK IN</p>
-      <div class="donate-qr" id="donateQr" data-augmented-ui="tl-clip br-clip border"></div>
-    </div>
-  </div>
-</aside>
-
 <aside class="side-panel" id="sideThemes" data-name="themes">
   <button class="side-toggle side-toggle-themes" id="themesToggle" type="button" aria-label="toggle themes" data-augmented-ui="tr-clip br-clip border">
     <span class="label" data-i18n="panel.themes">THEMES</span>
@@ -661,10 +641,8 @@
   //   Z (third)  — bumped for all small changes (tweaks, fixes, polish).
   // To bump, run `python3 bump_version.py {x|y|z}` — it updates this constant
   // AND the mirrored `<!-- COMMLINK vX.Y.Z -->` comment on line 1 in sync.
-  const APP_VERSION = '1.4.31';
+  const APP_VERSION = '1.4.32';
 
-  // ---------- External links ----------
-  const DONATE_URL = 'https://boosty.to/cyberdelaai/donate';
   // GitHub repo from which the commit count ("changes: N") in the header tag
   // is fetched. Cached in localStorage for an hour so we don't burn the
   // unauthenticated 60-req/hour rate limit on every page load.
@@ -795,17 +773,14 @@
 
   const sideContacts = $('sideContacts');
   const sideSnapshots = $('sideSnapshots');
-  const sideDonate = $('sideDonate');
   const sideThemes = $('sideThemes');
   const contactsToggle = $('contactsToggle');
   const snapshotsToggle = $('snapshotsToggle');
-  const donateToggle = $('donateToggle');
   const themesToggle = $('themesToggle');
   const themesArrow = $('themesArrow');
   const themeList = $('themeList');
   const contactsArrow = $('contactsArrow');
   const snapshotsArrow = $('snapshotsArrow');
-  const donateArrow = $('donateArrow');
   const newContactName = $('newContactName');
   const newContactAvatar = $('newContactAvatar');
   const newAvatarPreview = $('newAvatarPreview');
@@ -821,15 +796,12 @@
   function setOpenPanel(name) {
     sideContacts.classList.toggle('open', name === 'contacts');
     sideSnapshots.classList.toggle('open', name === 'snapshots');
-    sideDonate.classList.toggle('open', name === 'donate');
     sideThemes.classList.toggle('open', name === 'themes');
     sideContacts.classList.toggle('peer-open', name && name !== 'contacts');
     sideSnapshots.classList.toggle('peer-open', name && name !== 'snapshots');
-    sideDonate.classList.toggle('peer-open', name && name !== 'donate');
     sideThemes.classList.toggle('peer-open', name && name !== 'themes');
     contactsArrow.textContent = name === 'contacts' ? '<' : '>';
     snapshotsArrow.textContent = name === 'snapshots' ? '<' : '>';
-    donateArrow.textContent = name === 'donate' ? '<' : '>';
     themesArrow.textContent = name === 'themes' ? '<' : '>';
     storageSet(OPEN_PANEL_KEY, name || '');
   }
@@ -838,9 +810,6 @@
   });
   snapshotsToggle.addEventListener('click', () => {
     setOpenPanel(sideSnapshots.classList.contains('open') ? '' : 'snapshots');
-  });
-  donateToggle.addEventListener('click', () => {
-    setOpenPanel(sideDonate.classList.contains('open') ? '' : 'donate');
   });
   themesToggle.addEventListener('click', () => {
     setOpenPanel(sideThemes.classList.contains('open') ? '' : 'themes');
@@ -1250,7 +1219,6 @@
     });
   }
   document.getElementById('tagVersion').textContent = APP_VERSION;
-  document.getElementById('donateLink').href = DONATE_URL;
   // Wire up language switcher
   (function setupLangSwitcher() {
     const sel = document.getElementById('langSelect');
@@ -1268,32 +1236,6 @@
       if (typeof renderContacts === 'function') renderContacts();
       if (typeof renderSnapshots === 'function') renderSnapshots();
     });
-  })();
-  // Render donate QR code (qrcode-generator from CDN) — yellow cells on dark bg
-  (function renderDonateQr() {
-    const host = document.getElementById('donateQr');
-    if (!host || typeof qrcode !== 'function') return;
-    const qr = qrcode(0, 'M');
-    qr.addData(DONATE_URL);
-    qr.make();
-    const count = qr.getModuleCount();
-    const CELL = 4;
-    const size = count * CELL;
-    const DARK = '#fcee0a';
-    const LIGHT = '#0a0800';
-    let path = '';
-    for (let r = 0; r < count; r++) {
-      for (let c = 0; c < count; c++) {
-        if (qr.isDark(r, c)) {
-          path += `M${c * CELL} ${r * CELL}h${CELL}v${CELL}h-${CELL}z`;
-        }
-      }
-    }
-    host.innerHTML =
-      `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${size} ${size}" shape-rendering="crispEdges">` +
-        `<rect width="${size}" height="${size}" fill="${LIGHT}"/>` +
-        `<path d="${path}" fill="${DARK}"/>` +
-      `</svg>`;
   })();
   seedDefaults();
   augmentButtons();
