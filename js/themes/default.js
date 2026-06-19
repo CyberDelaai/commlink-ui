@@ -109,6 +109,12 @@
     const litCount = Math.max(1, Math.round(5 * (1 - effectiveGlitch / maxG)));
     const signalBars = document.getElementById('signalBars');
     if (signalBars) {
+      // Clear any custom signal-bar graphic a previously-active theme painted
+      // inline (aztec/noir/gothic set `style.backgroundImage` + signalLevel).
+      // Themes that want their own graphic call us first, then re-set it; the
+      // default/bubblegum bars rely on the .bar children, so wipe the leftover.
+      signalBars.style.backgroundImage = '';
+      delete signalBars.dataset.signalLevel;
       signalBars.querySelectorAll('.bar').forEach((bar, i) => {
         bar.classList.toggle('on', i < litCount);
       });

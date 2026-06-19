@@ -14,7 +14,6 @@ Inspired by [Commlink-Thread](https://tonkatsura.github.io/Comlink-Thread/).
 - **8 languages** — EN, RU, ES, DE, CN, JP, IT, FR. Switcher in the header. Includes UI labels, toast messages, the import-confirm dialog, locale-specific glitch scramble alphabet (katakana for JP, Han for ZH, Latin elsewhere), and per-locale example dialog.
 - **PNG export** — html-to-image-based, with a 15px black border around the captured frame. Filename `commlink_dialog_<epoch-ms>.png`.
 - **Effects** — scanlines, glitch (static SVG displacement-map tearing), accent color picker (8 presets + custom-color slot with saved swatch), background image (upload, paste, recrop).
-- **DONATE panel** — third tab in the lower-left. Cyberpunk thank-you text, "HELL YEAH" button to a configurable donation URL, and a yellow-on-dark QR code generated on the fly.
 - **Persistence** — `localStorage` keeps state, contacts, snapshots, language, UI open-state. **Images** (bg + bgOriginal + body images + their `*Original` recrop sources) live in **IndexedDB**, content-addressed by SHA-256 so identical images dedupe automatically across messages and snapshots.
 
 ## Running it
@@ -84,7 +83,7 @@ The header tag shows the version after the locale-aware app name (e.g. `DIALOG C
 - `commlink:contacts` — `[ { id, name, avatar } ]`. Avatars stay as base64 here (they're already 128×128 WEBP and small).
 - `commlink:bgOriginal` — recrop source ref for the background.
 - `commlink:lang` — current locale code.
-- `commlink:openPanel` — currently open side panel (`contacts` / `snapshots` / `donate` / `''`).
+- `commlink:openPanel` — currently open side panel (`contacts` / `snapshots` / `''`).
 - `commlink:seeded` — version stamp so the bundled `EXAMPLE_*` snapshots refresh after a schema bump.
 - `commlink:showExamples` — `'1'` / `'0'` for the SHOW EXAMPLES toggle in the snapshots panel.
 
