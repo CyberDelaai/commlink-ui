@@ -1,0 +1,150 @@
+/* LIGHT theme — "electronic ink": dark ink on pale paper, the inverse of the
+   dark default. Active only when `<html data-theme="light">`. No custom JS
+   renderer — it inherits the DEFAULT theme's renderStage (see js/themes/light.js)
+   and this file recolors the whole stage dark-on-light.
+
+   Deliberately monochrome (the e-ink look): body text, channels, system lines
+   and signal bars are all dark ink, so the dialog stays legible regardless of
+   the user's accent. The accent still survives as a restrained tint on the
+   speaker names and the chosen choice, like ink stamped in a second color.
+   Everything is scoped to `.stage` so the surrounding app chrome stays dark. */
+
+  /* ---------- E-ink palette (local custom props) ---------- */
+  :root[data-theme="light"] {
+    --eink-paper: #e9e7e0;       /* warm paper white */
+    --eink-paper-2: #f2f0ea;     /* lighter highlight */
+    --eink-ink: #1b1a16;         /* near-black primary ink */
+    --eink-ink-2: #44423b;       /* secondary / dim ink */
+    --eink-line: rgba(20, 18, 12, 0.55); /* hairline rules & borders */
+    /* Light paper halo behind the ink — keeps dark text legible when the user
+       drops in a DARKER background image (the ink would otherwise vanish). */
+    --eink-glow:
+      0 1px 2px rgba(248, 246, 240, 1),
+      0 0 4px rgba(248, 246, 240, 0.95),
+      0 0 9px rgba(248, 246, 240, 0.85);
+  }
+
+  /* ---------- Stage: pale paper wash with a soft inner shade ---------- */
+  :root[data-theme="light"] .stage {
+    --aug-border-bg: var(--eink-line);
+    --aug-inlay-bg: var(--eink-paper);
+    /* Generous, even radius on all four corners → rounded e-reader bezel. */
+    --aug-tl: 26px;
+    --aug-tr: 26px;
+    --aug-br: 26px;
+    --aug-bl: 26px;
+    background:
+      radial-gradient(ellipse at 50% 0%, var(--eink-paper-2), transparent 65%)
+      var(--eink-paper);
+  }
+  /* Replace the default's dark-tinted radials with a faint paper vignette +
+     extremely subtle grain, so a stage with no background image reads as a
+     clean printed page rather than glowing black. */
+  :root[data-theme="light"] #stageBg::after {
+    background:
+      radial-gradient(ellipse at 50% 30%, transparent 55%, rgba(0, 0, 0, 0.06) 100%),
+      url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='g'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix type='saturate' values='0'/></filter><rect width='100%' height='100%' filter='url(%23g)' opacity='0.05'/></svg>");
+    background-size: cover, 160px 160px;
+  }
+  /* (#stageBg's background + filter are driven inline by renderPreview /
+     js/themes/light.js — see the renderStage there for the pale e-ink default
+     page shown when the user has no background of their own. A user-selected
+     background is left under renderPreview's normal brightness handling.) */
+
+  /* ---------- Dialog: paper slab, dark hairline border, dark ink text ---- */
+  :root[data-theme="light"] .stage .dialog {
+    color: var(--eink-ink);
+    --aug-border-bg: var(--eink-line);
+    --aug-inlay-bg: rgba(238, 236, 229, 0.94);
+    /* Match the stage's rounded corners (the default theme's top/bottom edge
+       tabs are dropped — this theme's `shapes` no longer requests them). */
+    --aug-tl: 20px;
+    --aug-tr: 20px;
+    --aug-br: 20px;
+    --aug-bl: 20px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.18);
+  }
+
+  /* ---------- Channel labels: dark ink, dark drop instead of the glow ---- */
+  :root[data-theme="light"] .stage .stage-channel {
+    color: var(--eink-ink-2);
+    text-shadow: var(--eink-glow);
+  }
+  /* Pull both channels outward (toward the stage edges) so they sit clear of
+     the rounded inner dialog frame instead of crowding it. Defaults are 24px. */
+  :root[data-theme="light"] .stage .stage-channel.top { top: 12px; }
+  :root[data-theme="light"] .stage .stage-channel.bottom { bottom: 12px; }
+  /* Accent pip before the top channel keeps its color (the one spot of ink
+     in a second color); fall back to dark ink if the accent is very pale. */
+  :root[data-theme="light"] .stage .stage-channel.top:not(:empty)::before {
+    box-shadow: none;
+  }
+
+  /* ---------- Messages ---------- */
+  :root[data-theme="light"] .stage .message .name {
+    color: color-mix(in srgb, var(--accent) 80%, #000 20%);
+    text-shadow: var(--eink-glow);
+  }
+  :root[data-theme="light"] .stage .message .time {
+    color: rgba(20, 18, 12, 0.5);
+  }
+  :root[data-theme="light"] .stage .message:not(.system) .body {
+    color: var(--eink-ink);
+    text-shadow: var(--eink-glow);
+  }
+  /* Square portraits: dark hairline frame, no glow. */
+  :root[data-theme="light"] .stage .message .portrait {
+    border: 1px solid var(--eink-line);
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.18);
+  }
+  :root[data-theme="light"] .stage .message .body-image {
+    border-color: var(--eink-line);
+  }
+  /* FRAMES on: a paper bubble with a dark hairline (overrides the default's
+     dark gradient fill + accent border). */
+  :root[data-theme="light"] .stage.frames .message:not(.system) .body {
+    background: rgba(255, 255, 255, 0.45);
+    --aug-border-bg: var(--eink-line);
+  }
+
+  /* ---------- System message: dashed rules + dim ink caption ---------- */
+  :root[data-theme="light"] .stage .message.system .sys-rule {
+    border-top-color: var(--eink-line);
+  }
+  :root[data-theme="light"] .stage .message.system .body {
+    color: var(--eink-ink-2);
+    text-shadow: var(--eink-glow);
+  }
+
+  /* ---------- Choices: dim ink list, accent tint on the chosen line ---- */
+  :root[data-theme="light"] .stage .choices {
+    border-top: 1px dashed var(--eink-line);
+  }
+  :root[data-theme="light"] .stage .choice,
+  :root[data-theme="light"] .stage .choice .num,
+  :root[data-theme="light"] .stage .choice .arrow {
+    color: var(--eink-ink-2);
+    text-shadow: var(--eink-glow);
+  }
+  :root[data-theme="light"] .stage .choice.chosen,
+  :root[data-theme="light"] .stage .choice.chosen .num,
+  :root[data-theme="light"] .stage .choice.chosen .arrow {
+    color: color-mix(in srgb, var(--choices-color) 80%, #000 20%);
+    text-shadow: var(--eink-glow);
+  }
+
+  /* ---------- Signal bars: dark ink, no glow ----------
+     default.js anchors the bars' inline `top` just above the dialog's top
+     edge; the theme's now-rounded corners curve into that spot, so lift the
+     whole meter clear of the frame with a transform (leaves the dynamic
+     top/right alignment intact). */
+  :root[data-theme="light"] .signal-bars {
+    transform: translateY(-16px);
+  }
+  :root[data-theme="light"] .signal-bars .bar.on {
+    background: var(--eink-ink);
+    box-shadow: none;
+  }
+  :root[data-theme="light"] .signal-bars .bar:not(.on) {
+    background: rgba(20, 18, 12, 0.18);
+  }

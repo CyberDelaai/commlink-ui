@@ -14,7 +14,7 @@ window.I18N = {
       preview: '// PREVIEW',
       config: '// CONFIG'
     },
-    theme: { default: 'DEFAULT', bubblegum: 'BUBBLEGUM', gothic: 'GOTHIC', aztec: 'NEO_AZTEC', noir: 'NOIR', moreToCome: '// MORE TO COME' },
+    theme: { default: 'DEFAULT', bubblegum: 'BUBBLEGUM', gothic: 'GOTHIC', aztec: 'NEO_AZTEC', noir: 'NOIR', light: 'LIGHT', moreToCome: '// MORE TO COME' },
     field: {
       channelTop: 'Channel — Top',
       channelBottom: 'Channel — Bottom',
@@ -105,7 +105,7 @@ window.I18N = {
       preview: '// ПРОСМОТР',
       config: '// НАСТРОЙКИ'
     },
-    theme: { default: 'СТАНДАРТ', bubblegum: 'БАБЛГАМ', gothic: 'ГОТИКА', aztec: 'НЕО_АЦТЕК', noir: 'НУАР', moreToCome: '// СКОРО ЕЩЁ' },
+    theme: { default: 'СТАНДАРТ', bubblegum: 'БАБЛГАМ', gothic: 'ГОТИКА', aztec: 'НЕО_АЦТЕК', noir: 'НУАР', light: 'СВЕТЛАЯ', moreToCome: '// СКОРО ЕЩЁ' },
     field: {
       channelTop: 'Канал — Верх',
       channelBottom: 'Канал — Низ',
@@ -196,7 +196,7 @@ window.I18N = {
       preview: '// APERÇU',
       config: '// CONFIG'
     },
-    theme: { default: 'DÉFAUT', bubblegum: 'BUBBLEGUM', gothic: 'GOTHIQUE', aztec: 'NÉO_AZTÈQUE', noir: 'NOIR', moreToCome: '// BIENTÔT PLUS' },
+    theme: { default: 'DÉFAUT', bubblegum: 'BUBBLEGUM', gothic: 'GOTHIQUE', aztec: 'NÉO_AZTÈQUE', noir: 'NOIR', light: 'CLAIR', moreToCome: '// BIENTÔT PLUS' },
     field: {
       channelTop: 'Canal — Haut',
       channelBottom: 'Canal — Bas',
@@ -287,7 +287,7 @@ window.I18N = {
       preview: '// VORSCHAU',
       config: '// KONFIG'
     },
-    theme: { default: 'STANDARD', bubblegum: 'BUBBLEGUM', gothic: 'GOTISCH', aztec: 'NEO_AZTEKISCH', noir: 'NOIR', moreToCome: '// MEHR FOLGT' },
+    theme: { default: 'STANDARD', bubblegum: 'BUBBLEGUM', gothic: 'GOTISCH', aztec: 'NEO_AZTEKISCH', noir: 'NOIR', light: 'HELL', moreToCome: '// MEHR FOLGT' },
     field: {
       channelTop: 'Kanal — Oben',
       channelBottom: 'Kanal — Unten',
@@ -378,7 +378,7 @@ window.I18N = {
       preview: '// VISTA PREVIA',
       config: '// CONFIG'
     },
-    theme: { default: 'POR DEFECTO', bubblegum: 'BUBBLEGUM', gothic: 'GÓTICO', aztec: 'NEO_AZTECA', noir: 'NOIR', moreToCome: '// PRÓXIMAMENTE MÁS' },
+    theme: { default: 'POR DEFECTO', bubblegum: 'BUBBLEGUM', gothic: 'GÓTICO', aztec: 'NEO_AZTECA', noir: 'NOIR', light: 'CLARO', moreToCome: '// PRÓXIMAMENTE MÁS' },
     field: {
       channelTop: 'Canal — Arriba',
       channelBottom: 'Canal — Abajo',
@@ -469,7 +469,7 @@ window.I18N = {
       preview: '// ANTEPRIMA',
       config: '// CONFIG'
     },
-    theme: { default: 'PREDEFINITO', bubblegum: 'BUBBLEGUM', gothic: 'GOTICO', aztec: 'NEO_AZTECO', noir: 'NOIR', moreToCome: '// ALTRI IN ARRIVO' },
+    theme: { default: 'PREDEFINITO', bubblegum: 'BUBBLEGUM', gothic: 'GOTICO', aztec: 'NEO_AZTECO', noir: 'NOIR', light: 'CHIARO', moreToCome: '// ALTRI IN ARRIVO' },
     field: {
       channelTop: 'Canale — Sopra',
       channelBottom: 'Canale — Sotto',
@@ -560,7 +560,7 @@ window.I18N = {
       preview: '// プレビュー',
       config: '// 設定'
     },
-    theme: { default: 'デフォルト', bubblegum: 'バブルガム', gothic: 'ゴシック', aztec: 'ネオアステカ', noir: 'ノワール', moreToCome: '// 続々登場予定' },
+    theme: { default: 'デフォルト', bubblegum: 'バブルガム', gothic: 'ゴシック', aztec: 'ネオアステカ', noir: 'ノワール', light: 'ライト', moreToCome: '// 続々登場予定' },
     field: {
       channelTop: 'チャネル — 上',
       channelBottom: 'チャネル — 下',
@@ -651,7 +651,7 @@ window.I18N = {
       preview: '// 预览',
       config: '// 配置'
     },
-    theme: { default: '默认', bubblegum: '泡泡糖', gothic: '哥特', aztec: '新阿兹特克', noir: '黑色电影', moreToCome: '// 更多即将推出' },
+    theme: { default: '默认', bubblegum: '泡泡糖', gothic: '哥特', aztec: '新阿兹特克', noir: '黑色电影', light: '浅色', moreToCome: '// 更多即将推出' },
     field: {
       channelTop: '频道 — 上',
       channelBottom: '频道 — 下',
