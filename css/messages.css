@@ -855,9 +855,19 @@
       rgba(0, 0, 0, var(--scanline-alpha, 0.18)) 0px,
       rgba(0, 0, 0, var(--scanline-alpha, 0.18)) 1px,
       transparent 1px,
-      transparent 3px
+      transparent var(--scanline-period, 3px)
     );
     z-index: 2;
+  }
+  /* Diagonal-scanline fix. On fractional-DPR displays (Windows 125/150/175%
+     scaling → DPR 1.25/1.5/1.75) the default 3px period is a non-integer
+     number of device pixels (3.75/4.5/5.25), so each line's sub-pixel phase
+     drifts down the stage and the horizontal lines read as a diagonal moiré
+     in some bands. A 4px period lands on whole device pixels at every .25 DPR
+     step (5/6/7px), stopping the drift. Integer DPRs keep the tighter 3px. */
+  @media (-webkit-min-device-pixel-ratio: 1.01) and (-webkit-max-device-pixel-ratio: 1.99),
+         (min-resolution: 1.01dppx) and (max-resolution: 1.99dppx) {
+    .stage.scanlines::before { --scanline-period: 4px; }
   }
   /* Vignette — radial dark fade from clear center to dark corners. Real DOM
      overlay (not ::after) because augmented-ui owns that pseudo on .stage.
