@@ -1,7 +1,7 @@
 // COMMLINK themes: registry + apply/preview + side-panel renderer.
 //
 // A theme is a set of CSS-variable overrides applied via `:root[data-theme=X]`.
-// `default` is the baseline (no overrides — vars from the regular `:root`).
+// `neon` is the baseline (no overrides — vars from the regular `:root`).
 //
 // Lifecycle:
 //   - On script load, restore saved theme (data-theme attribute set on <html>).
@@ -13,10 +13,19 @@
 const THEME_KEY = 'commlink:theme';
 
 const THEMES = {
-  default: { label: 'DEFAULT' }
+  neon: { label: 'NEON' }
 };
 
-let appliedThemeId = storageGet(THEME_KEY) || 'default';
+// Legacy theme-id remap. Earlier builds stored `default`/`light`; those ids
+// were renamed to `neon`/`paper`. Normalize anywhere a persisted/imported id
+// enters the app (saved theme key, snapshots, JSON import) so old data still
+// resolves to the right theme instead of silently falling back to the baseline.
+const LEGACY_THEME_IDS = { default: 'neon', light: 'paper' };
+function normalizeThemeId(id) {
+  return (id && LEGACY_THEME_IDS[id]) || id;
+}
+
+let appliedThemeId = normalizeThemeId(storageGet(THEME_KEY)) || 'neon';
 // Apply at script load so the CSS vars take effect before first paint.
 // Validity check is deferred to init (in the inline script) because
 // non-default themes register from separate files that load AFTER this one;
@@ -41,7 +50,7 @@ let previewGlitchTimer = null;
 function applyThemeShapes(themeId) {
   const theme = THEMES[themeId];
   const shapes = (theme && theme.shapes)
-    || (THEMES.default && THEMES.default.shapes);
+    || (THEMES.neon && THEMES.neon.shapes);
   if (!shapes) return;
   Object.entries(shapes).forEach(([id, shape]) => {
     const el = document.getElementById(id);
@@ -59,8 +68,8 @@ function applyThemeShapes(themeId) {
 // ---- Per-theme color memory -------------------------------------------
 // Each theme remembers its own accent / choices colors (presets + custom
 // swatches). On switch we snapshot the outgoing theme's colors and restore
-// the incoming theme's saved set, so e.g. NEO_AZTEC can keep a gold accent
-// while the default theme keeps cyan. Colors live in `state`, persisted via
+// the incoming theme's saved set, so e.g. AZTEC can keep a gold accent
+// while the neon theme keeps cyan. Colors live in `state`, persisted via
 // saveState; the snapshots live in state.themeColors[themeId].
 const THEME_COLOR_FIELDS = ['accent', 'choicesColor', 'customAccent', 'customChoicesColor'];
 

@@ -1,6 +1,6 @@
 // GOTHIC theme — dark cathedral aesthetic with ornate avatar frames.
 //
-// Inherits the default theme's renderStage and adds the signal-bars
+// Inherits the neon theme's renderStage and adds the signal-bars
 // graveyard: 5 SVG variants painted as a background-image with the user's
 // accent color baked in. background-image (instead of mask-image) is what
 // lets the stage glitch/chromatic filters actually distort the crosses —
@@ -38,8 +38,8 @@
       dialog: 'tl-2-clip-y tr-2-clip-y br-clip bl-clip border'
     },
     renderStage(state) {
-      if (THEMES.default && typeof THEMES.default.renderStage === 'function') {
-        THEMES.default.renderStage(state);
+      if (THEMES.neon && typeof THEMES.neon.renderStage === 'function') {
+        THEMES.neon.renderStage(state);
       }
       const signalBars = document.getElementById('signalBars');
       if (signalBars) {

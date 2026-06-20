@@ -1,19 +1,19 @@
-// LIGHT theme — an "electronic ink" inversion: dark ink printed on a pale
+// PAPER theme — an "electronic ink" inversion: dark ink printed on a pale
 // paper-white stage, the opposite of every other (dark) theme. The look is
-// mostly a CSS-variable / color treatment (css/themes/light.css) that recolors
-// the inherited DEFAULT stage rendering to dark-on-light. Deliberately
+// mostly a CSS-variable / color treatment (css/themes/paper.css) that recolors
+// the inherited NEON stage rendering to dark-on-light. Deliberately
 // monochrome (the e-ink look), so it stays readable whatever accent the user
 // has picked; the user's accent still tints the speaker names / chosen choice.
 //
 // The one piece of JS is renderStage: renderPreview paints the bundled DARK
 // default background (makeDefaultBg) — and darkens any bg with a brightness
-// filter — which is wrong for a light theme. So we run the default renderer
+// filter — which is wrong for a light theme. So we run the neon renderer
 // and then swap in a pale e-ink page whenever the stage is showing the
 // DEFAULT background (either no bg at all, or the bundled makeDefaultBg one
 // that ships with the seeded examples). A background the USER explicitly
 // picked is left untouched under renderPreview's normal brightness handling.
 
-(function registerLightTheme() {
+(function registerPaperTheme() {
   if (typeof THEMES === 'undefined') return;
 
   // Pale "e-paper" default background, shown in place of the bundled dark
@@ -54,21 +54,21 @@
     return false;
   }
 
-  THEMES.light = {
-    label: 'LIGHT',
+  THEMES.paper = {
+    label: 'PAPER',
     // Soft rounded corners on all four sides — reads like an e-reader screen /
-    // printed card rather than the default theme's angular cyberpunk clips.
-    // (Radii come from the --aug-tl/tr/br/bl values; light.css enlarges them
+    // printed card rather than the neon theme's angular cyberpunk clips.
+    // (Radii come from the --aug-tl/tr/br/bl values; paper.css enlarges them
     // for a more pronounced, device-like curve.)
     shapes: {
       stage: 'tl-round tr-round br-round bl-round border',
       dialog: 'tl-round tr-round br-round bl-round border'
     },
     renderStage(state) {
-      // Inherit the default theme's stage rendering (messages, choices,
-      // channels, signal bars, accent vars). light.css recolors all of it.
-      if (THEMES.default && typeof THEMES.default.renderStage === 'function') {
-        THEMES.default.renderStage(state);
+      // Inherit the neon theme's stage rendering (messages, choices,
+      // channels, signal bars, accent vars). paper.css recolors all of it.
+      if (THEMES.neon && typeof THEMES.neon.renderStage === 'function') {
+        THEMES.neon.renderStage(state);
       }
       // Replace the bundled dark default bg with the pale e-ink page — but
       // ONLY when the stage is showing the DEFAULT background (no bg, or the

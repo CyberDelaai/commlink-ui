@@ -1,6 +1,6 @@
-/* LIGHT theme — "electronic ink": dark ink on pale paper, the inverse of the
-   dark default. Active only when `<html data-theme="light">`. No custom JS
-   renderer — it inherits the DEFAULT theme's renderStage (see js/themes/light.js)
+/* PAPER theme — "electronic ink": dark ink on pale paper, the inverse of the
+   dark default. Active only when `<html data-theme="paper">`. No custom JS
+   renderer — it inherits the NEON theme's renderStage (see js/themes/paper.js)
    and this file recolors the whole stage dark-on-light.
 
    Deliberately monochrome (the e-ink look): body text, channels, system lines
@@ -10,7 +10,7 @@
    Everything is scoped to `.stage` so the surrounding app chrome stays dark. */
 
   /* ---------- E-ink palette (local custom props) ---------- */
-  :root[data-theme="light"] {
+  :root[data-theme="paper"] {
     --eink-paper: #e9e7e0;       /* warm paper white */
     --eink-paper-2: #f2f0ea;     /* lighter highlight */
     --eink-ink: #1b1a16;         /* near-black primary ink */
@@ -25,7 +25,7 @@
   }
 
   /* ---------- Stage: pale paper wash with a soft inner shade ---------- */
-  :root[data-theme="light"] .stage {
+  :root[data-theme="paper"] .stage {
     --aug-border-bg: var(--eink-line);
     --aug-inlay-bg: var(--eink-paper);
     /* Generous, even radius on all four corners → rounded e-reader bezel. */
@@ -40,7 +40,7 @@
   /* Replace the default's dark-tinted radials with a faint paper vignette +
      extremely subtle grain, so a stage with no background image reads as a
      clean printed page rather than glowing black. */
-  :root[data-theme="light"] #stageBg::after {
+  :root[data-theme="paper"] #stageBg::after {
     background:
       radial-gradient(ellipse at 50% 30%, transparent 55%, rgba(0, 0, 0, 0.06) 100%),
       url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='g'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix type='saturate' values='0'/></filter><rect width='100%' height='100%' filter='url(%23g)' opacity='0.05'/></svg>");
@@ -52,7 +52,7 @@
      background is left under renderPreview's normal brightness handling.) */
 
   /* ---------- Dialog: paper slab, dark hairline border, dark ink text ---- */
-  :root[data-theme="light"] .stage .dialog {
+  :root[data-theme="paper"] .stage .dialog {
     color: var(--eink-ink);
     --aug-border-bg: var(--eink-line);
     --aug-inlay-bg: rgba(238, 236, 229, 0.94);
@@ -66,69 +66,69 @@
   }
 
   /* ---------- Channel labels: dark ink, dark drop instead of the glow ---- */
-  :root[data-theme="light"] .stage .stage-channel {
+  :root[data-theme="paper"] .stage .stage-channel {
     color: var(--eink-ink-2);
     text-shadow: var(--eink-glow);
   }
   /* Pull both channels outward (toward the stage edges) so they sit clear of
      the rounded inner dialog frame instead of crowding it. Defaults are 24px. */
-  :root[data-theme="light"] .stage .stage-channel.top { top: 12px; }
-  :root[data-theme="light"] .stage .stage-channel.bottom { bottom: 12px; }
+  :root[data-theme="paper"] .stage .stage-channel.top { top: 12px; }
+  :root[data-theme="paper"] .stage .stage-channel.bottom { bottom: 12px; }
   /* Accent pip before the top channel keeps its color (the one spot of ink
      in a second color); fall back to dark ink if the accent is very pale. */
-  :root[data-theme="light"] .stage .stage-channel.top:not(:empty)::before {
+  :root[data-theme="paper"] .stage .stage-channel.top:not(:empty)::before {
     box-shadow: none;
   }
 
   /* ---------- Messages ---------- */
-  :root[data-theme="light"] .stage .message .name {
+  :root[data-theme="paper"] .stage .message .name {
     color: color-mix(in srgb, var(--accent) 80%, #000 20%);
     text-shadow: var(--eink-glow);
   }
-  :root[data-theme="light"] .stage .message .time {
+  :root[data-theme="paper"] .stage .message .time {
     color: rgba(20, 18, 12, 0.5);
   }
-  :root[data-theme="light"] .stage .message:not(.system) .body {
+  :root[data-theme="paper"] .stage .message:not(.system) .body {
     color: var(--eink-ink);
     text-shadow: var(--eink-glow);
   }
   /* Square portraits: dark hairline frame, no glow. */
-  :root[data-theme="light"] .stage .message .portrait {
+  :root[data-theme="paper"] .stage .message .portrait {
     border: 1px solid var(--eink-line);
     box-shadow: 0 1px 4px rgba(0, 0, 0, 0.18);
   }
-  :root[data-theme="light"] .stage .message .body-image {
+  :root[data-theme="paper"] .stage .message .body-image {
     border-color: var(--eink-line);
   }
   /* FRAMES on: a paper bubble with a dark hairline (overrides the default's
      dark gradient fill + accent border). */
-  :root[data-theme="light"] .stage.frames .message:not(.system) .body {
+  :root[data-theme="paper"] .stage.frames .message:not(.system) .body {
     background: rgba(255, 255, 255, 0.45);
     --aug-border-bg: var(--eink-line);
   }
 
   /* ---------- System message: dashed rules + dim ink caption ---------- */
-  :root[data-theme="light"] .stage .message.system .sys-rule {
+  :root[data-theme="paper"] .stage .message.system .sys-rule {
     border-top-color: var(--eink-line);
   }
-  :root[data-theme="light"] .stage .message.system .body {
+  :root[data-theme="paper"] .stage .message.system .body {
     color: var(--eink-ink-2);
     text-shadow: var(--eink-glow);
   }
 
   /* ---------- Choices: dim ink list, accent tint on the chosen line ---- */
-  :root[data-theme="light"] .stage .choices {
+  :root[data-theme="paper"] .stage .choices {
     border-top: 1px dashed var(--eink-line);
   }
-  :root[data-theme="light"] .stage .choice,
-  :root[data-theme="light"] .stage .choice .num,
-  :root[data-theme="light"] .stage .choice .arrow {
+  :root[data-theme="paper"] .stage .choice,
+  :root[data-theme="paper"] .stage .choice .num,
+  :root[data-theme="paper"] .stage .choice .arrow {
     color: var(--eink-ink-2);
     text-shadow: var(--eink-glow);
   }
-  :root[data-theme="light"] .stage .choice.chosen,
-  :root[data-theme="light"] .stage .choice.chosen .num,
-  :root[data-theme="light"] .stage .choice.chosen .arrow {
+  :root[data-theme="paper"] .stage .choice.chosen,
+  :root[data-theme="paper"] .stage .choice.chosen .num,
+  :root[data-theme="paper"] .stage .choice.chosen .arrow {
     color: color-mix(in srgb, var(--choices-color) 80%, #000 20%);
     text-shadow: var(--eink-glow);
   }
@@ -138,13 +138,13 @@
      edge; the theme's now-rounded corners curve into that spot, so lift the
      whole meter clear of the frame with a transform (leaves the dynamic
      top/right alignment intact). */
-  :root[data-theme="light"] .signal-bars {
+  :root[data-theme="paper"] .signal-bars {
     transform: translateY(-16px);
   }
-  :root[data-theme="light"] .signal-bars .bar.on {
+  :root[data-theme="paper"] .signal-bars .bar.on {
     background: var(--eink-ink);
     box-shadow: none;
   }
-  :root[data-theme="light"] .signal-bars .bar:not(.on) {
+  :root[data-theme="paper"] .signal-bars .bar:not(.on) {
     background: rgba(20, 18, 12, 0.18);
   }

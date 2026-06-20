@@ -101,11 +101,11 @@
       dialog: 'tl-clip br-clip border'
     },
     renderStage(state) {
-      // Inherit the default theme's stage rendering (messages, choices,
+      // Inherit the neon theme's stage rendering (messages, choices,
       // channels, accent vars, and — crucially — the lit signal-bar count
       // that we read below to drive the rain).
-      if (THEMES.default && typeof THEMES.default.renderStage === 'function') {
-        THEMES.default.renderStage(state);
+      if (THEMES.neon && typeof THEMES.neon.renderStage === 'function') {
+        THEMES.neon.renderStage(state);
       }
 
       // Desaturate the background. renderPreview has already written the
@@ -119,7 +119,7 @@
         bg.style.filter = `grayscale(1) brightness(${bright}) contrast(1.55)`;
       }
 
-      // Signal meter → cigarette. The default renderStage just toggled the
+      // Signal meter → cigarette. The neon renderStage just toggled the
       // `.bar.on` classes; count them and treat that as the burn level.
       const signalBars = document.getElementById('signalBars');
       const lit = signalBars ? signalBars.querySelectorAll('.bar.on').length : 5;
@@ -138,8 +138,8 @@
       // Notched bubble frames: when FRAMES is on, clip a SINGLE top corner of
       // each message bubble — the inner one, facing the center of the dialog
       // (top-right for left messages, top-left for right) — and let
-      // augmented-ui draw the white border around that silhouette. default.js
-      // strips the attribute for non-default themes, so we (re)apply it here.
+      // augmented-ui draw the white border around that silhouette. neon.js
+      // strips the attribute for non-neon themes, so we (re)apply it here.
       if (typeof pMessages !== 'undefined' && pMessages) {
         pMessages.querySelectorAll('.message:not(.system)').forEach((el) => {
           const body = el.querySelector('.body');

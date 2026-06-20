@@ -57,7 +57,7 @@ exportBtn.addEventListener('click', async () => {
       pixelRatio: PIXEL_RATIO,
       backgroundColor: '#000',
       // Zero the cloned root's margin: html-to-image inlines USED margins,
-      // so a `margin: 0 auto`-centered capture (NEO_AZTEC's snapped width)
+      // so a `margin: 0 auto`-centered capture (AZTEC's snapped width)
       // would render shifted right and lose its right edge in the canvas.
       style: { margin: '0' },
       // cacheBust appends ?t=… to image URLs, which corrupts blob: URLs

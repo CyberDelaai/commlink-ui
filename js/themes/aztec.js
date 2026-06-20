@@ -278,7 +278,7 @@
   }
 
   THEMES.aztec = {
-    label: 'NEO_AZTEC',
+    label: 'AZTEC',
     // Stage stays a plain rectangle (the tile frame is the outer frame).
     // Dialog: double-stepped corners (stepped-pyramid silhouette echoing the
     // tiles' stepped fret) + rectangular "temple doorway" niches centered on
@@ -288,8 +288,8 @@
       dialog: 'tl-2-clip-x tr-2-clip-x br-2-clip-x bl-2-clip-x t-rect b-rect border'
     },
     renderStage(state) {
-      if (THEMES.default && typeof THEMES.default.renderStage === 'function') {
-        THEMES.default.renderStage(state);
+      if (THEMES.neon && typeof THEMES.neon.renderStage === 'function') {
+        THEMES.neon.renderStage(state);
       }
       setFrameVars(state.accent || '#fcee0a');
       // Signal grail (same pattern as gothic's graveyard): blood level

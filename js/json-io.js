@@ -31,7 +31,7 @@ exportStateBtn.addEventListener('click', async () => {
       exportedAt: Date.now(),
       state: await inlineIdbRefs(clone(state)),
       contacts: loadContacts(),
-      theme: typeof appliedThemeId !== 'undefined' ? appliedThemeId : 'default'
+      theme: typeof appliedThemeId !== 'undefined' ? appliedThemeId : 'neon'
     };
     const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
     const url = URL.createObjectURL(blob);
@@ -90,9 +90,11 @@ importStateFile.addEventListener('change', (e) => {
         saveContacts(data.contacts);
         renderContacts();
       }
-      // Apply imported theme (defaults to `default` if missing or unknown).
+      // Apply imported theme (defaults to `neon` if missing or unknown).
+      // Normalize legacy ids first so older exports keep their theme.
       if (typeof applyTheme === 'function') {
-        applyTheme(data.theme && THEMES[data.theme] ? data.theme : 'default');
+        const impTheme = typeof normalizeThemeId === 'function' ? normalizeThemeId(data.theme) : data.theme;
+        applyTheme(impTheme && THEMES[impTheme] ? impTheme : 'neon');
       }
       saveState();
       gcImages().catch(() => {});

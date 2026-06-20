@@ -19,7 +19,7 @@ function snapshotFromState() {
   const { lang, ...slim } = clone(state);
   return {
     ...slim,
-    theme: typeof appliedThemeId !== 'undefined' ? appliedThemeId : 'default',
+    theme: typeof appliedThemeId !== 'undefined' ? appliedThemeId : 'neon',
     contacts: loadContacts(),
     savedAt: Date.now()
   };
@@ -129,10 +129,12 @@ async function loadSnapshotInto(name) {
     if (m && isImgRef(m.bodyImageOriginal)) refs.push(m.bodyImageOriginal);
   });
   await preloadImageRefs(refs);
-  // Apply the snapshot's saved theme (or fall back to default if missing/
-  // unknown). applyTheme also re-renders, so call it before syncForm.
+  // Apply the snapshot's saved theme (or fall back to neon if missing/
+  // unknown). Normalize legacy ids first so old snapshots keep their theme.
+  // applyTheme also re-renders, so call it before syncForm.
   if (typeof applyTheme === 'function') {
-    applyTheme(snap.theme && THEMES[snap.theme] ? snap.theme : 'default');
+    const snapTheme = typeof normalizeThemeId === 'function' ? normalizeThemeId(snap.theme) : snap.theme;
+    applyTheme(snapTheme && THEMES[snapTheme] ? snapTheme : 'neon');
   }
   // Strip the snapshot's `theme` marker from the working state object so
   // the next snapshotFromState pulls a fresh value from appliedThemeId.
@@ -183,7 +185,7 @@ function buildExampleMessagesFor(lang) {
 }
 
 function seedDefaults() {
-  const SEED_VERSION = '20';
+  const SEED_VERSION = '21';
   if (storageGet(SEEDED_KEY) === SEED_VERSION) return;
   // One-time cleanup: strip portraitOriginal (dead since avatar-recrop was
   // removed) from any existing saved snapshots to reclaim localStorage.
@@ -229,7 +231,7 @@ function seedDefaults() {
       messages: buildExampleMessagesFor(lang),
       choices: tr.example.choices.map((c, i) => ({ text: c, chosen: i === 0 })),
       choicesColor: '#00f0ff',
-      theme: 'default',
+      theme: 'neon',
       contacts: defaultContacts,
       lang: lang,
       savedAt: Date.now()

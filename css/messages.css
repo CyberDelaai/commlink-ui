@@ -532,7 +532,7 @@
   /* Message frames toggle (FX → FRAMES) — wraps each message body in an
      augmented-ui chip with mirrored corner clips (TL+BR on left messages,
      TR+BL on right). The `data-augmented-ui` attribute is set per-body by
-     `themes/default.js` so other themes can swap in their own bubble look. */
+     `themes/neon.js` so other themes can swap in their own bubble look. */
   .stage.frames .message:not(.system) .body {
     padding: 8px 14px;
     background:

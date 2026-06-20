@@ -1,4 +1,4 @@
-// DEFAULT theme — paints the cyberpunk dialog inside .stage.
+// NEON theme — the baseline. Paints the cyberpunk dialog inside .stage.
 //
 // Scope: everything inside `#stage` that is **theme-owned** — channel
 // labels, dialog frame, message bubbles, choice list, signal bars, accent
@@ -9,18 +9,18 @@
 // Other themes mirror this shape: register a `renderStage(state)` on their
 // THEMES entry and operate on the same stage element.
 
-(function registerDefaultTheme() {
-  if (typeof THEMES === 'undefined' || !THEMES.default) return;
+(function registerNeonTheme() {
+  if (typeof THEMES === 'undefined' || !THEMES.neon) return;
 
   // Augmented-ui shapes per element — mirrors the values authored directly
-  // in index.html so switching FROM another theme BACK to default restores
+  // in index.html so switching FROM another theme BACK to neon restores
   // the original cyberpunk clipped silhouette.
-  THEMES.default.shapes = {
+  THEMES.neon.shapes = {
     stage: 'tl-clip tr-clip-x br-clip bl-clip-x border',
     dialog: 'tl-clip tr-clip-x br-clip bl-clip-x t-clip-x b-clip-x border'
   };
 
-  THEMES.default.renderStage = function renderDefaultStage(state) {
+  THEMES.neon.renderStage = function renderNeonStage(state) {
     pMeta.textContent = state.meta || '';
     pMetaRight.textContent = state.metaRight || '';
 
@@ -50,12 +50,12 @@
       el.querySelector('.time').textContent = (m.time || '').trim();
       const bodyEl = el.querySelector('.body');
       bodyEl.innerHTML = renderBodyHtml(m.body || '');
-      // When FRAMES is on AND the default theme is active, paint each body
+      // When FRAMES is on AND the neon theme is active, paint each body
       // with an augmented-ui clip silhouette (one chip per side, mirrored).
       // Other themes opt out so their own frame look wins.
       const activeTheme = (typeof previewingThemeId !== 'undefined' && previewingThemeId)
-        || (typeof appliedThemeId !== 'undefined' ? appliedThemeId : 'default');
-      if (state.frames && activeTheme === 'default') {
+        || (typeof appliedThemeId !== 'undefined' ? appliedThemeId : 'neon');
+      if (state.frames && activeTheme === 'neon') {
         bodyEl.setAttribute('data-augmented-ui',
           side === 'right'
             ? 'tl-clip br-clip border'
@@ -112,7 +112,7 @@
       // Clear any custom signal-bar graphic a previously-active theme painted
       // inline (aztec/noir/gothic set `style.backgroundImage` + signalLevel).
       // Themes that want their own graphic call us first, then re-set it; the
-      // default/bubblegum bars rely on the .bar children, so wipe the leftover.
+      // neon/bubblegum bars rely on the .bar children, so wipe the leftover.
       signalBars.style.backgroundImage = '';
       delete signalBars.dataset.signalLevel;
       signalBars.querySelectorAll('.bar').forEach((bar, i) => {
