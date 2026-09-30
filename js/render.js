@@ -716,6 +716,12 @@ function renderChoicesEditor() {
   augmentButtons(choicesWrap);
 }
 
+// Whether an FX (glitch/scanlines/chromatic/vignette) should actually render:
+// its own toggle is on AND the master ALL bypass isn't engaged.
+function fxActive(key) {
+  return !state.fxOff && !!state[key];
+}
+
 function renderPreview() {
   // ----- Universal FX layer: overlays + filter params that sit OVER any
   // theme's stage output. The theme is responsible for the dialog/channels
@@ -742,17 +748,19 @@ function renderPreview() {
   const vAmt = (typeof state.vignetteAmount === 'number') ? state.vignetteAmount : 0.6;
   stage.style.setProperty('--vignette-alpha', vAmt);
   const fxFilters = [];
-  if (state.chromatic) fxFilters.push('url(#chromatic-aberration)');
-  if (state.glitch) fxFilters.push('url(#glitch-slices)');
+  if (fxActive('chromatic')) fxFilters.push('url(#chromatic-aberration)');
+  if (fxActive('glitch')) fxFilters.push('url(#glitch-slices)');
   stage.style.setProperty('--stage-filter', fxFilters.length ? fxFilters.join(' ') : 'none');
-  stage.classList.toggle('glitch', state.glitch);
-  stage.classList.toggle('scanlines', state.scanlines);
-  stage.classList.toggle('chromatic', state.chromatic);
-  stage.classList.toggle('vignette', state.vignette);
+  stage.classList.toggle('glitch', fxActive('glitch'));
+  stage.classList.toggle('scanlines', fxActive('scanlines'));
+  stage.classList.toggle('chromatic', fxActive('chromatic'));
+  stage.classList.toggle('vignette', fxActive('vignette'));
   toggleGlitchBtn.setAttribute('data-pos', state.glitch ? 'right' : 'left');
   toggleScanlinesBtn.setAttribute('data-pos', state.scanlines ? 'right' : 'left');
   toggleChromaticBtn.setAttribute('data-pos', state.chromatic ? 'right' : 'left');
   toggleVignetteBtn.setAttribute('data-pos', state.vignette ? 'right' : 'left');
+  toggleAllFxBtn.setAttribute('data-pos', state.fxOff ? 'left' : 'right');
+  document.getElementById('fxGrid').classList.toggle('fx-bypassed', !!state.fxOff);
   const framesBtn = document.getElementById('toggleFrames');
   if (framesBtn) framesBtn.setAttribute('data-pos', state.frames ? 'right' : 'left');
   if (state.bg) {

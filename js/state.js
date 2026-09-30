@@ -82,6 +82,9 @@ const defaultState = {
   chromaticAmount: 2,
   vignette: false,
   vignetteAmount: 0.6,
+  // Master FX bypass (ALL switch): true suppresses every effect while the
+  // individual toggles keep their own on/off values. See fxActive().
+  fxOff: false,
   frames: false,
   bg: makeDefaultBg(),
   bgOriginal: '',

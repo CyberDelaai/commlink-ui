@@ -119,7 +119,7 @@
     // Reads the same glitch-amount control that the universal layer uses.
     const gAmt = (typeof state.glitchAmount === 'number') ? state.glitchAmount : 38;
     const maxG = parseFloat(glitchAmountInput.max) || 80;
-    const effectiveGlitch = state.glitch ? gAmt : 0;
+    const effectiveGlitch = (typeof fxActive === 'function' ? fxActive('glitch') : state.glitch) ? gAmt : 0;
     const litCount = Math.max(1, Math.round(5 * (1 - effectiveGlitch / maxG)));
     const signalBars = document.getElementById('signalBars');
     if (signalBars) {

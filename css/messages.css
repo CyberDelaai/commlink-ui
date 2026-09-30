@@ -195,6 +195,16 @@
     align-items: center;
   }
   .fx-grid .side-switch.fx { justify-self: end; }
+  /* FX field header: label on the left, master bypass switch on the right */
+  .fx-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 6px;
+  }
+  .fx-head > label { margin-bottom: 0; }
+  /* Master switch off: dim the individual FX rows (they keep their positions). */
+  .fx-grid.fx-bypassed { opacity: 0.4; }
   .fx-toggle {
     display: flex;
     align-items: center;
