@@ -27,7 +27,8 @@ window.I18N = {
     fx: { glitch: 'GLITCH', scanlines: 'SCANLINES', chromatic: 'RGB', vignette: 'VIGNETTE', frames: 'FRAMES', hide: 'HIDE' },
     btn: {
       addMessage: '+ MESSAGE',
-      addSysMessage: '+ SYSTEM MESSAGE',
+      addSysMessage: '+ SYSTEM',
+      addConsole: '+ CONSOLE',
       clearAll: 'CLEAR ALL',
       add: '+ ADD',
       clear: 'CLEAR',
@@ -118,7 +119,8 @@ window.I18N = {
     fx: { glitch: 'ГЛИТЧ', scanlines: 'ПОЛОСЫ', chromatic: 'RGB', vignette: 'ВИНЬЕТКА', frames: 'РАМКИ', hide: 'СКРЫТЬ' },
     btn: {
       addMessage: '+ СООБЩЕНИЕ',
-      addSysMessage: '+ СИСТ. СООБЩ.',
+      addSysMessage: '+ СИСТЕМА',
+      addConsole: '+ КОНСОЛЬ',
       clearAll: 'ОЧИСТИТЬ',
       add: '+ ДОБАВИТЬ',
       clear: 'ОЧИСТ.',
@@ -209,7 +211,8 @@ window.I18N = {
     fx: { glitch: 'GLITCH', scanlines: 'SCANLINES', chromatic: 'RGB', vignette: 'VIGNETTE', frames: 'CADRES', hide: 'CACHER' },
     btn: {
       addMessage: '+ MESSAGE',
-      addSysMessage: '+ MSG SYSTÈME',
+      addSysMessage: '+ SYSTÈME',
+      addConsole: '+ CONSOLE',
       clearAll: 'TOUT EFFACER',
       add: '+ AJOUTER',
       clear: 'EFFACER',
@@ -300,7 +303,8 @@ window.I18N = {
     fx: { glitch: 'GLITCH', scanlines: 'SCANLINES', chromatic: 'RGB', vignette: 'VIGNETTE', frames: 'RAHMEN', hide: 'AUSBL.' },
     btn: {
       addMessage: '+ NACHRICHT',
-      addSysMessage: '+ SYS-NACHR.',
+      addSysMessage: '+ SYSTEM',
+      addConsole: '+ KONSOLE',
       clearAll: 'ALLES LÖSCHEN',
       add: '+ HINZU',
       clear: 'LÖSCHEN',
@@ -391,7 +395,8 @@ window.I18N = {
     fx: { glitch: 'GLITCH', scanlines: 'LÍNEAS', chromatic: 'RGB', vignette: 'VIÑETA', frames: 'MARCOS', hide: 'OCULTAR' },
     btn: {
       addMessage: '+ MENSAJE',
-      addSysMessage: '+ MSG SISTEMA',
+      addSysMessage: '+ SISTEMA',
+      addConsole: '+ CONSOLA',
       clearAll: 'BORRAR TODO',
       add: '+ AÑADIR',
       clear: 'BORRAR',
@@ -482,7 +487,8 @@ window.I18N = {
     fx: { glitch: 'GLITCH', scanlines: 'SCANLINES', chromatic: 'RGB', vignette: 'VIGNETTE', frames: 'CORNICI', hide: 'NASCONDI' },
     btn: {
       addMessage: '+ MESSAGGIO',
-      addSysMessage: '+ MSG SISTEMA',
+      addSysMessage: '+ SISTEMA',
+      addConsole: '+ CONSOLE',
       clearAll: 'CANCELLA TUTTO',
       add: '+ AGGIUNGI',
       clear: 'CANCELLA',
@@ -574,6 +580,7 @@ window.I18N = {
     btn: {
       addMessage: '+ メッセージ',
       addSysMessage: '+ システム',
+      addConsole: '+ コンソール',
       clearAll: '全クリア',
       add: '+ 追加',
       clear: 'クリア',
@@ -665,6 +672,7 @@ window.I18N = {
     btn: {
       addMessage: '+ 消息',
       addSysMessage: '+ 系统',
+      addConsole: '+ 控制台',
       clearAll: '全部清除',
       add: '+ 添加',
       clear: '清除',

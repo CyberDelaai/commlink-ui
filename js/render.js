@@ -3,6 +3,13 @@
 // script in the page so its function declarations are global at the time
 // inline init calls them; function bodies look up state/DOM refs lazily.
 
+// Default text/frame color of console messages (m.type === 'console');
+// per-message override lives in m.consoleColor.
+const CONSOLE_DEFAULT_COLOR = '#39ff88';
+// Quick-pick presets shown left of the console color picker:
+// phosphor green, amber CRT, alert red.
+const CONSOLE_PRESET_COLORS = ['#39ff88', '#ffb000', '#ff3b5c'];
+
 // Curated kaomoji set surfaced via the 顔 toolbar button on each message row.
 // Inserted at the textarea cursor; popup closes on insert.
 //
@@ -57,7 +64,7 @@ function renderMessagesEditor() {
   // its message has a resolvable contact link. Pass a precomputed Set for
   // bulk paths; handlers omit it and we re-read the contacts list.
   function refreshNoContact(row, m, knownIds) {
-    if (!row || !m || m.type === 'system') return;
+    if (!row || !m || m.type === 'system' || m.type === 'console') return;
     const ids = knownIds || new Set(loadContacts().map(c => c.id));
     const linked = !!(m.contactId && ids.has(m.contactId));
     row.classList.toggle('no-contact', !linked);
@@ -71,13 +78,17 @@ function renderMessagesEditor() {
     const row = document.createElement('div');
     row.className = 'msg-row';
 
-    // ----- System message editor: simplified row -----
-    if (m.type === 'system') {
+    // ----- System / console message editor: simplified row -----
+    // Console rows share the system row's layout (no speaker/avatar) and its
+    // .system class; .console adds the green card + color picker.
+    if (m.type === 'system' || m.type === 'console') {
+      const isConsole = m.type === 'console';
       row.classList.add('system');
+      row.classList.toggle('console', isConsole);
       row.innerHTML = `
         <div class="msg-row-left">
           <span class="msg-pip"></span>
-          <span class="idx"><span class="idx-text">SYS ${String(i + 1).padStart(2, '0')}</span></span>
+          <span class="idx"><span class="idx-text">${isConsole ? 'CON' : 'SYS'} ${String(i + 1).padStart(2, '0')}</span></span>
           <span class="vspace"></span>
           <button class="btn ghost reorder-btn" type="button" data-up aria-label="move up" ${i === 0 ? 'disabled' : ''}>↑</button>
           <button class="btn ghost reorder-btn" type="button" data-down aria-label="move down" ${i === state.messages.length - 1 ? 'disabled' : ''}>↓</button>
@@ -85,17 +96,39 @@ function renderMessagesEditor() {
         <div class="msg-row-divider"></div>
         <div class="msg-row-right">
           <div class="msg-row-head">
-            <span class="sys-label">// SYSTEM MESSAGE</span>
+            <span class="sys-label">${isConsole ? '// CONSOLE' : '// SYSTEM MESSAGE'}</span>
             <span class="toolbar-spacer"></span>
+            ${isConsole ? CONSOLE_PRESET_COLORS.map(c => `<button class="swatch console-preset${(m.consoleColor || CONSOLE_DEFAULT_COLOR).toLowerCase() === c ? ' active' : ''}" type="button" data-console-preset="${c}" style="background:${c}; color:${c}" aria-label="console color ${c}" title="${c}"></button>`).join('') : ''}
+            ${isConsole ? `<label class="swatch-pick-btn console-color-pick" title="Console color" data-augmented-ui="tl-clip br-clip border" style="color:${m.consoleColor || CONSOLE_DEFAULT_COLOR}">
+              <input type="color" data-console-color value="${m.consoleColor || CONSOLE_DEFAULT_COLOR}" />
+              <svg class="pick-icon" viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true"><path d="M480-80q-82 0-155-31.5t-127.5-86Q143-252 111.5-325T80-480q0-83 32.5-156t88-127Q256-817 330-848.5T488-880q80 0 151 27.5t124.5 76q53.5 48.5 85 115T880-518q0 115-70 176.5T640-280h-74q-9 0-12.5 5t-3.5 11q0 12 15 34.5t15 51.5q0 50-27.5 74T480-80Zm0-400Zm-177 23q17-17 17-43t-17-43q-17-17-43-17t-43 17q-17 17-17 43t17 43q17 17 43 17t43-17Zm120-160q17-17 17-43t-17-43q-17-17-43-17t-43 17q-17 17-17 43t17 43q17 17 43 17t43-17Zm200 0q17-17 17-43t-17-43q-17-17-43-17t-43 17q-17 17-17 43t17 43q17 17 43 17t43-17Zm120 160q17-17 17-43t-17-43q-17-17-43-17t-43 17q-17 17-17 43t17 43q17 17 43 17t43-17ZM480-160q9 0 14.5-5t5.5-13q0-14-15-33t-15-57q0-42 29-67t71-25h70q66 0 113-38.5T800-518q0-121-92.5-201.5T488-800q-136 0-232 93t-96 227q0 133 93.5 226.5T480-160Z"/></svg>
+            </label>` : ''}
             <button class="btn cyan icon" type="button" data-clone aria-label="clone" title="Clone">
               <svg class="mi" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg>
             </button>
             <button class="btn danger icon" type="button" aria-label="remove" data-remove>✕</button>
           </div>
-          <textarea class="body-input" maxlength="200" placeholder="System message..."></textarea>
+          <textarea class="body-input" maxlength="${isConsole ? 1000 : 200}" placeholder="${isConsole ? '$ run --code...' : 'System message...'}" spellcheck="${!isConsole}"></textarea>
         </div>
       `;
       const sbd = row.querySelector('.body-input');
+      const ccIn = row.querySelector('[data-console-color]');
+      if (ccIn) {
+        // Updates in place, no editor re-render: the picker's 'input' fires
+        // while dragging, and a re-render would close the native picker.
+        const setConsoleColor = (c) => {
+          state.messages[i].consoleColor = c;
+          ccIn.value = c;
+          ccIn.parentElement.style.color = c;
+          row.querySelectorAll('[data-console-preset]').forEach(b =>
+            b.classList.toggle('active', b.dataset.consolePreset === c.toLowerCase()));
+          renderPreview();
+          saveState();
+        };
+        ccIn.addEventListener('input', () => setConsoleColor(ccIn.value));
+        row.querySelectorAll('[data-console-preset]').forEach(b =>
+          b.addEventListener('click', () => setConsoleColor(b.dataset.consolePreset)));
+      }
       sbd.value = m.body;
       sbd.addEventListener('input', () => {
         state.messages[i].body = sbd.value;
@@ -596,7 +629,7 @@ function renderMessagesEditor() {
       // The chain is defined by a shared chainId or a shared contactId.
       const anchor = state.messages[i];
       state.messages.forEach(m => {
-        if (!m || m.type === 'system') return;
+        if (!m || m.type === 'system' || m.type === 'console') return;
         if (inSameChain(m, anchor)) {
           m.contactId = newId;
           m.speaker = '';

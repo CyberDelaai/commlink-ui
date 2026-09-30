@@ -27,6 +27,20 @@
     pMessages.innerHTML = '';
     const contactsCache = loadContacts();
     state.messages.forEach((m) => {
+      // Console message: framed terminal block. Keeps the .system class so
+      // themes treat it like a system line (no bubble frames), but uses its
+      // own .console-body (not .body) so themes' system-caption rules
+      // (crosses, stamps, centered caps) don't bleed into the code.
+      if (m.type === 'console') {
+        if (!m.body.trim()) return;
+        const conEl = document.createElement('div');
+        conEl.className = 'message system console';
+        if (m.consoleColor) conEl.style.setProperty('--console-color', m.consoleColor);
+        conEl.innerHTML = '<pre class="console-body" data-augmented-ui="br-clip border"></pre>';
+        conEl.querySelector('.console-body').textContent = m.body;
+        pMessages.appendChild(conEl);
+        return;
+      }
       if (m.type === 'system') {
         if (!m.body.trim()) return;
         const sysEl = document.createElement('div');

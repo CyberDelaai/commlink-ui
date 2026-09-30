@@ -719,6 +719,49 @@
     white-space: pre-wrap;
   }
 
+  /* Console message (preview) — framed terminal block. Stays a
+     dark phosphor box in every theme on purpose: it's a pasted-in terminal,
+     not part of the dialog's own ink. */
+  .message.system.console {
+    --console-color: #39ff88; /* per-message override set inline by neon.js */
+    align-items: stretch;
+    max-width: 88%;
+    width: 88%;
+  }
+  .message.system.console .console-body {
+    margin: 0;
+    padding: 10px 14px 10px 26px;
+    position: relative;
+    background:
+      repeating-linear-gradient(0deg, color-mix(in srgb, var(--console-color) 3.5%, transparent) 0 1px, transparent 1px 3px),
+      color-mix(in srgb, var(--console-color) 4%, rgba(2, 4, 3, 0.88));
+    /* Frame via augmented-ui (br-clip border) so the diagonal cut carries
+       the border line too — a plain CSS border would be sliced off. */
+    border: none;
+    --aug-border-all: 1px;
+    --aug-border-bg: color-mix(in srgb, var(--console-color) 55%, transparent);
+    --aug-br: 12px;
+    color: var(--console-color);
+    text-shadow: 0 0 4px color-mix(in srgb, var(--console-color) 45%, transparent);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12.5px;
+    font-weight: 400;
+    line-height: 1.55;
+    letter-spacing: 0;
+    text-align: left;
+    white-space: pre-wrap;
+    word-break: break-word;
+    tab-size: 2;
+  }
+  /* Prompt glyph in the gutter */
+  .message.system.console .console-body::before {
+    content: '>';
+    position: absolute;
+    left: 10px;
+    top: 10px;
+    color: color-mix(in srgb, var(--console-color) 60%, transparent);
+  }
+
   /* System message (editor) — distinct visual */
   .msg-row.system {
     border-left-color: var(--cyan);
@@ -729,6 +772,46 @@
     font-size: 11px;
     letter-spacing: 2px;
     text-transform: uppercase;
+  }
+  /* Console message (editor): left edge + label go console green; pip,
+     index and buttons keep the normal cyan. */
+  .msg-row.system.console {
+    border-left-color: #39ff88;
+  }
+  .msg-row.system.console .sys-label {
+    color: #39ff88;
+  }
+  .msg-row.system.console .msg-row-divider {
+    background: rgba(57, 255, 136, 0.22);
+  }
+  .msg-row.system.console .body-input {
+    border-color: rgba(57, 255, 136, 0.2);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12.5px;
+    color: #39ff88;
+    white-space: pre;
+    overflow-x: auto;
+  }
+  /* Console color picker: match the 32px row buttons beside it (size,
+     tl+br 4px clips, no label margin). Icon is tinted with the current
+     console color (inline `color`). */
+  .msg-row.system .console-color-pick {
+    width: 36px;
+    height: 32px;
+    margin: 0;
+    flex-shrink: 0;
+    --aug-tl: 4px;
+    --aug-br: 4px;
+  }
+  /* Console color presets reuse the accent .swatch look; just reset
+     button defaults. */
+  .msg-row.system .console-preset {
+    margin: 0;
+    padding: 0;
+    flex-shrink: 0;
+  }
+  .msg-row.system.console .body-input:focus {
+    border-color: var(--yellow);
   }
 
   .choices {

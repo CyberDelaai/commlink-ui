@@ -1,4 +1,4 @@
-<!-- COMMLINK v1.4.39 -->
+<!-- COMMLINK v1.5.0 -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -392,8 +392,9 @@
       <div id="messages"></div>
       <div class="btn-row">
         <button class="btn cyan icon" id="addMessage" type="button" data-i18n="btn.addMessage">+ MESSAGE</button>
-        <button class="btn cyan icon" id="addSystemMessage" type="button" data-i18n="btn.addSysMessage">+ SYSTEM MESSAGE</button>
-        <button class="btn danger icon" id="clearMessages" type="button" data-i18n="btn.clearAll">CLEAR ALL</button>
+        <button class="btn cyan icon" id="addSystemMessage" type="button" data-i18n="btn.addSysMessage">+ SYSTEM</button>
+        <button class="btn cyan icon" id="addConsoleMessage" type="button" data-i18n="btn.addConsole">+ CONSOLE</button>
+        <button class="btn danger icon" id="clearMessages" type="button" data-i18n="btn.clear">CLEAR</button>
       </div>
     </div>
   </section>
@@ -644,7 +645,7 @@
   //   Z (third)  — bumped for all small changes (tweaks, fixes, polish).
   // To bump, run `python3 bump_version.py {x|y|z}` — it updates this constant
   // AND the mirrored `<!-- COMMLINK vX.Y.Z -->` comment on line 1 in sync.
-  const APP_VERSION = '1.4.39';
+  const APP_VERSION = '1.5.0';
 
   // GitHub repo from which the commit count ("changes: N") in the header tag
   // is fetched. Cached in localStorage for an hour so we don't burn the
@@ -728,6 +729,7 @@
   const messagesWrap = $('messages');
   const addMessageBtn = $('addMessage');
   const addSystemMessageBtn = $('addSystemMessage');
+  const addConsoleMessageBtn = $('addConsoleMessage');
   const clearMessagesBtn = $('clearMessages');
   const choicesWrap = $('choices');
   const addChoiceBtn = $('addChoice');
@@ -963,6 +965,13 @@
   addSystemMessageBtn.addEventListener('click', () => {
     if (state.messages.length >= 99) { showToast(t('toast.maxMessages')); return; }
     state.messages.push({ type: 'system', contactId: '', speaker: '', body: '', portrait: '', portraitOriginal: '', side: 'left', time: '', bodyImage: '', bodyImageOriginal: '' });
+    renderMessagesEditor();
+    renderPreview();
+    saveState();
+  });
+  addConsoleMessageBtn.addEventListener('click', () => {
+    if (state.messages.length >= 99) { showToast(t('toast.maxMessages')); return; }
+    state.messages.push({ type: 'console', contactId: '', speaker: '', body: '', portrait: '', portraitOriginal: '', side: 'left', time: '', bodyImage: '', bodyImageOriginal: '', consoleColor: CONSOLE_DEFAULT_COLOR });
     renderMessagesEditor();
     renderPreview();
     saveState();

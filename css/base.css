@@ -379,8 +379,7 @@
     background: color-mix(in srgb, var(--btn-color) 22%, transparent);
     box-shadow: 0 0 12px color-mix(in srgb, var(--btn-color) 45%, transparent);
   }
-  .btn.cyan { --btn-color: var(--cyan); }
-  .btn.ghost { --btn-color: var(--dim); }
+  .btn.cyan { --btn-color: var(--cyan); }  .btn.ghost { --btn-color: var(--dim); }
   .btn.ghost:hover { box-shadow: none; }
   .btn.danger { --btn-color: var(--magenta); }
   .btn:disabled,
