@@ -1,15 +1,15 @@
 #!/usr/bin/env python3
-"""Generate the per-language COMMLINK pages: ru/, fr/, de/, es/, it/, ja/, zh/.
+"""Generate this tool's per-language pages: ru/, fr/, de/, es/, it/, ja/, zh/.
 
 Search engines only see the HTML they're served, so a UI translated by JS
 after load is invisible to them. Each language gets its own URL instead:
-/commlink-ui/<lang>/index.html is a copy of index.html with
+/<tool>/<lang>/index.html is a copy of index.html with
 
-  - <html lang> + data-url-lang (the inline i18n code pins the UI language to it)
+  - <html lang> + data-url-lang (the i18n code pins the UI language to it)
   - a translated <title>, meta description and og/twitter title + description
   - its own canonical / og:url / og:locale and the JSON-LD "url"
-  - relative asset paths prefixed with ../ (no <base>: it would break the
-    url(#glitch-slices) SVG filter references)
+  - relative asset paths prefixed with ../ (no <base>: it would break
+    fragment references like url(#…) SVG filters)
 
 It also keeps the hreflang block in index.html in sync, rewrites sitemap.xml
 with every language URL + xhtml:link alternates, and does the same for this
@@ -152,8 +152,11 @@ def localize(src, lang):
     s = sub1(s, r'(<link rel="canonical" href=")[^"]*(" />)', lambda m: m.group(1) + url(lang) + m.group(2), "canonical")
     locales = [f'<meta property="og:locale" content="{LOCALES[lang]}" />'] + [
         f'<meta property="og:locale:alternate" content="{LOCALES[l]}" />' for l in LANGS if l != lang]
-    s = sub1(s, r'<meta property="og:locale" content="[^"]*" />\n(?:<meta property="og:locale:alternate" content="[^"]*" />\n)*',
-             lambda m: "\n".join(locales) + "\n", "og:locale block")
+    block = re.compile(r'<meta property="og:locale" content="[^"]*" />\n(?:<meta property="og:locale:alternate" content="[^"]*" />\n)*')
+    if block.search(s):
+        s = block.sub(lambda m: "\n".join(locales) + "\n", s, count=1)
+    else:  # no og:locale block in index.html: add one after og:url
+        s = sub1(s, r'(<meta property="og:url" content="[^"]*" />\n)', lambda m: m.group(1) + "\n".join(locales) + "\n", "og:url")
     s = sub1(s, rf'("url": "){re.escape(BASE)}(")', lambda m: m.group(1) + url(lang) + m.group(2), 'JSON-LD "url"')
     return prefix_paths(s)
 
