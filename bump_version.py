@@ -14,6 +14,7 @@ Updates BOTH places that carry the version in index.html, keeping them in sync:
   - the mirrored line-1    <!-- COMMLINK vX.Y.Z -->
 """
 import re
+import subprocess
 import sys
 from datetime import date
 from pathlib import Path
@@ -87,6 +88,8 @@ def main():
     if n_comment == 0:
         print("warning: line-1 '<!-- COMMLINK v... -->' comment not found/updated")
     stamp_seo(new)
+    # the per-language pages are copies of index.html: rebuild them with the new version / dates
+    subprocess.run([sys.executable, str(TOOL_DIR / "make_langs.py")], check=False)
 
 
 if __name__ == "__main__":

@@ -1,0 +1,227 @@
+#!/usr/bin/env python3
+"""Generate the per-language COMMLINK pages: ru/, fr/, de/, es/, it/, ja/, zh/.
+
+Search engines only see the HTML they're served, so a UI translated by JS
+after load is invisible to them. Each language gets its own URL instead:
+/commlink-ui/<lang>/index.html is a copy of index.html with
+
+  - <html lang> + data-url-lang (the inline i18n code pins the UI language to it)
+  - a translated <title>, meta description and og/twitter title + description
+  - its own canonical / og:url / og:locale and the JSON-LD "url"
+  - relative asset paths prefixed with ../ (no <base>: it would break the
+    url(#glitch-slices) SVG filter references)
+
+It also keeps the hreflang block in index.html in sync, rewrites sitemap.xml
+with every language URL + xhtml:link alternates, and does the same for this
+tool's entries in the hub's ../cyberdeck-tools/sitemap.xml (when present).
+
+index.html (English) is the only source: NEVER edit the generated folders.
+bump_version.py runs this script after every bump; run it by hand after any
+other index.html change:
+
+    python make_langs.py
+"""
+import html
+import re
+import sys
+from pathlib import Path
+
+ROOT = Path(__file__).resolve().parent
+TOOL = "commlink-ui"
+BASE = f"https://cyberdeck.tools/{TOOL}/"
+INDEX = ROOT / "index.html"
+SITEMAP = ROOT / "sitemap.xml"
+HUB_SITEMAP = ROOT.parent / "cyberdeck-tools" / "sitemap.xml"
+
+LANGS = ["en", "ru", "fr", "de", "es", "it", "ja", "zh"]
+LOCALES = {"en": "en_US", "ru": "ru_RU", "fr": "fr_FR", "de": "de_DE",
+           "es": "es_ES", "it": "it_IT", "ja": "ja_JP", "zh": "zh_CN"}
+
+# Search-result copy per language (English lives in index.html itself).
+# title <= ~60 chars, desc <= ~160 (Google cuts longer ones); og_* feed both
+# the Open Graph and the Twitter card tags.
+SEO = {
+    "ru": dict(
+        title="COMMLINK — конструктор киберпанк-диалогов и скриншотов чата",
+        desc="Бесплатный конструктор скриншотов переписки в стиле киберпанк: диалоги нетраннеров с контактами и глитч-эффектами, экспорт PNG для Shadowrun и Cyberpunk RED.",
+        og_title="COMMLINK — конструктор киберпанк-диалогов",
+        og_desc="Скриншоты переписки в стиле киберпанк прямо в браузере: свои контакты, глитч-эффекты, экспорт PNG — для мастеров Shadowrun и Cyberpunk RED.",
+    ),
+    "fr": dict(
+        title="COMMLINK — Générateur de captures de chat cyberpunk",
+        desc="Générateur gratuit de captures de chat cyberpunk : dialogues de netrunner avec contacts et effets glitch, export PNG pour vos parties de Shadowrun et Cyberpunk RED.",
+        og_title="COMMLINK — Constructeur de dialogues cyberpunk",
+        og_desc="Créez des captures de chat cyberpunk dans votre navigateur : contacts personnalisés, effets glitch, export PNG — idéal pour les MJ de Shadowrun et Cyberpunk RED.",
+    ),
+    "de": dict(
+        title="COMMLINK — Cyberpunk-Chat-Screenshot-Generator",
+        desc="Kostenloser Cyberpunk-Chat-Screenshot-Generator: Netrunner-Dialoge mit eigenen Kontakten und Glitch-Effekten, PNG-Export für Shadowrun und Cyberpunk RED.",
+        og_title="COMMLINK — Cyberpunk-Dialog-Konstruktor",
+        og_desc="Cyberpunk-Chat-Screenshots direkt im Browser: eigene Kontakte, Glitch-Effekte, PNG-Export — ideal für Spielleiter von Shadowrun und Cyberpunk RED.",
+    ),
+    "es": dict(
+        title="COMMLINK — Generador de capturas de chat cyberpunk",
+        desc="Generador gratuito de capturas de chat cyberpunk: diálogos de netrunner con contactos propios y efectos glitch, exportación PNG para Shadowrun y Cyberpunk RED.",
+        og_title="COMMLINK — Constructor de diálogos cyberpunk",
+        og_desc="Crea capturas de chat cyberpunk en tu navegador: contactos personalizados, efectos glitch y exportación PNG, ideal para másteres de Shadowrun y Cyberpunk RED.",
+    ),
+    "it": dict(
+        title="COMMLINK — Generatore di screenshot di chat cyberpunk",
+        desc="Generatore gratuito di screenshot di chat cyberpunk: dialoghi da netrunner con contatti ed effetti glitch, esportazione PNG per Shadowrun e Cyberpunk RED.",
+        og_title="COMMLINK — Costruttore di dialoghi cyberpunk",
+        og_desc="Crea screenshot di chat cyberpunk nel browser: contatti personalizzati, effetti glitch, esportazione PNG — perfetto per i master di Shadowrun e Cyberpunk RED.",
+    ),
+    "ja": dict(
+        title="COMMLINK — サイバーパンク風チャット画面メーカー",
+        desc="サイバーパンク風のチャットスクリーンショットを無料で作成。連絡先やグリッチ効果付きのネットランナーの会話を作り、Shadowrun や Cyberpunk RED の資料として PNG で書き出せます。",
+        og_title="COMMLINK — サイバーパンク会話コンストラクター",
+        og_desc="ブラウザでサイバーパンク風のチャット画像を作成。連絡先、グリッチ効果、PNG 書き出し — TRPG のハンドアウトに最適です。",
+    ),
+    "zh": dict(
+        title="COMMLINK — 赛博朋克聊天截图生成器",
+        desc="免费的赛博朋克风格聊天截图生成器：创建带自定义联系人和故障特效的黑客对话，并导出为 PNG，适用于《暗影狂奔》和《赛博朋克 RED》跑团资料。",
+        og_title="COMMLINK — 赛博朋克对话构造器",
+        og_desc="在浏览器中制作赛博朋克风格的聊天截图：自定义联系人、故障特效、PNG 导出，非常适合跑团主持人。",
+    ),
+}
+
+HREFLANG_START = "<!-- hreflang: generated by make_langs.py -->"
+HREFLANG_END = "<!-- /hreflang -->"
+GENERATED = "<!-- GENERATED by make_langs.py from ../index.html — edit index.html, then re-run -->"
+
+
+def url(lang):
+    return BASE if lang == "en" else f"{BASE}{lang}/"
+
+
+def esc(s):
+    return html.escape(s, quote=True)
+
+
+def sub1(text, pattern, repl, what):
+    text, n = re.subn(pattern, repl, text, count=1)
+    if n != 1:
+        sys.exit(f"error: {what} not found in index.html")
+    return text
+
+
+def set_meta(text, attr, name, value):
+    return sub1(text, rf'(<meta {attr}="{re.escape(name)}" content=")[^"]*(" />)',
+                lambda m: m.group(1) + esc(value) + m.group(2), f"{attr}={name}")
+
+
+def hreflang_block():
+    links = [f'<link rel="alternate" hreflang="{l}" href="{url(l)}" />' for l in LANGS]
+    links.append(f'<link rel="alternate" hreflang="x-default" href="{BASE}" />')
+    return "\n".join([HREFLANG_START, *links, HREFLANG_END])
+
+
+def with_hreflang(text):
+    block = hreflang_block()
+    if HREFLANG_START in text:
+        return re.sub(re.escape(HREFLANG_START) + r".*?" + re.escape(HREFLANG_END), lambda m: block, text, flags=re.S)
+    return sub1(text, r'(<link rel="canonical" href="[^"]*" />\n)', lambda m: m.group(1) + block + "\n", "canonical")
+
+
+def prefix_paths(text):
+    """../ before relative src / href attributes. Inside a <script> block only
+    the opening tag is touched (its src=), so template strings in the inline
+    JS are left alone."""
+    rel = re.compile(r'(\s(?:src|href)=")(?!https?:|data:|#|/|mailto:|javascript:|\.\./)([^"]+")')
+
+    def fix(part):
+        if not part.startswith("<script"):
+            return rel.sub(r"\1../\2", part)
+        tag_end = part.index(">") + 1
+        return rel.sub(r"\1../\2", part[:tag_end]) + part[tag_end:]
+
+    return "".join(fix(p) for p in re.split(r"(<script\b.*?</script>)", text, flags=re.S))
+
+
+def localize(src, lang):
+    t, s = SEO[lang], src
+    s = sub1(s, r"\n", "\n" + GENERATED + "\n", "first line")  # right after the version comment
+    s = sub1(s, r'<html lang="en">', f'<html lang="{lang}" data-url-lang="{lang}">', '<html lang="en">')
+    s = sub1(s, r"<title>[^<]*</title>", lambda m: f"<title>{esc(t['title'])}</title>", "<title>")
+    s = set_meta(s, "name", "description", t["desc"])
+    s = set_meta(s, "property", "og:title", t["og_title"])
+    s = set_meta(s, "property", "og:description", t["og_desc"])
+    s = set_meta(s, "name", "twitter:title", t["og_title"])
+    s = set_meta(s, "name", "twitter:description", t["og_desc"])
+    s = set_meta(s, "property", "og:url", url(lang))
+    s = sub1(s, r'(<link rel="canonical" href=")[^"]*(" />)', lambda m: m.group(1) + url(lang) + m.group(2), "canonical")
+    locales = [f'<meta property="og:locale" content="{LOCALES[lang]}" />'] + [
+        f'<meta property="og:locale:alternate" content="{LOCALES[l]}" />' for l in LANGS if l != lang]
+    s = sub1(s, r'<meta property="og:locale" content="[^"]*" />\n(?:<meta property="og:locale:alternate" content="[^"]*" />\n)*',
+             lambda m: "\n".join(locales) + "\n", "og:locale block")
+    s = sub1(s, rf'("url": "){re.escape(BASE)}(")', lambda m: m.group(1) + url(lang) + m.group(2), 'JSON-LD "url"')
+    return prefix_paths(s)
+
+
+def url_entries(lastmod, priority_en, priority_lang, indent="  "):
+    alts = "".join(f'\n{indent}  <xhtml:link rel="alternate" hreflang="{l}" href="{url(l)}" />' for l in LANGS)
+    alts += f'\n{indent}  <xhtml:link rel="alternate" hreflang="x-default" href="{BASE}" />'
+    out = []
+    for l in LANGS:
+        out.append(f"{indent}<url>\n{indent}  <loc>{url(l)}</loc>\n{indent}  <lastmod>{lastmod}</lastmod>\n"
+                   f"{indent}  <changefreq>weekly</changefreq>\n{indent}  <priority>{priority_en if l == 'en' else priority_lang}</priority>"
+                   f"{alts}\n{indent}</url>\n")
+    return "".join(out)
+
+
+URLSET_OPEN = '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">'
+
+
+def write_tool_sitemap(lastmod):
+    SITEMAP.write_text('<?xml version="1.0" encoding="UTF-8"?>\n' + URLSET_OPEN + "\n"
+                       + url_entries(lastmod, "1.0", "0.9") + "</urlset>\n", encoding="utf-8")
+
+
+def update_hub_sitemap(lastmod):
+    if not HUB_SITEMAP.exists():
+        print(f"note: {HUB_SITEMAP} not found, hub sitemap skipped")
+        return
+    text = HUB_SITEMAP.read_text(encoding="utf-8")
+    blocks = list(re.finditer(r"  <url>\n.*?\n  </url>\n", text, flags=re.S))
+    mine = [b for b in blocks if re.search(rf"<loc>{re.escape(BASE)}", b.group(0))]
+    if not mine:
+        print(f"note: {BASE} is not listed in the hub sitemap, skipped")
+        return
+    prio = re.search(r"<priority>([^<]+)</priority>", mine[0].group(0))
+    p_en = prio.group(1) if prio else "0.8"
+    p_lang = f"{max(0.1, float(p_en) - 0.1):.1f}"
+    new = url_entries(lastmod, p_en, p_lang)
+    out, pos = [], 0
+    for i, b in enumerate(mine):
+        out.append(text[pos:b.start()])
+        if i == 0:
+            out.append(new)
+        pos = b.end()
+    out.append(text[pos:])
+    text = "".join(out)
+    text = re.sub(r"<urlset[^>]*>", URLSET_OPEN, text, count=1)
+    HUB_SITEMAP.write_text(text, encoding="utf-8")
+    print("sitemap: cyberdeck-tools/sitemap.xml updated (commit the hub repo too)")
+
+
+def main():
+    for lang, t in SEO.items():
+        for k, limit in (("title", 60), ("desc", 165)):
+            if len(t[k]) > limit:
+                print(f"warning: {lang} {k} is {len(t[k])} chars (> {limit})")
+
+    src = with_hreflang(INDEX.read_text(encoding="utf-8"))
+    INDEX.write_text(src, encoding="utf-8")
+    for lang in LANGS[1:]:
+        out = ROOT / lang / "index.html"
+        out.parent.mkdir(exist_ok=True)
+        out.write_text(localize(src, lang), encoding="utf-8")
+    m = re.search(r'"dateModified": "([^"]+)"', src)
+    lastmod = m.group(1) if m else __import__("datetime").date.today().isoformat()
+    write_tool_sitemap(lastmod)
+    update_hub_sitemap(lastmod)
+    print(f"langs: wrote {', '.join(l + '/' for l in LANGS[1:])} (lastmod {lastmod})")
+
+
+if __name__ == "__main__":
+    main()

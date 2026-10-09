@@ -7,3 +7,5 @@ exclude:
   - LICENSE
   - README.md
   - TODO.md
+  - make_langs.py
+  - bump_version.py
