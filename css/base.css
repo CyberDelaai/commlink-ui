@@ -655,3 +655,6 @@
     margin-top: 18px;
   }
   .crop-actions #cropMax { margin-right: auto; }
+
+/* Visually hidden but readable by crawlers / screen readers (page <h1>). */
+.sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
