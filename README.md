@@ -1,6 +1,6 @@
 # COMMLINK — Cyberpunk Dialog Constructor
 
-A single-page web app for composing cyberpunk-styled dialog screenshots (Cyberpunk 2077 / netrunner UI vibe). No backend, no build step. Open `index.html` in any modern browser.
+A single-page web app for composing cyberpunk-styled dialog screenshots (netrunner UI vibe). No backend, no build step. Open `index.html` in any modern browser.
 
 Inspired by [Commlink-Thread](https://tonkatsura.github.io/Comlink-Thread/).
 
