@@ -16,7 +16,7 @@ async function fetchCommitCount() {
   const at = parseInt(storageGet(CACHE_AT) || '0', 10);
   if (cached && (Date.now() - at) < TTL) return cached;
   try {
-    const r = await fetch(`https://api.github.com/repos/${GH_REPO}/commits?per_page=1`);
+    const r = await fetch(GH_COMMITS);
     if (!r.ok) return cached || '';
     const link = r.headers.get('Link');
     if (link) {

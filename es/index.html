@@ -671,10 +671,10 @@
   // AND the mirrored `<!-- COMMLINK vX.Y.Z -->` comment on line 1 in sync.
   const APP_VERSION = '1.6.1';
 
-  // GitHub repo from which the commit count ("changes: N") in the header tag
+  // GitHub API URL from which the commit count ("changes: N") in the header tag
   // is fetched. Cached in localStorage for an hour so we don't burn the
   // unauthenticated 60-req/hour rate limit on every page load.
-  const GH_REPO = 'CyberDelaai/commlink-ui';
+  const GH_COMMITS = 'https://api.github.com/repos/CyberDelaai/commlink-ui/commits?per_page=1';
 
   // ---------- Image crop defaults ----------
   // Avatars (message portraits + contact avatars) are crammed into many slots
